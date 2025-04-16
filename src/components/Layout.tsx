@@ -68,12 +68,14 @@ const Layout: React.FC = () => {
   // This function generates the appropriate className string for NavLinks,
   // handling both active state and scrolled state.
   const getNavLinkClass = (isActive: boolean): string => {
-    const baseClasses = "hover:text-sakura-pink transition-colors";
+    // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
+    const baseClasses = "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink transition-colors";
     const textClass = isScrolled ? 'text-sakura-dark-text' : 'text-white';
-    const activeClass = isActive ? 'font-medium text-sakura-pink' : ''; // Active links get pink color directly
+    const activeClass = isActive ? 'font-medium text-sakura-pink border-sakura-pink' : ''; // Active links get pink color and border directly
     
     // Combine classes, ensuring active pink overrides the scrolled text color if needed.
-    return `${baseClasses} ${isActive ? activeClass : textClass} ${activeClass ? '' : textClass}`;
+    // Active state explicitly sets border-sakura-pink
+    return `${baseClasses} ${isActive ? activeClass : textClass}`;
   };
 
   const getMobileNavLinkClass = (isActive: boolean): string => {
@@ -109,7 +111,13 @@ const Layout: React.FC = () => {
               isScrolled ? 'text-sakura-dark-text' : 'text-white' // Text color changes on scroll
             }`}
           >
-            Sakura Lens
+            <img 
+              src="./src/assets/logorose-300x155.png" 
+              alt="MOM.B Logo" 
+              className={`transition-all duration-300 ${
+                isScrolled ? 'h-10 w-auto' : 'h-16 w-auto' // Larger when not scrolled, smaller when scrolled
+              }`} 
+            />
           </Link>
 
           {/* --- Mobile Menu Button --- */}
