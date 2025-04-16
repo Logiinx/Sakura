@@ -115,8 +115,8 @@ const Layout: React.FC = () => {
             }`}
           >
             <img 
-              src="./src/assets/logorose-300x155.png" 
-              alt="MOM.B Logo" 
+              src="./src/assets/logomompink-300x150.png" 
+              alt="MOM.B Logo Header" 
               className={`transition-all duration-300 ${
                 isScrolled ? 'h-10 w-auto' : 'h-16 w-auto' // Larger when not scrolled, smaller when scrolled
               }`} 

@@ -10,7 +10,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 // Import icons from lucide-react.
 import { Camera, Clock, Heart, Award } from 'lucide-react';
-import logo from '@/assets/logo2mom.png'; // Import the logo
+import logo from '@/assets/logomom.png'; // Import the logo
 
 // Define the Index page component.
 const Index: React.FC = () => {
@@ -39,7 +39,7 @@ const Index: React.FC = () => {
             <img src={logo} alt="Sakura Lens Logo"  /> {/* Use the imported logo */}
           </h1>
           {/* Subheading/Tagline: Lighter font weight. */}
-          <p className="flex justify-center text-lg md:text-xl mb-8 max-w-lg font-light">
+          <p className="flex justify-center text-2xl mb-8 max-w-lg font-bad-script tracking-widest">
             Bienvenue sur MOM.B
           </p>
           {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
