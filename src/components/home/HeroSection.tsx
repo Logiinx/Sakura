@@ -1,15 +1,16 @@
 /**
  * src/components/home/HeroSection.tsx
- * 
+ *
  * Hero section component for the homepage.
  * Displays a full-screen background image with overlay, title, tagline, and CTA button.
  */
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react"
+import { Link } from "react-router-dom"
 
 // NOTE: Consider moving this URL to a central configuration or constants file.
-const HERO_BACKGROUND_URL = 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80';
+const HERO_BACKGROUND_URL =
+  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80"
 
 const HeroSection: React.FC = () => {
   return (
@@ -19,7 +20,7 @@ const HeroSection: React.FC = () => {
       {/* Background Image Container */}
       {/* `absolute inset-0` makes it fill the parent section. */}
       {/* `bg-[url(...)] bg-cover bg-center` sets the background image, ensures it covers the area, and centers it. */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url('${HERO_BACKGROUND_URL}')` }} // Set background using inline style for clarity
       >
@@ -32,9 +33,7 @@ const HeroSection: React.FC = () => {
       {/* `text-white` sets text color for contrast against the dark overlay. */}
       <div className="sakura-container relative z-10 text-white">
         {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
-        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6">
-          Sakura Lens
-        </h1>
+        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6">Sakura Lens</h1>
         {/* Subheading/Tagline: Lighter font weight. */}
         <p className="text-lg md:text-xl mb-8 max-w-lg font-light">
           Capturing moments with the delicate beauty of cherry blossoms.
@@ -45,7 +44,7 @@ const HeroSection: React.FC = () => {
         </Link>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default HeroSection; 
+export default HeroSection

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"
 
 const PackageFourPage: React.FC = () => {
   return (
@@ -7,7 +7,7 @@ const PackageFourPage: React.FC = () => {
       <p>Details about Package Four will go here.</p>
       {/* Add more content specific to Package Four */}
     </div>
-  );
-};
+  )
+}
 
-export default PackageFourPage; 
+export default PackageFourPage

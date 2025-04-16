@@ -1,16 +1,16 @@
 /**
  * src/pages/Index.tsx
- * 
+ *
  * This component renders the homepage of the application.
  * It includes sections like Hero, About, Featured Gallery, and a Call to Action.
  */
 
-import React from 'react';
+import React from "react"
 // Import Link for internal navigation.
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom"
 // Import icons from lucide-react.
-import { Camera, Clock, Heart, Award } from 'lucide-react';
-import logo from '@/assets/logomom.png'; // Import the logo
+import { Camera, Clock, Heart, Award } from "lucide-react"
+import logo from "@/assets/logomom.png" // Import the logo
 
 // Define the Index page component.
 const Index: React.FC = () => {
@@ -36,7 +36,7 @@ const Index: React.FC = () => {
         <div className="sakura-container relative z-10 text-white">
           {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6">
-            <img src={logo} alt="Sakura Lens Logo"  /> {/* Use the imported logo */}
+            <img src={logo} alt="Sakura Lens Logo" /> {/* Use the imported logo */}
           </h1>
           {/* Subheading/Tagline: Lighter font weight. */}
           <p className="flex justify-center text-2xl mb-8 max-w-lg font-bad-script tracking-widest">
@@ -48,7 +48,7 @@ const Index: React.FC = () => {
           </Link>
         </div>
       </section>
-      
+
       {/* --- About Section --- */}
       {/* Provides padding top/bottom (`py-20 md:py-28`). White background. */}
       <section className="py-20 md:py-28 bg-white">
@@ -59,7 +59,7 @@ const Index: React.FC = () => {
             {/* Custom pink divider line (defined in index.css). */}
             <div className="section-divider"></div>
           </div>
-          
+
           {/* Grid for Vision Points */}
           {/* Responsive grid: 1 column on small, 2 on medium, 4 on large screens. `gap-10` adds space between items. */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -73,7 +73,7 @@ const Index: React.FC = () => {
               <h3 className="font-playfair text-xl font-bold mb-3">Elegance</h3>
               <p className="text-gray-600">Clean and minimalist compositions that highlight the subject.</p>
             </div>
-            
+
             {/* Vision Point 2: Timing */}
             <div className="p-6 text-center hover-scale">
               <div className="w-14 h-14 bg-sakura-light-pink rounded-full flex items-center justify-center mx-auto mb-5">
@@ -82,7 +82,7 @@ const Index: React.FC = () => {
               <h3 className="font-playfair text-xl font-bold mb-3">Timing</h3>
               <p className="text-gray-600">Capturing those fleeting moments that tell your unique story.</p>
             </div>
-            
+
             {/* Vision Point 3: Emotion */}
             <div className="p-6 text-center hover-scale">
               <div className="w-14 h-14 bg-sakura-light-pink rounded-full flex items-center justify-center mx-auto mb-5">
@@ -91,7 +91,7 @@ const Index: React.FC = () => {
               <h3 className="font-playfair text-xl font-bold mb-3">Emotion</h3>
               <p className="text-gray-600">Emphasizing genuine emotions and authentic connections.</p>
             </div>
-            
+
             {/* Vision Point 4: Quality */}
             <div className="p-6 text-center hover-scale">
               <div className="w-14 h-14 bg-sakura-light-pink rounded-full flex items-center justify-center mx-auto mb-5">
@@ -103,7 +103,7 @@ const Index: React.FC = () => {
           </div>
         </div>
       </section>
-      
+
       {/* --- Featured Work Section --- */}
       {/* Light gray background (`bg-sakura-light-gray`). */}
       <section className="py-20 md:py-28 bg-sakura-light-gray">
@@ -113,51 +113,53 @@ const Index: React.FC = () => {
             <h2 className="text-3xl md:text-4xl font-bold">Featured Gallery</h2>
             <div className="section-divider"></div>
           </div>
-          
+
           {/* Image Grid */}
           {/* Responsive grid: 1 column default, 2 on small, 3 on large screens. `gap-8` for spacing. */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Image Item 1 */} 
+            {/* Image Item 1 */}
             {/* `overflow-hidden rounded-md` clips the image to rounded corners. `hover-scale` adds subtle zoom container. */}
             <div className="overflow-hidden rounded-md hover-scale">
               {/* NOTE: Alt text should be more descriptive if possible. Image URLs could be dynamic. */}
-              <img 
-                src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80" 
-                alt="Orange flowers field during daytime" 
+              <img
+                src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80"
+                alt="Orange flowers field during daytime"
                 className="w-full h-80 object-cover transition-transform duration-700 hover:scale-105" // Image scales on container hover
                 loading="lazy" // Add lazy loading for images below the fold
               />
             </div>
             {/* Image Item 2 */}
             <div className="overflow-hidden rounded-md hover-scale">
-              <img 
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" 
-                alt="Scenic landscape view of mountains and lake" 
+              <img
+                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
+                alt="Scenic landscape view of mountains and lake"
                 className="w-full h-80 object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
               />
             </div>
             {/* Image Item 3 */}
             <div className="overflow-hidden rounded-md hover-scale">
-              <img 
-                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80" 
-                alt="Mountain valley with river and green foliage" 
+              <img
+                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
+                alt="Mountain valley with river and green foliage"
                 className="w-full h-80 object-cover transition-transform duration-700 hover:scale-105"
                 loading="lazy"
               />
             </div>
           </div>
-          
+
           {/* Link to Full Gallery */}
           <div className="text-center mt-14">
             {/* Button styled with border, pink text, hover effect changes background/text color. */}
-            <Link to="/gallery" className="px-6 py-3 border border-sakura-pink text-sakura-pink rounded-md hover:bg-sakura-pink hover:text-white transition-all duration-300 font-medium hover-float">
+            <Link
+              to="/gallery"
+              className="px-6 py-3 border border-sakura-pink text-sakura-pink rounded-md hover:bg-sakura-pink hover:text-white transition-all duration-300 font-medium hover-float">
               View Full Gallery
             </Link>
           </div>
         </div>
       </section>
-      
+
       {/* --- Call to Action (CTA) Section --- */}
       <section className="py-20 md:py-28 bg-white">
         <div className="sakura-container text-center">
@@ -173,8 +175,8 @@ const Index: React.FC = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
 // Export the Index component for use in App.tsx (routing).
-export default Index;
+export default Index

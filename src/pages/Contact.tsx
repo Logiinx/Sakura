@@ -1,30 +1,29 @@
-
-import React, { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { MapPin, Phone, Mail } from 'lucide-react';
+import React, { useState } from "react"
+import { useToast } from "@/hooks/use-toast"
+import { MapPin, Phone, Mail } from "lucide-react"
 
 const Contact = () => {
-  const { toast } = useToast();
+  const { toast } = useToast()
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
+    const { name, value } = e.target
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }));
-  };
-  
+      [name]: value,
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
+    e.preventDefault()
+    setIsSubmitting(true)
+
     try {
       // EmailJS integration would go here
       // Example:
@@ -41,34 +40,34 @@ const Contact = () => {
         'YOUR_PUBLIC_KEY'
       );
       */
-      
+
       // For demo purposes, we'll simulate a successful API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+
       toast({
         title: "Message sent!",
         description: "We'll get back to you as soon as possible.",
-      });
-      
+      })
+
       // Reset form
       setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      })
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error)
       toast({
         title: "Something went wrong",
         description: "Failed to send your message. Please try again.",
-        variant: "destructive"
-      });
+        variant: "destructive",
+      })
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
-  
+  }
+
   return (
     <div className="animate-fade-in">
       <section className="py-16 md:py-24">
@@ -80,13 +79,13 @@ const Contact = () => {
               We'd love to hear from you. Fill out the form below, and we'll get back to you as soon as possible.
             </p>
           </div>
-          
+
           <div className="flex flex-col lg:flex-row gap-12">
             {/* Contact Info */}
             <div className="lg:w-1/3">
               <div className="bg-sakura-light-gray p-6 rounded-lg">
                 <h2 className="font-playfair text-2xl font-bold mb-6">Get In Touch</h2>
-                
+
                 <div className="space-y-6">
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">
@@ -94,10 +93,14 @@ const Contact = () => {
                     </div>
                     <div className="ml-4">
                       <h3 className="font-bold mb-1">Location</h3>
-                      <p className="text-gray-600">123 Cherry Blossom Avenue<br/>Sakura City, SC 10001</p>
+                      <p className="text-gray-600">
+                        123 Cherry Blossom Avenue
+                        <br />
+                        Sakura City, SC 10001
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">
                       <Phone className="text-sakura-pink" />
@@ -107,7 +110,7 @@ const Contact = () => {
                       <p className="text-gray-600">(123) 456-7890</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">
                       <Mail className="text-sakura-pink" />
@@ -118,7 +121,7 @@ const Contact = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-8">
                   <h3 className="font-bold mb-3">Business Hours</h3>
                   <ul className="space-y-2 text-gray-600">
@@ -138,7 +141,7 @@ const Contact = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Contact Form */}
             <div className="lg:w-2/3">
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -157,7 +160,7 @@ const Contact = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="email" className="block mb-2 font-medium">
                       Your Email <span className="text-red-500">*</span>
@@ -173,7 +176,7 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <label htmlFor="subject" className="block mb-2 font-medium">
                     Subject <span className="text-red-500">*</span>
@@ -188,7 +191,7 @@ const Contact = () => {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block mb-2 font-medium">
                     Message <span className="text-red-500">*</span>
@@ -200,17 +203,12 @@ const Contact = () => {
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent resize-none"
-                    required
-                  ></textarea>
+                    required></textarea>
                 </div>
-                
+
                 <div>
-                  <button
-                    type="submit"
-                    className="sakura-btn"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  <button type="submit" className="sakura-btn" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending..." : "Send Message"}
                   </button>
                 </div>
               </form>
@@ -218,7 +216,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Map Section */}
       <section className="py-16 bg-sakura-light-gray">
         <div className="sakura-container">
@@ -226,7 +224,7 @@ const Contact = () => {
             <h2 className="text-3xl font-bold mb-4">Find Us</h2>
             <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
           </div>
-          
+
           {/* Map Placeholder - In a real project, you'd insert a Google Map or similar here */}
           <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
             <p className="text-gray-600">Map would be displayed here</p>
@@ -244,7 +242,7 @@ const Contact = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default Contact;
+export default Contact
