@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
@@ -26,9 +25,9 @@ const PricingCard = ({
       <h3 className="font-playfair text-2xl font-bold">{title}</h3>
       <div className="mt-4 mb-6">
         <span className="text-4xl font-bold">{price}</span>
-        <span className="text-gray-600 ml-1">/ session</span>
+        <span className="text-white ml-1">/ session</span>
       </div>
-      <p className="text-gray-600 mb-6">{description}</p>
+      <p className="text-white mb-6">{description}</p>
       <ul className="space-y-3 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-center">
@@ -54,17 +53,23 @@ const PricingCard = ({
 const Pricing = () => {
   return (
     <div className="animate-fade-in">
-      <section className="py-16 md:py-24 bg-white">
-        <div className="sakura-container">
+      
+      {/* Hero Section */}
+      <section className="relative py-16 md:py-24 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center">    
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div> 
+        
+        {/* Content Container */}
+        <div className="sakura-container relative z-10"> 
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Photography Packages</h1>
+            <h1 className="text-4xl text-white md:text-5xl font-bold mb-4">Photography Packages</h1>
             <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
-            <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
+            <p className="mt-6 text-white max-w-2xl mx-auto">
               Choose the perfect photography package for your needs. All packages include professional editing and digital delivery.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 text-white md:grid-cols-3 gap-8">
             <PricingCard 
               title="Basic"
               price="$199"
@@ -111,7 +116,7 @@ const Pricing = () => {
         </div>
       </section>
       
-      {/* Additional Services */}
+      {/* Additional Services Section (Now correctly positioned below the hero) */}
       <section className="py-16 bg-sakura-light-gray">
         <div className="sakura-container">
           <div className="text-center mb-12">
@@ -175,7 +180,7 @@ const Pricing = () => {
         </div>
       </section>
       
-      {/* FAQ Section */}
+      {/* FAQ Section (Now correctly positioned below additional services) */}
       <section className="py-16 md:py-24 bg-white">
         <div className="sakura-container">
           <div className="text-center mb-12">

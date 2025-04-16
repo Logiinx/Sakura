@@ -142,13 +142,13 @@ const Layout: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-10">
             {/* Use NavLink for items that should highlight when active. */}
             <NavLink to="/" className={({ isActive }) => getNavLinkClass(isActive)}>
-              Home
+              Accueil
             </NavLink>
             <NavLink to="/pricing" className={({ isActive }) => getNavLinkClass(isActive)}>
-              Pricing
+              Tarifs
             </NavLink>
             <NavLink to="/gallery" className={({ isActive }) => getNavLinkClass(isActive)}>
-              Gallery
+              Galerie
             </NavLink>
             <NavLink to="/contact" className={({ isActive }) => getNavLinkClass(isActive)}>
               Contact
