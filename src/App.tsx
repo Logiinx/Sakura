@@ -34,6 +34,10 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import BookNow from "./pages/BookNow";
 import NotFound from "./pages/NotFound"; // Page displayed for invalid URLs
+import PackageOnePage from './pages/PackageOnePage';
+import PackageTwoPage from './pages/PackageTwoPage';
+import PackageThreePage from './pages/PackageThreePage';
+import PackageFourPage from './pages/PackageFourPage';
 
 // Layout Components (located in ./components/)
 // Layout: A wrapper component that likely contains common UI elements like header/footer.
@@ -91,6 +95,10 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/book-now" element={<BookNow />} />
+            <Route path="/package-one" element={<PackageOnePage />} />
+            <Route path="/package-two" element={<PackageTwoPage />} />
+            <Route path="/package-three" element={<PackageThreePage />} />
+            <Route path="/package-four" element={<PackageFourPage />} />
             {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
             <Route path="*" element={<NotFound />} />
           </Route>
