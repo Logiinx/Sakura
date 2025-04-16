@@ -1,42 +1,67 @@
+/* Import Google Fonts */
+/* This line imports the 'Playfair Display' and 'Montserrat' fonts from Google Fonts. */
+/* These fonts are then defined in `tailwind.config.ts` and can be used with classes like `font-playfair`. */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap");
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
-
+/* Tailwind CSS Directives */
+/* These lines are essential for Tailwind CSS to work. */
+/* @tailwind base: Injects Tailwind's base styles (like CSS resets). */
 @tailwind base;
+/* @tailwind components: Injects Tailwind's component classes (like predefined button styles, though often overridden by shadcn-ui). */
 @tailwind components;
+/* @tailwind utilities: Injects Tailwind's utility classes (like `p-4`, `flex`, `text-red-500`, etc.). */
 @tailwind utilities;
 
+/* Base Layer Configuration */
+/* `@layer base` allows adding custom base styles or overriding Tailwind's base styles. */
 @layer base {
+  /* CSS Variables for Theming (Light Theme) */
+  /* These variables define the color palette for the application, used by both Tailwind config and shadcn-ui components. */
+  /* They follow the hsl(hue saturation lightness) format, often without the 'hsl()' wrapper itself. */
+  /* Example: `--background: 0 0% 100%;` defines the background color as white. */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%; /* Main background color (white) */
+    --foreground: 222.2 84% 4.9%; /* Main text color (dark gray/black) */
 
+    /* Card component colors */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
+    /* Popover component colors (tooltips, dropdowns) */
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 0 100% 87%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary colors (buttons, accents) */
+    --primary: 0 100% 87%; /* Main primary color (a light pink/peach) */
+    --primary-foreground: 210 40% 98%; /* Text color on primary background (near white) */
 
-    --secondary: 114 23% 86%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary colors (less prominent elements) */
+    --secondary: 114 23% 86%; /* Main secondary color (a light green/gray) */
+    --secondary-foreground: 222.2 47.4% 11.2%; /* Text color on secondary background (dark gray) */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted colors (subdued text/backgrounds) */
+    --muted: 210 40% 96.1%; /* Muted background (very light gray) */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Muted text (medium gray) */
 
-    --accent: 351 100% 94%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent colors (highlights, interactive states) */
+    --accent: 351 100% 94%; /* Accent color (light pink) */
+    --accent-foreground: 222.2 47.4% 11.2%; /* Text on accent background (dark gray) */
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive colors (errors, warnings, delete actions) */
+    --destructive: 0 84.2% 60.2%; /* Destructive color (red) */
+    --destructive-foreground: 210 40% 98%; /* Text on destructive background (near white) */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 0 100% 87%;
+    /* Border and input field colors */
+    --border: 214.3 31.8% 91.4%; /* Default border color (light gray) */
+    --input: 214.3 31.8% 91.4%; /* Input field border (same as default border) */
+    --ring: 0 100% 87%; /* Focus ring color (matches primary) */
 
-    --radius: 0.5rem;
+    /* Border Radius Variable */
+    /* Used by Tailwind config (`tailwind.config.ts`) for `rounded-sm`, `rounded-md`, `rounded-lg` utilities. */
+    --radius: 0.5rem; /* Default border radius */
 
+    /* Custom Sidebar Colors */
+    /* These variables are specific to the sidebar component. */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -46,60 +71,117 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  /* Dark Theme Color Variables (Example - Add if dark mode is needed) */
+  /* 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 346.8 77.2% 49.8%; 
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 346.8 77.2% 49.8%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  */
 }
 
+/* Further Base Layer Customizations */
 @layer base {
+  /* Apply default border color to all elements */
   * {
-    @apply border-border;
+    @apply border-border; /* Uses the --border CSS variable */
   }
 
+  /* Default body styles */
   body {
+    /* Apply background, text color, and default font using custom 'sakura' colors/fonts from tailwind.config.ts */
     @apply bg-sakura-white text-sakura-dark-text font-montserrat;
+    /* Prevent horizontal scrolling on the body */
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Default heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    /* Apply the custom 'Playfair Display' font defined in tailwind.config.ts */
     @apply font-playfair;
   }
 }
 
+/* Custom Component Styles */
+/* Styles defined outside of `@layer` have higher specificity than base Tailwind styles. */
+
+/* Custom button style */
 .sakura-btn {
+  /* Mix Tailwind utilities to create a reusable button style */
   @apply px-6 py-3 bg-sakura-pink text-white rounded-md hover:bg-opacity-90 transition-all duration-300 font-medium;
 }
 
+/* Custom container style */
 .sakura-container {
+  /* Defines a max-width container with horizontal padding, responsive */
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* Fade-in animation utility */
 .fade-in {
+  /* Applies the 'fade-in' animation defined in tailwind.config.ts */
   @apply animate-fade-in;
 }
 
-/* Sakura Petals Animation */
+/* Sakura Petals Animation Styles */
+/* These styles are for the <SakuraPetals /> component */
 .sakura-petals {
-  position: fixed;
+  position: fixed; /* Keep it fixed on the screen */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-  overflow: hidden;
+  pointer-events: none; /* Allow clicks to pass through */
+  z-index: 1000; /* Ensure it's on top (adjust as needed) */
+  overflow: hidden; /* Hide petals that go outside the bounds */
 }
 
 .petal {
-  position: absolute;
+  position: absolute; /* Position petals individually */
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  opacity: 0.7;
+  opacity: 0.7; /* Semi-transparent */
   pointer-events: none;
+  /* Apply the 'fall' animation defined below */
   animation-name: fall;
   animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+  animation-iteration-count: infinite; /* Loop indefinitely */
   animation-play-state: running;
 }
 
+/* Define different petal appearances using inline SVG backgrounds */
 .petal-1 {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 0C11 5 8 10 9 15C8 20 11 25 15 30C19 25 22 20 21 15C22 10 19 5 15 0Z' fill='%23FFC1CC' fill-opacity='0.7'/%3E%3C/svg%3E");
   width: 20px;
@@ -118,36 +200,46 @@
   height: 25px;
 }
 
+/* Define the 'fall' keyframe animation for the petals */
 @keyframes fall {
   0% {
-    transform: translateY(-50px) translateX(0) rotate(0deg);
-    opacity: 0;
+    /* Starting state */
+    transform: translateY(-50px) translateX(0) rotate(0deg); /* Start above screen */
+    opacity: 0; /* Start invisible */
   }
   10% {
+    /* Fade in quickly */
     opacity: 0.7;
   }
   100% {
+    /* Ending state */
+    /* Move down past the bottom of the screen, drift horizontally, and rotate */
     transform: translateY(calc(100vh + 50px)) translateX(100px) rotate(360deg);
-    opacity: 0;
+    opacity: 0; /* Fade out */
   }
 }
 
-/* Minimalistic style updates */
+/* Miscellaneous Utility Styles */
+
+/* Minimalistic shadow */
 .min-shadow {
+  /* A subtle box-shadow */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* Section divider style */
 .section-divider {
+  /* A short, centered horizontal line using a custom pink color */
   @apply h-px w-20 bg-sakura-pink mx-auto my-6;
 }
 
 /* Subtle hover animations */
 .hover-float {
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; /* Smooth transition for the transform property */
 }
 
 .hover-float:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px); /* Move element up slightly on hover */
 }
 
 .hover-scale {
@@ -155,5 +247,5 @@
 }
 
 .hover-scale:hover {
-  transform: scale(1.03);
+  transform: scale(1.03); /* Slightly enlarge element on hover */
 }
