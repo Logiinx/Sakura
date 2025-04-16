@@ -14,7 +14,7 @@ const SakuraPetals: React.FC = () => {
   // This allows us to directly access the DOM element inside the useEffect hook.
   const containerRef = useRef<HTMLDivElement>(null);
   // Define the number of petals to create.
-  const numberOfPetals = 15;
+  const numberOfPetals = 20;
 
   // --- Effect for Creating and Cleaning Up Petals --- //
   useEffect(() => {
@@ -35,11 +35,11 @@ const SakuraPetals: React.FC = () => {
     // This function runs when the component is unmounted.
     return () => {
       // Check if the container element still exists before trying to clear it.
-      if (containerRef.current) {
+      if (containerElement) {
         // Remove all petal elements from the container.
         // Setting innerHTML to '' is a common way to clear children, 
         // though for more complex scenarios with event listeners, more targeted removal might be needed.
-        containerRef.current.innerHTML = ''; 
+        containerElement.innerHTML = ''; 
       }
     };
     // Empty dependency array `[]` ensures this effect runs only once when the component mounts
