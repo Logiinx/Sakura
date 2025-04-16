@@ -15,7 +15,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 // Import icons from lucide-react library.
 import { Menu, X, Instagram, Facebook, Twitter } from 'lucide-react';
-
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
+library.add(faFacebook, faInstagram, faWhatsapp);
 // --- Component Definition --- //
 
 // Define the Layout component as a Functional Component (React.FC).
@@ -221,31 +224,31 @@ const Layout: React.FC = () => {
             <div className="flex space-x-6">
               {/* Use anchor tags `<a>` for external links (replace "#" with actual URLs). */}
               <a
-                href="#" // Replace with actual Instagram URL
+                href="https://www.facebook.com/mombphotographie/" // Replace with actual Facebook URL
                 target="_blank" // Open in new tab
                 rel="noopener noreferrer" // Security best practice for target="_blank"
                 className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
                 aria-label="Instagram (opens in a new tab)"
               >
-                <Instagram size={24} aria-hidden="true" />
+                <FontAwesomeIcon icon={faFacebook} size="2x" />
               </a>
               <a
-                href="#" // Replace with actual Facebook URL
+                href="https://www.instagram.com/mombphotographie/" // Replace with actual Instagram URL
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
                 aria-label="Facebook (opens in a new tab)"
               >
-                <Facebook size={24} aria-hidden="true" />
+                <FontAwesomeIcon icon={faInstagram} size="2x" />
               </a>
               <a
-                href="#" // Replace with actual Twitter URL
+                href="#" // Replace with actual WhatsApp URL
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
                 aria-label="Twitter (opens in a new tab)"
               >
-                <Twitter size={24} aria-hidden="true" />
+                <FontAwesomeIcon icon={faWhatsapp} size="2x" />
               </a>
             </div>
           </div>

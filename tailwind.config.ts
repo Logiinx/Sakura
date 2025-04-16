@@ -155,7 +155,8 @@ export default {
 			// These can be used with classes like `font-playfair` or `font-montserrat`.
 			fontFamily: {
 				'playfair': ['"Playfair Display"', 'serif'], // Serif font
-				'montserrat': ['Montserrat', 'sans-serif'] // Sans-serif font
+				'montserrat': ['Montserrat', 'sans-serif'], // Sans-serif font
+				'bad-script': ['"Bad Script"', 'cursive'] // Cursive font
 			}
 		}
 	},
