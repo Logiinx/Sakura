@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"
 
 const PackageTwoPage: React.FC = () => {
   return (
@@ -7,7 +7,7 @@ const PackageTwoPage: React.FC = () => {
       <p>Details about Package Two will go here.</p>
       {/* Add more content specific to Package Two */}
     </div>
-  );
-};
+  )
+}
 
-export default PackageTwoPage; 
+export default PackageTwoPage
