@@ -6,7 +6,7 @@
  * It handles responsive navigation and changes header appearance on scroll.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // Import components from react-router-dom for navigation and rendering page content.
 // Link: Basic navigation link.
 // NavLink: Special link that knows if it's "active" (matches the current URL).
@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 // useLocation: Hook to get information about the current URL.
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 // Import icons from lucide-react library.
-import { Menu, X, Instagram, Facebook, Twitter } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Twitter, ChevronDown } from 'lucide-react';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons';
@@ -28,14 +28,38 @@ const Layout: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   // State to track if the page has been scrolled down.
   const [isScrolled, setIsScrolled] = useState(false);
+  // State for the Tarifs dropdown visibility
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownTimeoutId, setDropdownTimeoutId] = useState<NodeJS.Timeout | null>(null); // State for the timeout ID
 
   // Get the current location object (contains pathname, search, etc.).
   const location = useLocation();
+  // Ref for the dropdown menu to detect clicks outside
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // --- Handlers --- //
   // Function to toggle the mobile menu state.
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Function to handle mouse entering the dropdown trigger area
+  const handleMouseEnter = () => {
+    // Clear any existing timeout to prevent the dropdown from closing
+    if (dropdownTimeoutId) {
+      clearTimeout(dropdownTimeoutId);
+      setDropdownTimeoutId(null);
+    }
+    setIsDropdownOpen(true);
+  };
+
+  // Function to handle mouse leaving the dropdown trigger area
+  const handleMouseLeave = () => {
+    // Set a timeout to close the dropdown after a short delay
+    const timeoutId = setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 200); // 200ms delay
+    setDropdownTimeoutId(timeoutId);
   };
 
   // --- Effects --- //
@@ -45,6 +69,8 @@ const Layout: React.FC = () => {
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
+    // Close dropdown on route change as well
+    setIsDropdownOpen(false); 
     // Run this effect whenever the location.pathname changes.
   }, [location.pathname, isMenuOpen]); // Added isMenuOpen to dependencies for completeness
 
@@ -67,18 +93,58 @@ const Layout: React.FC = () => {
     // Empty dependency array `[]` means this effect runs only once on mount and cleanup on unmount.
   }, []);
 
+  // Effect to clear timeout on unmount
+  useEffect(() => {
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => {
+      if (dropdownTimeoutId) {
+        clearTimeout(dropdownTimeoutId);
+      }
+    };
+  }, [dropdownTimeoutId]);
+
+  // Effect to handle clicks outside the dropdown to close it (optional, good UX)
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Add listener if dropdown is open
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      // Remove listener if dropdown is closed
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    // Cleanup listener on component unmount or when dropdown closes
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]); // Re-run effect when isDropdownOpen changes
+
+
   // --- Helper Function for NavLink ClassNames --- //
   // This function generates the appropriate className string for NavLinks,
   // handling both active state and scrolled state.
   const getNavLinkClass = (isActive: boolean): string => {
     // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
-    const baseClasses = "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:bg-opacity-90 transition-colors";
+    const baseClasses = "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:bg-opacity-90 transition-colors flex items-center gap-1"; // Added flex, items-center, gap-1
     const textClass = isScrolled ? 'text-sakura-dark-text' : 'text-white';
-    const activeClass = isActive ? 'font-medium text-sakura-pink border-sakura-pink' : ''; // Active links get pink color and border directly
+    // Standard active class logic
+    const activeClass = isActive ? 'font-medium text-sakura-pink border-sakura-pink' : ''; 
     
     // Combine classes, ensuring active pink overrides the scrolled text color if needed.
-    // Active state explicitly sets border-sakura-pink
     return `${baseClasses} ${isActive ? activeClass : textClass}`;
+  };
+  
+  // Helper for dropdown item links
+  const getDropdownLinkClass = (isActive: boolean): string => {
+    const base = "block px-4 py-2 text-sm text-gray-700 hover:bg-sakura-light-gray hover:text-sakura-pink transition-colors";
+    const active = isActive ? "font-medium text-sakura-pink bg-sakura-light-gray" : "text-sakura-dark-text";
+    return `${base} ${active}`;
   };
 
   const getMobileNavLinkClass = (isActive: boolean): string => {
@@ -144,9 +210,69 @@ const Layout: React.FC = () => {
             <NavLink to="/" className={({ isActive }) => getNavLinkClass(isActive)}>
               Accueil
             </NavLink>
-            <NavLink to="/pricing" className={({ isActive }) => getNavLinkClass(isActive)}>
-              Tarifs
-            </NavLink>
+            
+            {/* --- Tarifs Dropdown --- */}
+            <div 
+              className="relative" 
+              onMouseEnter={handleMouseEnter} 
+              onMouseLeave={handleMouseLeave}
+              ref={dropdownRef} // Attach ref here
+            >
+              <NavLink 
+                to="/pricing" 
+                className={({ isActive }) => getNavLinkClass(isActive)}
+                aria-expanded={isDropdownOpen}
+                aria-haspopup="true"
+              >
+                Tarifs
+                <ChevronDown 
+                  size={16} 
+                  className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''} ml-1`}
+                />
+              </NavLink>
+              
+              {/* Dropdown Panel */}
+              {isDropdownOpen && (
+                <div 
+                  className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none animate-fade-in-fast"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                    <NavLink 
+                      to="/package-one" 
+                      className={({ isActive }) => getDropdownLinkClass(isActive)} 
+                      role="menuitem"
+                    >
+                      Package 1
+                    </NavLink>
+                    <NavLink 
+                      to="/package-two" 
+                      className={({ isActive }) => getDropdownLinkClass(isActive)} 
+                      role="menuitem"
+                    >
+                      Package 2
+                    </NavLink>
+                    <NavLink 
+                      to="/package-three" 
+                      className={({ isActive }) => getDropdownLinkClass(isActive)} 
+                      role="menuitem"
+                    >
+                      Package 3
+                    </NavLink>
+                    <NavLink 
+                      to="/package-four" 
+                      className={({ isActive }) => getDropdownLinkClass(isActive)} 
+                      role="menuitem"
+                    >
+                      Package 4
+                    </NavLink>
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* --- End Tarifs Dropdown --- */}
+
             <NavLink to="/gallery" className={({ isActive }) => getNavLinkClass(isActive)}>
               Galerie
             </NavLink>
@@ -168,10 +294,10 @@ const Layout: React.FC = () => {
         {isMenuOpen && (
           // `fixed inset-0` makes it cover the entire screen.
           // `animate-fade-in` applies the custom fade-in animation.
-          <nav className="md:hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center space-y-8 animate-fade-in">
+          <nav className="md:hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center space-y-6 animate-fade-in overflow-y-auto py-16"> {/* Added padding and overflow */}
             {/* Close button for the mobile menu */}
-            <button
-              className="absolute top-5 right-5 text-sakura-dark-text p-1 rounded hover:bg-gray-100 transition-colors" // Positioned top-right
+             <button
+              className="absolute top-5 right-5 text-sakura-dark-text p-1 rounded hover:bg-gray-100 transition-colors z-10" // Ensure button is above links
               onClick={toggleMenu} // Closes the menu
               aria-label="Close mobile menu"
             >
@@ -179,19 +305,35 @@ const Layout: React.FC = () => {
             </button>
             {/* Mobile navigation links - larger text, close menu on click */}
             <NavLink to="/" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Home
+              Accueil {/* Changed from Home */}
             </NavLink>
-            <NavLink to="/pricing" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Pricing
-            </NavLink>
+            
+            {/* --- Mobile Tarifs Links --- */}
+            <div className="text-center"> {/* Group Tarifs links */}
+              <p className="text-lg text-gray-500 mb-2">Tarifs</p> {/* Optional: Add a heading */}
+              <NavLink to="/package-one" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
+                Package 1
+              </NavLink>
+              <NavLink to="/package-two" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
+                Package 2
+              </NavLink>
+              <NavLink to="/package-three" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
+                Package 3
+              </NavLink>
+              <NavLink to="/package-four" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
+                Package 4
+              </NavLink>
+            </div>
+            {/* --- End Mobile Tarifs Links --- */}
+
             <NavLink to="/gallery" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Gallery
+              Galerie {/* Changed from Gallery */}
             </NavLink>
             <NavLink to="/contact" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
               Contact
             </NavLink>
             {/* Use the custom button style for Book Now */}
-            <NavLink to="/book-now" className="sakura-btn text-xl" onClick={toggleMenu}>
+            <NavLink to="/book-now" className="sakura-btn text-xl mt-4" onClick={toggleMenu}> {/* Added margin-top */}
               Book Now
             </NavLink>
           </nav>
@@ -200,7 +342,7 @@ const Layout: React.FC = () => {
 
       {/* --- Main Content Area --- */}
       {/* `flex-grow` makes this section take up available vertical space. */}
-      {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */} 
+      {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */}
       <main className="flex-grow pt-21"> {/* Adjusted padding-top slightly */} 
         {/* The Outlet component renders the content of the matched child route (the specific page). */}
         <Outlet />
