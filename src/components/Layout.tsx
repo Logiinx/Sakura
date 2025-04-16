@@ -190,7 +190,7 @@ const Layout: React.FC = () => {
       {/* --- Main Content Area --- */}
       {/* `flex-grow` makes this section take up available vertical space. */}
       {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */} 
-      <main className="flex-grow pt-20"> {/* Adjusted padding-top slightly */} 
+      <main className="flex-grow pt-21"> {/* Adjusted padding-top slightly */} 
         {/* The Outlet component renders the content of the matched child route (the specific page). */}
         <Outlet />
       </main>
