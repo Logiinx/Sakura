@@ -147,7 +147,6 @@
   /* Defines a max-width container with horizontal padding, responsive */
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
-
 /* Fade-in animation utility */
 .fade-in {
   /* Applies the 'fade-in' animation defined in tailwind.config.ts */
