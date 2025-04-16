@@ -1,22 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Check } from 'lucide-react';
+import React from "react"
+import { Link } from "react-router-dom"
+import { Check } from "lucide-react"
 
-const PricingCard = ({ 
-  title, 
-  price, 
-  description, 
-  features, 
-  isPopular = false 
-}: { 
-  title: string; 
-  price: string; 
-  description: string; 
-  features: string[];
-  isPopular?: boolean;
+const PricingCard = ({
+  title,
+  price,
+  description,
+  features,
+  isPopular = false,
+}: {
+  title: string
+  price: string
+  description: string
+  features: string[]
+  isPopular?: boolean
 }) => {
   return (
-    <div className={`flex flex-col h-full p-6 rounded-lg shadow-sm transition-shadow hover:shadow-md border ${isPopular ? 'border-sakura-pink' : 'border-gray-200'}`}>
+    <div
+      className={`flex flex-col h-full p-6 rounded-lg shadow-sm transition-shadow hover:shadow-md border ${
+        isPopular ? "border-sakura-pink" : "border-gray-200"
+      }`}>
       {isPopular && (
         <div className="py-1 px-4 bg-sakura-pink text-white text-sm font-medium self-start rounded-full mb-4">
           Most Popular
@@ -36,41 +39,40 @@ const PricingCard = ({
           </li>
         ))}
       </ul>
-      <Link 
-        to="/book-now" 
+      <Link
+        to="/book-now"
         className={`mt-auto text-center py-2 px-4 rounded-md transition-colors ${
-          isPopular 
-            ? 'bg-sakura-pink text-white hover:bg-opacity-90' 
-            : 'border border-sakura-pink text-sakura-pink hover:bg-sakura-pink hover:text-white'
-        }`}
-      >
+          isPopular
+            ? "bg-sakura-pink text-white hover:bg-opacity-90"
+            : "border border-sakura-pink text-sakura-pink hover:bg-sakura-pink hover:text-white"
+        }`}>
         Book Now
       </Link>
     </div>
-  );
-};
+  )
+}
 
 const Pricing = () => {
   return (
     <div className="animate-fade-in">
-      
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center">    
+      <section className="relative py-16 md:py-24 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center">
         {/* Overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div> 
-        
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+
         {/* Content Container */}
-        <div className="sakura-container relative z-10"> 
+        <div className="sakura-container relative z-10">
           <div className="text-center mb-16">
             <h1 className="text-4xl text-white md:text-5xl font-bold mb-4">Photography Packages</h1>
             <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
             <p className="mt-6 text-white max-w-2xl mx-auto">
-              Choose the perfect photography package for your needs. All packages include professional editing and digital delivery.
+              Choose the perfect photography package for your needs. All packages include professional editing and
+              digital delivery.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 text-white md:grid-cols-3 gap-8">
-            <PricingCard 
+            <PricingCard
               title="Basic"
               price="$199"
               description="Perfect for individual portraits and small shoots."
@@ -79,11 +81,11 @@ const Pricing = () => {
                 "1 location",
                 "15 edited digital photos",
                 "Online gallery",
-                "Digital download"
+                "Digital download",
               ]}
             />
-            
-            <PricingCard 
+
+            <PricingCard
               title="Standard"
               price="$349"
               description="Ideal for couples, families, and engagement sessions."
@@ -93,12 +95,12 @@ const Pricing = () => {
                 "30 edited digital photos",
                 "Online gallery",
                 "Digital download",
-                "5 physical prints (8×10)"
+                "5 physical prints (8×10)",
               ]}
               isPopular
             />
-            
-            <PricingCard 
+
+            <PricingCard
               title="Premium"
               price="$599"
               description="Our comprehensive package for special events and full photoshoots."
@@ -109,13 +111,13 @@ const Pricing = () => {
                 "Online gallery",
                 "Digital download",
                 "10 physical prints (8×10)",
-                "Custom photo album"
+                "Custom photo album",
               ]}
             />
           </div>
         </div>
       </section>
-      
+
       {/* Additional Services Section (Now correctly positioned below the hero) */}
       <section className="py-16 bg-sakura-light-gray">
         <div className="sakura-container">
@@ -123,7 +125,7 @@ const Pricing = () => {
             <h2 className="text-3xl font-bold mb-4">Additional Services</h2>
             <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-playfair text-xl font-bold mb-4">À La Carte Options</h3>
@@ -150,7 +152,7 @@ const Pricing = () => {
                 </li>
               </ul>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-playfair text-xl font-bold mb-4">Print & Product Options</h3>
               <ul className="space-y-3">
@@ -179,7 +181,7 @@ const Pricing = () => {
           </div>
         </div>
       </section>
-      
+
       {/* FAQ Section (Now correctly positioned below additional services) */}
       <section className="py-16 md:py-24 bg-white">
         <div className="sakura-container">
@@ -187,42 +189,44 @@ const Pricing = () => {
             <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
             <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
           </div>
-          
+
           <div className="max-w-3xl mx-auto">
             <div className="mb-8">
               <h3 className="font-playfair text-xl font-bold mb-2">How do I schedule a session?</h3>
               <p className="text-gray-600">
-                You can book directly through our website by visiting the "Book Now" page, or contact us
-                via email or phone to discuss your specific needs.
+                You can book directly through our website by visiting the "Book Now" page, or contact us via email or
+                phone to discuss your specific needs.
               </p>
             </div>
-            
+
             <div className="mb-8">
               <h3 className="font-playfair text-xl font-bold mb-2">What should I wear to my photo session?</h3>
               <p className="text-gray-600">
-                We recommend wearing solid colors and avoiding busy patterns. Once you book, we'll send you a detailed guide
-                with suggestions based on your specific photoshoot.
+                We recommend wearing solid colors and avoiding busy patterns. Once you book, we'll send you a detailed
+                guide with suggestions based on your specific photoshoot.
               </p>
             </div>
-            
+
             <div className="mb-8">
               <h3 className="font-playfair text-xl font-bold mb-2">How long until I receive my photos?</h3>
               <p className="text-gray-600">
-                For standard editing, you'll receive your photos within 2 weeks. Rush editing is available for an additional fee.
+                For standard editing, you'll receive your photos within 2 weeks. Rush editing is available for an
+                additional fee.
               </p>
             </div>
-            
+
             <div>
               <h3 className="font-playfair text-xl font-bold mb-2">Do you offer mini sessions?</h3>
               <p className="text-gray-600">
-                Yes, we offer seasonal mini sessions throughout the year. Follow us on social media or join our mailing list to be notified.
+                Yes, we offer seasonal mini sessions throughout the year. Follow us on social media or join our mailing
+                list to be notified.
               </p>
             </div>
           </div>
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default Pricing;
+export default Pricing
