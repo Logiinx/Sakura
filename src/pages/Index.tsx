@@ -10,6 +10,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 // Import icons from lucide-react.
 import { Camera, Clock, Heart, Award } from 'lucide-react';
+import logo from '@/assets/logo2mom.png'; // Import the logo
 
 // Define the Index page component.
 const Index: React.FC = () => {
@@ -35,14 +36,14 @@ const Index: React.FC = () => {
         <div className="sakura-container relative z-10 text-white">
           {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6">
-            Sakura Lens
+            <img src={logo} alt="Sakura Lens Logo"  /> {/* Use the imported logo */}
           </h1>
           {/* Subheading/Tagline: Lighter font weight. */}
-          <p className="text-lg md:text-xl mb-8 max-w-lg font-light">
-            Capturing moments with the delicate beauty of cherry blossoms.
+          <p className="flex justify-center text-lg md:text-xl mb-8 max-w-lg font-light">
+            Bienvenue sur MOM.B
           </p>
           {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
-          <Link to="/book-now" className="sakura-btn inline-block hover-float">
+          <Link to="/book-now" className="sakura-btn px-1 py-2 flex justify-center hover-float">
             Book a Session
           </Link>
         </div>

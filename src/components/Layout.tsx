@@ -69,7 +69,7 @@ const Layout: React.FC = () => {
   // handling both active state and scrolled state.
   const getNavLinkClass = (isActive: boolean): string => {
     // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
-    const baseClasses = "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink transition-colors";
+    const baseClasses = "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:bg-opacity-90 transition-colors";
     const textClass = isScrolled ? 'text-sakura-dark-text' : 'text-white';
     const activeClass = isActive ? 'font-medium text-sakura-pink border-sakura-pink' : ''; // Active links get pink color and border directly
     
