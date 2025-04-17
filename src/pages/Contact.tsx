@@ -1,6 +1,7 @@
 import React, { useState } from "react"
+import { FaMapPin, FaPhone, FaEnvelope } from "react-icons/fa"
+
 import { useToast } from "@/hooks/use-toast"
-import { MapPin, Phone, Mail } from "lucide-react"
 
 const Contact = () => {
   const { toast } = useToast()
@@ -72,27 +73,28 @@ const Contact = () => {
     <div className="animate-fade-in">
       <section className="py-16 md:py-24">
         <div className="sakura-container">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-            <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
-            <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
-              We'd love to hear from you. Fill out the form below, and we'll get back to you as soon as possible.
+          <div className="mb-16 text-center">
+            <h1 className="mb-4 text-4xl font-bold md:text-5xl">Contact Us</h1>
+            <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
+            <p className="mx-auto mt-6 max-w-2xl text-gray-600">
+              We&apos;d love to hear from you. Fill out the form below, and we&apos;ll get back to you as soon as
+              possible.
             </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-12">
+          <div className="flex flex-col gap-12 lg:flex-row">
             {/* Contact Info */}
             <div className="lg:w-1/3">
-              <div className="bg-sakura-light-gray p-6 rounded-lg">
-                <h2 className="font-playfair text-2xl font-bold mb-6">Get In Touch</h2>
+              <div className="rounded-lg bg-sakura-light-gray p-6">
+                <h2 className="mb-6 font-playfair text-2xl font-bold">Get In Touch</h2>
 
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <MapPin className="text-sakura-pink" />
+                    <div className="mt-1 flex-shrink-0">
+                      <FaMapPin className="text-sakura-pink" />
                     </div>
                     <div className="ml-4">
-                      <h3 className="font-bold mb-1">Location</h3>
+                      <h3 className="mb-1 font-bold">Location</h3>
                       <p className="text-gray-600">
                         123 Cherry Blossom Avenue
                         <br />
@@ -102,28 +104,28 @@ const Contact = () => {
                   </div>
 
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Phone className="text-sakura-pink" />
+                    <div className="mt-1 flex-shrink-0">
+                      <FaPhone className="text-sakura-pink" />
                     </div>
                     <div className="ml-4">
-                      <h3 className="font-bold mb-1">Phone</h3>
+                      <h3 className="mb-1 font-bold">Phone</h3>
                       <p className="text-gray-600">(123) 456-7890</p>
                     </div>
                   </div>
 
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <Mail className="text-sakura-pink" />
+                    <div className="mt-1 flex-shrink-0">
+                      <FaEnvelope className="text-sakura-pink" />
                     </div>
                     <div className="ml-4">
-                      <h3 className="font-bold mb-1">Email</h3>
+                      <h3 className="mb-1 font-bold">Email</h3>
                       <p className="text-gray-600">hello@sakuralens.com</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-8">
-                  <h3 className="font-bold mb-3">Business Hours</h3>
+                  <h3 className="mb-3 font-bold">Business Hours</h3>
                   <ul className="space-y-2 text-gray-600">
                     <li className="flex justify-between">
                       <span>Monday - Friday</span>
@@ -145,9 +147,9 @@ const Contact = () => {
             {/* Contact Form */}
             <div className="lg:w-2/3">
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="name" className="block mb-2 font-medium">
+                    <label htmlFor="name" className="mb-2 block font-medium">
                       Your Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -156,13 +158,13 @@ const Contact = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                      className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                       required
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block mb-2 font-medium">
+                    <label htmlFor="email" className="mb-2 block font-medium">
                       Your Email <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -171,14 +173,14 @@ const Contact = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                      className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block mb-2 font-medium">
+                  <label htmlFor="subject" className="mb-2 block font-medium">
                     Subject <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -187,13 +189,13 @@ const Contact = () => {
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                    className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block mb-2 font-medium">
+                  <label htmlFor="message" className="mb-2 block font-medium">
                     Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -202,7 +204,7 @@ const Contact = () => {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent resize-none"
+                    className="w-full resize-none rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                     required></textarea>
                 </div>
 
@@ -218,15 +220,15 @@ const Contact = () => {
       </section>
 
       {/* Map Section */}
-      <section className="py-16 bg-sakura-light-gray">
+      <section className="bg-sakura-light-gray py-16">
         <div className="sakura-container">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Find Us</h2>
-            <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
+          <div className="mb-8 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Find Us</h2>
+            <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
           </div>
 
           {/* Map Placeholder - In a real project, you'd insert a Google Map or similar here */}
-          <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+          <div className="flex h-96 w-full items-center justify-center rounded-lg bg-gray-200">
             <p className="text-gray-600">Map would be displayed here</p>
             {/* Alternative: Embed a real map
             <iframe 

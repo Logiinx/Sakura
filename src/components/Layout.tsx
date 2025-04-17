@@ -12,14 +12,8 @@ import React, { useState, useEffect, useRef } from "react"
 // NavLink: Special link that knows if it's "active" (matches the current URL).
 // Outlet: Placeholder where nested route components (pages) will be rendered.
 // useLocation: Hook to get information about the current URL.
+import { FaBars, FaTimes, FaInstagram, FaFacebook, FaChevronDown, FaWhatsapp } from "react-icons/fa"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
-// Import icons from lucide-react library.
-import { Menu, X, Instagram, Facebook, Twitter, ChevronDown } from "lucide-react"
-import { library } from "@fortawesome/fontawesome-svg-core"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faFacebook, faInstagram, faWhatsapp } from "@fortawesome/free-brands-svg-icons"
-library.add(faFacebook, faInstagram, faWhatsapp)
-// --- Component Definition --- //
 
 // Define the Layout component as a Functional Component (React.FC).
 const Layout: React.FC = () => {
@@ -157,7 +151,7 @@ const Layout: React.FC = () => {
   // --- Render --- //
   return (
     // Main container div, uses flexbox to ensure footer sticks to the bottom.
-    <div className="flex flex-col min-h-screen bg-sakura-light-gray">
+    <div className="flex min-h-screen flex-col bg-sakura-light-gray">
       {/* --- Header --- */}
       {/* `fixed` positions the header relative to the viewport. */}
       {/* `top-0 left-0 right-0` stretches it across the top. */}
@@ -165,13 +159,13 @@ const Layout: React.FC = () => {
       {/* `transition-all duration-300` applies smooth transitions to changes (like background). */}
       {/* Conditional background/styling based on `isScrolled` state. */}
       <header
-        className={`py-5 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed left-0 right-0 top-0 z-50 py-5 transition-all duration-300 ${
           isScrolled
-            ? "bg-white bg-opacity-90 backdrop-blur-sm shadow-sm" // Scrolled: White, blurred background, shadow
+            ? "bg-white bg-opacity-90 shadow-sm backdrop-blur-sm" // Scrolled: White, blurred background, shadow
             : "bg-transparent" // Top: Transparent background
         }`}>
         {/* Use the custom container class for consistent padding and max-width. */}
-        <div className="sakura-container flex justify-between items-center">
+        <div className="sakura-container flex items-center justify-between">
           {/* Logo/Brand Name - Links to homepage */}
           <Link
             to="/"
@@ -190,7 +184,7 @@ const Layout: React.FC = () => {
           {/* --- Mobile Menu Button --- */}
           {/* `md:hidden` makes this button visible only on small screens (up to medium). */}
           <button
-            className={`md:hidden p-1 rounded transition-colors ${
+            className={`rounded p-1 transition-colors md:hidden ${
               isScrolled ? "text-sakura-dark-text hover:bg-gray-100" : "text-white hover:bg-white/20"
             }`}
             onClick={toggleMenu} // Calls the handler to open/close the menu
@@ -198,12 +192,12 @@ const Layout: React.FC = () => {
             aria-expanded={isMenuOpen} // Indicate if the menu is expanded
           >
             {/* Show X icon when menu is open, Menu icon when closed. */}
-            {isMenuOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
+            {isMenuOpen ? <FaTimes size={24} aria-hidden="true" /> : <FaBars size={24} aria-hidden="true" />}
           </button>
 
           {/* --- Desktop Navigation --- */}
           {/* `hidden md:flex` makes this nav visible only on medium screens and larger. */}
-          <nav className="hidden md:flex items-center space-x-10">
+          <nav className="hidden items-center space-x-10 md:flex">
             {/* Use NavLink for items that should highlight when active. */}
             <NavLink to="/" className={({ isActive }) => getNavLinkClass(isActive)}>
               Accueil
@@ -222,7 +216,7 @@ const Layout: React.FC = () => {
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true">
                 Tarifs
-                <ChevronDown
+                <FaChevronDown
                   size={16}
                   className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""} ml-1`}
                 />
@@ -231,7 +225,7 @@ const Layout: React.FC = () => {
               {/* Dropdown Panel */}
               {isDropdownOpen && (
                 <div
-                  className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none animate-fade-in-fast"
+                  className="animate-fade-in-fast absolute left-0 mt-2 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}>
                   <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
@@ -274,7 +268,7 @@ const Layout: React.FC = () => {
             {/* "Book Now" Button - styled differently using custom class and inline styles. */}
             <NavLink
               to="/book-now"
-              className="px-5 py-2 bg-sakura-pink text-white rounded-md hover:bg-opacity-90 transition-all duration-300 font-medium hover-float">
+              className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 hover:bg-opacity-90">
               Book Now
             </NavLink>
           </nav>
@@ -285,15 +279,15 @@ const Layout: React.FC = () => {
         {isMenuOpen && (
           // `fixed inset-0` makes it cover the entire screen.
           // `animate-fade-in` applies the custom fade-in animation.
-          <nav className="md:hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center space-y-6 animate-fade-in overflow-y-auto py-16">
+          <nav className="fixed inset-0 z-50 flex animate-fade-in flex-col items-center justify-center space-y-6 overflow-y-auto bg-white py-16 md:hidden">
             {" "}
             {/* Added padding and overflow */}
             {/* Close button for the mobile menu */}
             <button
-              className="absolute top-5 right-5 text-sakura-dark-text p-1 rounded hover:bg-gray-100 transition-colors z-10" // Ensure button is above links
+              className="absolute right-5 top-5 z-10 rounded p-1 text-sakura-dark-text transition-colors hover:bg-gray-100" // Ensure button is above links
               onClick={toggleMenu} // Closes the menu
               aria-label="Close mobile menu">
-              <X size={24} aria-hidden="true" />
+              <FaTimes size={24} aria-hidden="true" />
             </button>
             {/* Mobile navigation links - larger text, close menu on click */}
             <NavLink to="/" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
@@ -303,7 +297,7 @@ const Layout: React.FC = () => {
             <div className="text-center">
               {" "}
               {/* Group Tarifs links */}
-              <p className="text-lg text-gray-500 mb-2">Tarifs</p> {/* Optional: Add a heading */}
+              <p className="mb-2 text-lg text-gray-500">Tarifs</p> {/* Optional: Add a heading */}
               <NavLink
                 to="/package-one"
                 className={({ isActive }) => getMobileNavLinkClass(isActive)}
@@ -337,7 +331,7 @@ const Layout: React.FC = () => {
               Contact
             </NavLink>
             {/* Use the custom button style for Book Now */}
-            <NavLink to="/book-now" className="sakura-btn text-xl mt-4" onClick={toggleMenu}>
+            <NavLink to="/book-now" className="sakura-btn mt-4 text-xl" onClick={toggleMenu}>
               {" "}
               {/* Added margin-top */}
               Book Now
@@ -349,7 +343,7 @@ const Layout: React.FC = () => {
       {/* --- Main Content Area --- */}
       {/* `flex-grow` makes this section take up available vertical space. */}
       {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */}
-      <main className="flex-grow pt-21">
+      <main className="pt-21 flex-grow">
         {" "}
         {/* Adjusted padding-top slightly */}
         {/* The Outlet component renders the content of the matched child route (the specific page). */}
@@ -357,15 +351,15 @@ const Layout: React.FC = () => {
       </main>
 
       {/* --- Footer --- */}
-      <footer className="bg-white py-12 border-t border-gray-100 mt-auto">
+      <footer className="mt-auto border-t border-gray-100 bg-white py-12">
         <div className="sakura-container">
-          <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+          <div className="flex flex-col items-center justify-between text-center md:flex-row md:text-left">
             {/* Footer Logo and Tagline */}
             <div className="mb-6 md:mb-0">
               <Link to="/" className="font-playfair text-xl font-bold text-sakura-dark-text">
                 Sakura Lens
               </Link>
-              <p className="text-gray-500 mt-2 text-sm">Photography with a cherry blossom touch</p>
+              <p className="mt-2 text-sm text-gray-500">Photography with a cherry blossom touch</p>
             </div>
 
             {/* Social Media Links */}
@@ -375,31 +369,31 @@ const Layout: React.FC = () => {
                 href="https://www.facebook.com/mombphotographie/" // Replace with actual Facebook URL
                 target="_blank" // Open in new tab
                 rel="noopener noreferrer" // Security best practice for target="_blank"
-                className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
-                aria-label="Instagram (opens in a new tab)">
-                <FontAwesomeIcon icon={faFacebook} size="2x" />
+                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
+                aria-label="Facebook (opens in a new tab)">
+                <FaFacebook size="2em" />
               </a>
               <a
                 href="https://www.instagram.com/mombphotographie/" // Replace with actual Instagram URL
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
-                aria-label="Facebook (opens in a new tab)">
-                <FontAwesomeIcon icon={faInstagram} size="2x" />
+                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
+                aria-label="Instagram (opens in a new tab)">
+                <FaInstagram size="2em" />
               </a>
               <a
                 href="#" // Replace with actual WhatsApp URL
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-sakura-pink transition-colors hover-float"
-                aria-label="Twitter (opens in a new tab)">
-                <FontAwesomeIcon icon={faWhatsapp} size="2x" />
+                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
+                aria-label="WhatsApp (opens in a new tab)">
+                <FaWhatsapp size="2em" />
               </a>
             </div>
           </div>
 
           {/* Copyright Notice */}
-          <div className="border-t border-gray-100 mt-8 pt-8 text-center text-gray-500 text-sm">
+          <div className="mt-8 border-t border-gray-100 pt-8 text-center text-sm text-gray-500">
             {/* Dynamically display the current year */}
             <p>© {new Date().getFullYear()} Sakura Lens. All rights reserved.</p>
           </div>

@@ -7,43 +7,41 @@
 
 // --- Imports --- //
 
-// UI Components from shadcn-ui library (located in @/components/ui)
-// Toaster: Used for displaying brief notifications (often for success/error messages).
-import { Toaster } from "@/components/ui/toaster"
-// Sonner: Another toast component library, potentially used for different styles or positions.
-import { Toaster as Sonner } from "@/components/ui/sonner"
-// TooltipProvider: Enables the use of tooltips throughout the application (required by shadcn-ui tooltips).
-import { TooltipProvider } from "@/components/ui/tooltip"
-
 // Data Fetching Library (React Query)
 // QueryClient: Manages the cache for fetched data.
 // QueryClientProvider: Makes the QueryClient available to all components in the app.
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-
 // Routing Library (React Router DOM)
 // BrowserRouter: Provides routing capabilities using the browser's history API.
 // Routes: Container for defining individual Route components.
 // Route: Defines a mapping between a URL path and a React component.
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-// Page Components (located in ./pages/)
-// These components represent the different pages of the application.
-import Index from "./pages/Index"
-import Pricing from "./pages/Pricing"
-import Gallery from "./pages/Gallery"
-import Contact from "./pages/Contact"
-import BookNow from "./pages/BookNow"
-import NotFound from "./pages/NotFound" // Page displayed for invalid URLs
-import PackageOnePage from "./pages/PackageOnePage"
-import PackageTwoPage from "./pages/PackageTwoPage"
-import PackageThreePage from "./pages/PackageThreePage"
-import PackageFourPage from "./pages/PackageFourPage"
+// Sonner: Another toast component library, potentially used for different styles or positions.
+import { Toaster as Sonner } from "@/components/ui/sonner"
+// UI Components from shadcn-ui library (located in @/components/ui)
+// Toaster: Used for displaying brief notifications (often for success/error messages).
+import { Toaster } from "@/components/ui/toaster"
+// TooltipProvider: Enables the use of tooltips throughout the application (required by shadcn-ui tooltips).
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 // Layout Components (located in ./components/)
 // Layout: A wrapper component that likely contains common UI elements like header/footer.
 import Layout from "./components/Layout"
 // SakuraPetals: A custom component, possibly for background animation or decoration.
 import SakuraPetals from "./components/SakuraPetals"
+import BookNow from "./pages/BookNow"
+import Contact from "./pages/Contact"
+import Gallery from "./pages/Gallery"
+// Page Components (located in ./pages/)
+// These components represent the different pages of the application.
+import Index from "./pages/Index"
+import NotFound from "./pages/NotFound" // Page displayed for invalid URLs
+import PackageFourPage from "./pages/PackageFourPage"
+import PackageOnePage from "./pages/PackageOnePage"
+import PackageThreePage from "./pages/PackageThreePage"
+import PackageTwoPage from "./pages/PackageTwoPage"
+import Pricing from "./pages/Pricing"
 
 // --- React Query Client Setup --- //
 
