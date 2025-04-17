@@ -3,8 +3,12 @@
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "baseUrl": ".",
+    "strict": true,
     "target": "esnext",
     "module": "esnext",
+    "outDir": "dist",
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -15,7 +19,10 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowJs": true,
+    "resolveJsonModule": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "isolatedModules": true,
+    "strictNullChecks": false,
+    "verbatimModuleSyntax": true
   }
 }
