@@ -30,7 +30,7 @@ const getRandomUnavailableTimes = (allTimes: string[]) => {
 
 const BookNow = () => {
   const { toast } = useToast()
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [_currentDate, _setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [weekOffset, setWeekOffset] = useState(0)
