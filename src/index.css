@@ -116,7 +116,7 @@
   /* Default body styles */
   body {
     /* Apply background, text color, and default font using custom 'sakura' colors/fonts from tailwind.config.ts */
-    @apply bg-sakura-white text-sakura-dark-text font-montserrat;
+    @apply bg-sakura-white font-montserrat text-sakura-dark-text;
     /* Prevent horizontal scrolling on the body */
     overflow-x: hidden;
   }
@@ -139,13 +139,13 @@
 /* Custom button style */
 .sakura-btn {
   /* Mix Tailwind utilities to create a reusable button style */
-  @apply px-6 py-3 bg-sakura-pink text-white rounded-md hover:bg-opacity-90 transition-all duration-300 font-medium;
+  @apply rounded-md bg-sakura-pink px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-opacity-90;
 }
 
 /* Custom container style */
 .sakura-container {
   /* Defines a max-width container with horizontal padding, responsive */
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }
 /* Fade-in animation utility */
 .fade-in {
@@ -229,7 +229,7 @@
 /* Section divider style */
 .section-divider {
   /* A short, centered horizontal line using a custom pink color */
-  @apply h-px w-20 bg-sakura-pink mx-auto my-6;
+  @apply mx-auto my-6 h-px w-20 bg-sakura-pink;
 }
 
 /* Subtle hover animations */

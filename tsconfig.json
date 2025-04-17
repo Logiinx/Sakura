@@ -1,6 +1,4 @@
 {
-  "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "baseUrl": ".",
     "strict": true,
@@ -24,5 +22,7 @@
     "isolatedModules": true,
     "strictNullChecks": false,
     "verbatimModuleSyntax": true
-  }
+  },
+  "include": ["src/**/*"], // Assurez-vous que tous les fichiers TypeScript sont inclus.
+  "exclude": ["node_modules", "dist"] // Exclut les fichiers compilés et node_modules
 }

@@ -1,7 +1,8 @@
 import React, { useState } from "react"
-import { format, isToday, isSameDay, addDays, startOfWeek, addWeeks, eachDayOfInterval, isWeekend } from "date-fns"
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react"
+import { FaChevronLeft, FaChevronRight, FaCalendarAlt as CalendarIcon } from "react-icons/fa"
+
 import { useToast } from "@/hooks/use-toast"
+import { format, isToday, isSameDay, addDays, startOfWeek, addWeeks, eachDayOfInterval, isWeekend } from "date-fns"
 
 // Simulate available time slots
 const getAvailableTimesForDate = (date: Date) => {
@@ -146,39 +147,39 @@ const BookNow = () => {
     <div className="animate-fade-in">
       <section className="py-16 md:py-24">
         <div className="sakura-container">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Book Your Session</h1>
-            <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
-            <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
-              Choose a date and time that works for you, and we'll help you capture beautiful memories.
+          <div className="mb-16 text-center">
+            <h1 className="mb-4 text-4xl font-bold md:text-5xl">Book Your Session</h1>
+            <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
+            <p className="mx-auto mt-6 max-w-2xl text-gray-600">
+              Choose a date and time that works for you, and we&apos;ll help you capture beautiful memories.
             </p>
           </div>
 
           {bookingStep === 1 ? (
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-playfair font-bold">Select Date & Time</h2>
+            <div className="mx-auto max-w-4xl">
+              <div className="rounded-lg bg-white p-6 shadow-md">
+                <div className="mb-6 flex items-center justify-between">
+                  <h2 className="font-playfair text-2xl font-bold">Select Date & Time</h2>
                   <div className="flex space-x-2">
                     <button
                       onClick={handlePreviousWeek}
-                      className="p-2 rounded-full hover:bg-sakura-light-pink transition-colors"
+                      className="rounded-full p-2 transition-colors hover:bg-sakura-light-pink"
                       disabled={weekOffset === 0}>
-                      <ChevronLeft className={weekOffset === 0 ? "text-gray-300" : ""} />
+                      <FaChevronLeft className={weekOffset === 0 ? "text-gray-300" : ""} />
                     </button>
                     <button
                       onClick={handleNextWeek}
-                      className="p-2 rounded-full hover:bg-sakura-light-pink transition-colors">
-                      <ChevronRight />
+                      className="rounded-full p-2 transition-colors hover:bg-sakura-light-pink">
+                      <FaChevronRight />
                     </button>
                   </div>
                 </div>
 
                 {/* Calendar */}
                 <div className="mb-8">
-                  <div className="grid grid-cols-7 gap-2 text-center mb-2">
+                  <div className="mb-2 grid grid-cols-7 gap-2 text-center">
                     {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                      <div key={day} className="text-gray-600 font-medium">
+                      <div key={day} className="font-medium text-gray-600">
                         {day}
                       </div>
                     ))}
@@ -194,12 +195,7 @@ const BookNow = () => {
                           key={day.toString()}
                           onClick={() => !isPast && handleDateSelect(day)}
                           disabled={isPast}
-                          className={`
-                            p-3 rounded-md flex flex-col items-center justify-center h-16
-                            ${isPast ? "text-gray-300 cursor-not-allowed" : "hover:bg-sakura-light-pink cursor-pointer"}
-                            ${isSelected ? "bg-sakura-pink text-white" : "bg-gray-50"}
-                            ${isToday(day) && !isSelected ? "border-2 border-sakura-pink" : ""}
-                          `}>
+                          className={`flex h-16 flex-col items-center justify-center rounded-md p-3 ${isPast ? "cursor-not-allowed text-gray-300" : "cursor-pointer hover:bg-sakura-light-pink"} ${isSelected ? "bg-sakura-pink text-white" : "bg-gray-50"} ${isToday(day) && !isSelected ? "border-2 border-sakura-pink" : ""} `}>
                           <span className="text-sm">{format(day, "MMM")}</span>
                           <span className="text-lg font-medium">{format(day, "d")}</span>
                         </button>
@@ -211,11 +207,11 @@ const BookNow = () => {
                 {/* Time slots */}
                 {selectedDate && (
                   <div className="mt-6">
-                    <h3 className="text-xl font-medium mb-4">
+                    <h3 className="mb-4 text-xl font-medium">
                       Available Times for {format(selectedDate, "MMMM d, yyyy")}
                     </h3>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                       {availableTimes.map((time) => {
                         const isUnavailable = unavailableTimes.includes(time)
                         const isTimeSelected = selectedTime === time
@@ -225,17 +221,13 @@ const BookNow = () => {
                             key={time}
                             onClick={() => !isUnavailable && handleTimeSelect(time)}
                             disabled={isUnavailable}
-                            className={`
-                              py-2 px-4 rounded-md text-center
-                              ${isUnavailable ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}
-                              ${
-                                isTimeSelected
-                                  ? "bg-sakura-pink text-white"
-                                  : !isUnavailable
+                            className={`rounded-md px-4 py-2 text-center ${isUnavailable ? "cursor-not-allowed bg-gray-100 text-gray-400" : ""} ${
+                              isTimeSelected
+                                ? "bg-sakura-pink text-white"
+                                : !isUnavailable
                                   ? "bg-sakura-light-pink hover:bg-opacity-70"
                                   : ""
-                              }
-                            `}>
+                            } `}>
                             {time}
                           </button>
                         )
@@ -243,7 +235,7 @@ const BookNow = () => {
                     </div>
 
                     {availableTimes.length === 0 && (
-                      <p className="text-gray-600 text-center py-4">No available times for this date.</p>
+                      <p className="py-4 text-center text-gray-600">No available times for this date.</p>
                     )}
                   </div>
                 )}
@@ -254,7 +246,7 @@ const BookNow = () => {
                     onClick={handleContinue}
                     disabled={!selectedDate || !selectedTime}
                     className={`sakura-btn w-full sm:w-auto ${
-                      !selectedDate || !selectedTime ? "opacity-50 cursor-not-allowed" : ""
+                      !selectedDate || !selectedTime ? "cursor-not-allowed opacity-50" : ""
                     }`}>
                     Continue to Details
                   </button>
@@ -262,13 +254,13 @@ const BookNow = () => {
               </div>
             </div>
           ) : (
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-playfair font-bold mb-6">Complete Your Booking</h2>
+            <div className="mx-auto max-w-4xl">
+              <div className="rounded-lg bg-white p-6 shadow-md">
+                <h2 className="mb-6 font-playfair text-2xl font-bold">Complete Your Booking</h2>
 
-                <div className="mb-6 p-4 bg-sakura-light-gray rounded-lg">
+                <div className="mb-6 rounded-lg bg-sakura-light-gray p-4">
                   <div className="flex items-center">
-                    <CalendarIcon className="text-sakura-pink mr-2" />
+                    <CalendarIcon className="mr-2 text-sakura-pink" />
                     <p>
                       <strong>Selected Date & Time:</strong> {selectedDate && format(selectedDate, "MMMM d, yyyy")} at{" "}
                       {selectedTime}
@@ -277,9 +269,9 @@ const BookNow = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                      <label htmlFor="name" className="block mb-2 font-medium">
+                      <label htmlFor="name" className="mb-2 block font-medium">
                         Your Name <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -288,13 +280,13 @@ const BookNow = () => {
                         name="name"
                         value={bookingDetails.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                        className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                         required
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block mb-2 font-medium">
+                      <label htmlFor="email" className="mb-2 block font-medium">
                         Email <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -303,15 +295,15 @@ const BookNow = () => {
                         name="email"
                         value={bookingDetails.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                        className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                         required
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                      <label htmlFor="phone" className="block mb-2 font-medium">
+                      <label htmlFor="phone" className="mb-2 block font-medium">
                         Phone Number <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -320,13 +312,13 @@ const BookNow = () => {
                         name="phone"
                         value={bookingDetails.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                        className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                         required
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="packageType" className="block mb-2 font-medium">
+                      <label htmlFor="packageType" className="mb-2 block font-medium">
                         Package <span className="text-red-500">*</span>
                       </label>
                       <select
@@ -334,7 +326,7 @@ const BookNow = () => {
                         name="packageType"
                         value={bookingDetails.packageType}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent"
+                        className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"
                         required>
                         <option value="">Select a package</option>
                         <option value="basic">Basic ($199)</option>
@@ -345,7 +337,7 @@ const BookNow = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="notes" className="block mb-2 font-medium">
+                    <label htmlFor="notes" className="mb-2 block font-medium">
                       Special Requests / Notes
                     </label>
                     <textarea
@@ -354,14 +346,14 @@ const BookNow = () => {
                       rows={4}
                       value={bookingDetails.notes}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:border-transparent resize-none"></textarea>
+                      className="w-full resize-none rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sakura-pink"></textarea>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row justify-between gap-4">
+                  <div className="flex flex-col justify-between gap-4 sm:flex-row">
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="px-6 py-3 border border-sakura-pink text-sakura-pink rounded-md hover:bg-sakura-light-pink transition-colors">
+                      className="rounded-md border border-sakura-pink px-6 py-3 text-sakura-pink transition-colors hover:bg-sakura-light-pink">
                       Back to Calendar
                     </button>
                     <button type="submit" className="sakura-btn">

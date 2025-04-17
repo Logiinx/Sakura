@@ -81,21 +81,21 @@ const Gallery = () => {
     <div className="animate-fade-in">
       <section className="py-16 md:py-24">
         <div className="sakura-container">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Gallery</h1>
-            <div className="h-1 w-20 bg-sakura-pink mx-auto"></div>
-            <p className="mt-6 text-gray-600 max-w-2xl mx-auto">
+          <div className="mb-16 text-center">
+            <h1 className="mb-4 text-4xl font-bold md:text-5xl">Gallery</h1>
+            <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
+            <p className="mx-auto mt-6 max-w-2xl text-gray-600">
               Browse our collection of beautiful photographs showcasing our unique style and vision.
             </p>
           </div>
 
           {/* Category Filter */}
-          <div className="flex justify-center mb-10">
-            <div className="flex space-x-2 border border-gray-200 rounded-full p-1">
+          <div className="mb-10 flex justify-center">
+            <div className="flex space-x-2 rounded-full border border-gray-200 p-1">
               {categories.map((category) => (
                 <button
                   key={category}
-                  className={`px-6 py-2 rounded-full transition-colors ${
+                  className={`rounded-full px-6 py-2 transition-colors ${
                     selectedCategory === category ? "bg-sakura-pink text-white" : "hover:bg-sakura-light-pink"
                   }`}
                   onClick={() => setSelectedCategory(category)}>
@@ -106,19 +106,19 @@ const Gallery = () => {
           </div>
 
           {/* Gallery Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredImages.map((image) => (
               <div
                 key={image.id}
-                className="overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                className="cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
                 onClick={() => openLightbox(image.id)}>
                 <div className="relative h-72">
                   <img
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-black opacity-0 hover:opacity-20 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-20"></div>
                 </div>
               </div>
             ))}
@@ -127,9 +127,9 @@ const Gallery = () => {
           {/* Lightbox */}
           {selectedImage !== null && getImageIndex() !== -1 && (
             <div
-              className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 p-4"
               onClick={closeLightbox}>
-              <button className="absolute top-4 right-4 text-white hover:text-sakura-pink" onClick={closeLightbox}>
+              <button className="absolute right-4 top-4 text-white hover:text-sakura-pink" onClick={closeLightbox}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-8 w-8"

@@ -16,7 +16,7 @@ const HeroSection: React.FC = () => {
   return (
     // `relative` allows absolute positioning of children. `h-screen` makes it full viewport height.
     // `flex items-center` vertically centers the content.
-    <section className="relative h-screen flex items-center">
+    <section className="relative flex h-screen items-center">
       {/* Background Image Container */}
       {/* `absolute inset-0` makes it fill the parent section. */}
       {/* `bg-[url(...)] bg-cover bg-center` sets the background image, ensures it covers the area, and centers it. */}
@@ -33,13 +33,13 @@ const HeroSection: React.FC = () => {
       {/* `text-white` sets text color for contrast against the dark overlay. */}
       <div className="sakura-container relative z-10 text-white">
         {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
-        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6">Sakura Lens</h1>
+        <h1 className="mb-6 text-4xl font-bold md:text-5xl lg:text-7xl">Sakura Lens</h1>
         {/* Subheading/Tagline: Lighter font weight. */}
-        <p className="text-lg md:text-xl mb-8 max-w-lg font-light">
+        <p className="mb-8 max-w-lg text-lg font-light md:text-xl">
           Capturing moments with the delicate beauty of cherry blossoms.
         </p>
         {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
-        <Link to="/book-now" className="sakura-btn inline-block hover-float">
+        <Link to="/book-now" className="sakura-btn hover-float inline-block">
           Book a Session
         </Link>
       </div>
