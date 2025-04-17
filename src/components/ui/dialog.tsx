@@ -1,6 +1,6 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { FaXmark } from "react-icons/fa6"
 import * as React from "react"
+import { FaXmark } from "react-icons/fa6"
 
 import { cn } from "@/lib/utils"
 

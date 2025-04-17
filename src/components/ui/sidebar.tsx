@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot"
-import { FaBars } from "react-icons/fa"
 import * as React from "react"
+import { FaBars } from "react-icons/fa"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot"
-import { FaChevronRight, FaEllipsisH } from "react-icons/fa"
 import * as React from "react"
+import { FaChevronRight, FaEllipsisH } from "react-icons/fa"
 
 import { cn } from "@/lib/utils"
 

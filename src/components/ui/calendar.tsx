@@ -1,6 +1,6 @@
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 import * as React from "react"
 import { DayPicker } from "react-day-picker"
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa"
 
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
