@@ -1,5 +1,5 @@
-import { FaDotCircle } from "react-icons/fa"
 import * as React from "react"
+import { FaDotCircle } from "react-icons/fa"
 
 import { cn } from "@/lib/utils"
 import { OTPInput, OTPInputContext } from "input-otp"

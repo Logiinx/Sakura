@@ -1,5 +1,5 @@
-import { FaChevronLeft, FaChevronRight, FaEllipsisH } from "react-icons/fa"
 import * as React from "react"
+import { FaChevronLeft, FaChevronRight, FaEllipsisH } from "react-icons/fa"
 
 import { type ButtonProps, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

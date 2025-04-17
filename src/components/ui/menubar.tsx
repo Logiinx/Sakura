@@ -1,6 +1,6 @@
 import * as MenubarPrimitive from "@radix-ui/react-menubar"
-import { FaCheck, FaChevronRight, FaCircle } from "react-icons/fa"
 import * as React from "react"
+import { FaCheck, FaChevronRight, FaCircle } from "react-icons/fa"
 
 import { cn } from "@/lib/utils"
 

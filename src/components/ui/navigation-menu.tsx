@@ -1,6 +1,6 @@
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
-import { FaChevronDown } from "react-icons/fa"
 import * as React from "react"
+import { FaChevronDown } from "react-icons/fa"
 
 import { cn } from "@/lib/utils"
 import { cva } from "class-variance-authority"

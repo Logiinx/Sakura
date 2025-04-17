@@ -1,13 +1,17 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "momb-photographie",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "lint": "eslint .",
+    "lint": "eslint --fix .",
+    "format": "prettier --write .",
+    "lint:format": "eslint --fix . && prettier --write .",
+    "clean": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
+    "prepare": "bun run lint:format && bun run build",
     "preview": "vite preview"
   },
   "dependencies": {
