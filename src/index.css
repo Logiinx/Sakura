@@ -248,3 +248,24 @@
 .hover-scale:hover {
   transform: scale(1.03); /* Slightly enlarge element on hover */
 }
+
+/* Slide-in animations */
+.slide-hidden {
+  opacity: 0;
+  filter: blur(5px);
+  transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-from-left {
+  transform: translateX(-20%);
+}
+
+.slide-from-right {
+  transform: translateX(20%);
+}
+
+.slide-show {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(0);
+}
