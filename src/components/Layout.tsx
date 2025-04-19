@@ -269,7 +269,7 @@ const Layout: React.FC = () => {
             <NavLink
               to="/book-now"
               className="hover-float text-shadow-md rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 hover:bg-opacity-90">
-              Book Now
+              Disponibilités
             </NavLink>
           </nav>
         </div>
@@ -395,7 +395,10 @@ const Layout: React.FC = () => {
           {/* Copyright Notice */}
           <div className="mt-8 border-t border-gray-100 pt-8 text-center text-sm text-gray-500">
             {/* Dynamically display the current year */}
-            <p>© {new Date().getFullYear()} Sakura Lens. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} MOM.B Photographie. Tous droits réservés.</p>
+            <Link to="/mentions-legales" className="underline transition-colors duration-200 hover:text-sakura-pink">
+              Mentions légales
+            </Link>
           </div>
         </div>
       </footer>

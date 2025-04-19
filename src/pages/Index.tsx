@@ -171,7 +171,7 @@ const Index: React.FC = () => {
             Let us help you capture memories that bloom eternally.
           </p>
           {/* Uses the main `sakura-btn` style. */}
-          <Link to="/book-now" className="sakura-btn hover-float inline-block">
+          <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
             Disponibilités
           </Link>
         </div>

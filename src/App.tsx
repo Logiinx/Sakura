@@ -30,12 +30,15 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import Layout from "./components/Layout"
 // SakuraPetals: A custom component, possibly for background animation or decoration.
 import SakuraPetals from "./components/SakuraPetals"
+import ScrollToTop from "./components/ScrollToTop"
+import ScrollToTopButton from "./components/ScrollToTopButton"
 import BookNow from "./pages/BookNow"
 import Contact from "./pages/Contact"
 import Gallery from "./pages/Gallery"
 // Page Components (located in ./pages/)
 // These components represent the different pages of the application.
 import Index from "./pages/Index"
+import MentionsLegales from "./pages/MentionsLegales"
 import NotFound from "./pages/NotFound" // Page displayed for invalid URLs
 import PackageFourPage from "./pages/PackageFourPage"
 import PackageOnePage from "./pages/PackageOnePage"
@@ -81,6 +84,10 @@ const App = () => (
 
       {/* Set up client-side routing using BrowserRouter. */}
       <BrowserRouter>
+        {/* Component to handle scrolling to top on route changes */}
+        <ScrollToTop />
+        {/* Floating button to scroll to top */}
+        <ScrollToTopButton />
         {/* Define the routes for the application. */}
         <Routes>
           {/* Define a parent route that uses the Layout component. */}
@@ -97,6 +104,7 @@ const App = () => (
             <Route path="/package-two" element={<PackageTwoPage />} />
             <Route path="/package-three" element={<PackageThreePage />} />
             <Route path="/package-four" element={<PackageFourPage />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
             {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
             <Route path="*" element={<NotFound />} />
           </Route>
