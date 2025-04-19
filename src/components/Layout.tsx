@@ -15,6 +15,8 @@ import React, { useState, useEffect, useRef } from "react"
 import { FaBars, FaTimes, FaInstagram, FaFacebook, FaChevronDown, FaWhatsapp } from "react-icons/fa"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 
+import logo from "@/assets/logomompink-300x150.png" // Import the logo image
+
 // Define the Layout component as a Functional Component (React.FC).
 const Layout: React.FC = () => {
   // --- State --- //
@@ -59,14 +61,20 @@ const Layout: React.FC = () => {
   // --- Effects --- //
   // Effect to close the mobile menu whenever the route changes.
   useEffect(() => {
-    // Check if the menu is currently open before closing it.
-    if (isMenuOpen) {
-      setIsMenuOpen(false)
-    }
-    // Close dropdown on route change as well
     setIsDropdownOpen(false)
-    // Run this effect whenever the location.pathname changes.
-  }, [location.pathname, isMenuOpen]) // Added isMenuOpen to dependencies for completeness
+  }, [location.pathname]) // Remove isMenuOpen from dependencies
+
+  // Effect to handle body scroll when menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "unset"
+    }
+    return () => {
+      document.body.style.overflow = "unset"
+    }
+  }, [isMenuOpen])
 
   // Effect to detect scroll position and update the `isScrolled` state.
   useEffect(() => {
@@ -151,7 +159,7 @@ const Layout: React.FC = () => {
   // --- Render --- //
   return (
     // Main container div, uses flexbox to ensure footer sticks to the bottom.
-    <div className="flex min-h-screen flex-col bg-sakura-light-gray">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-sakura-light-gray">
       {/* --- Header --- */}
       {/* `fixed` positions the header relative to the viewport. */}
       {/* `top-0 left-0 right-0` stretches it across the top. */}
@@ -159,7 +167,7 @@ const Layout: React.FC = () => {
       {/* `transition-all duration-300` applies smooth transitions to changes (like background). */}
       {/* Conditional background/styling based on `isScrolled` state. */}
       <header
-        className={`fixed left-0 right-0 top-0 z-50 py-5 transition-all duration-300 ${
+        className={`fixed left-0 right-0 top-0 z-[90] py-5 transition-all duration-300 ${
           isScrolled
             ? "bg-white bg-opacity-90 shadow-sm backdrop-blur-sm" // Scrolled: White, blurred background, shadow
             : "bg-transparent" // Top: Transparent background
@@ -173,7 +181,7 @@ const Layout: React.FC = () => {
               isScrolled ? "text-sakura-dark-text" : "text-white" // Text color changes on scroll
             }`}>
             <img
-              src="./src/assets/logomompink-300x150.png"
+              src={logo}
               alt="MOM.B Logo Header"
               className={`transition-all duration-300 ${
                 isScrolled ? "h-10 w-auto" : "h-16 w-auto" // Larger when not scrolled, smaller when scrolled
@@ -182,17 +190,18 @@ const Layout: React.FC = () => {
           </Link>
 
           {/* --- Mobile Menu Button --- */}
-          {/* `md:hidden` makes this button visible only on small screens (up to medium). */}
           <button
-            className={`rounded p-1 transition-colors md:hidden ${
+            className={`flex items-center justify-center rounded-md p-2 transition-colors md:hidden ${
               isScrolled ? "text-sakura-dark-text hover:bg-gray-100" : "text-white hover:bg-white/20"
             }`}
-            onClick={toggleMenu} // Calls the handler to open/close the menu
-            aria-label="Toggle mobile menu" // Accessibility label for screen readers
-            aria-expanded={isMenuOpen} // Indicate if the menu is expanded
-          >
-            {/* Show X icon when menu is open, Menu icon when closed. */}
-            {isMenuOpen ? <FaTimes size={24} aria-hidden="true" /> : <FaBars size={24} aria-hidden="true" />}
+            onClick={toggleMenu}
+            aria-label="Toggle mobile menu"
+            aria-expanded={isMenuOpen}>
+            {isMenuOpen ? (
+              <FaTimes className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <FaBars className="h-6 w-6" aria-hidden="true" />
+            )}
           </button>
 
           {/* --- Desktop Navigation --- */}
@@ -275,69 +284,70 @@ const Layout: React.FC = () => {
         </div>
 
         {/* --- Mobile Navigation Menu (Conditional Rendering) --- */}
-        {/* This section is rendered only if `isMenuOpen` is true. */}
-        {isMenuOpen && (
-          // `fixed inset-0` makes it cover the entire screen.
-          // `animate-fade-in` applies the custom fade-in animation.
-          <nav className="fixed inset-0 z-50 flex animate-fade-in flex-col items-center justify-center space-y-6 overflow-y-auto bg-white py-16 md:hidden">
-            {" "}
-            {/* Added padding and overflow */}
-            {/* Close button for the mobile menu */}
-            <button
-              className="absolute right-5 top-5 z-10 rounded p-1 text-sakura-dark-text transition-colors hover:bg-gray-100" // Ensure button is above links
-              onClick={toggleMenu} // Closes the menu
-              aria-label="Close mobile menu">
-              <FaTimes size={24} aria-hidden="true" />
-            </button>
-            {/* Mobile navigation links - larger text, close menu on click */}
-            <NavLink to="/" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Accueil {/* Changed from Home */}
-            </NavLink>
-            {/* --- Mobile Tarifs Links --- */}
-            <div className="text-center">
-              {" "}
-              {/* Group Tarifs links */}
-              <p className="mb-2 text-lg text-gray-500">Tarifs</p> {/* Optional: Add a heading */}
-              <NavLink
-                to="/package-one"
-                className={({ isActive }) => getMobileNavLinkClass(isActive)}
-                onClick={toggleMenu}>
-                Package 1
-              </NavLink>
-              <NavLink
-                to="/package-two"
-                className={({ isActive }) => getMobileNavLinkClass(isActive)}
-                onClick={toggleMenu}>
-                Package 2
-              </NavLink>
-              <NavLink
-                to="/package-three"
-                className={({ isActive }) => getMobileNavLinkClass(isActive)}
-                onClick={toggleMenu}>
-                Package 3
-              </NavLink>
-              <NavLink
-                to="/package-four"
-                className={({ isActive }) => getMobileNavLinkClass(isActive)}
-                onClick={toggleMenu}>
-                Package 4
-              </NavLink>
+        {isMenuOpen ? (
+          <div className="fixed inset-0 z-[100]">
+            <div className="fixed inset-0 bg-white">
+              <nav className="flex h-screen w-full flex-col items-center justify-center space-y-6 overflow-y-auto bg-white py-16">
+                <button
+                  className="fixed right-5 top-5 rounded-md p-2 text-sakura-dark-text transition-colors hover:bg-gray-100"
+                  onClick={toggleMenu}
+                  aria-label="Close mobile menu">
+                  <FaTimes className="h-6 w-6" aria-hidden="true" />
+                </button>
+                <NavLink to="/" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
+                  Accueil
+                </NavLink>
+                <div className="flex flex-col items-center space-y-4">
+                  <NavLink
+                    to="/pricing"
+                    className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    onClick={toggleMenu}>
+                    Tarifs
+                  </NavLink>
+                  <NavLink
+                    to="/package-one"
+                    className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    onClick={toggleMenu}>
+                    Package 1
+                  </NavLink>
+                  <NavLink
+                    to="/package-two"
+                    className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    onClick={toggleMenu}>
+                    Package 2
+                  </NavLink>
+                  <NavLink
+                    to="/package-three"
+                    className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    onClick={toggleMenu}>
+                    Package 3
+                  </NavLink>
+                  <NavLink
+                    to="/package-four"
+                    className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                    onClick={toggleMenu}>
+                    Package 4
+                  </NavLink>
+                </div>
+                <NavLink
+                  to="/gallery"
+                  className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                  onClick={toggleMenu}>
+                  Galerie
+                </NavLink>
+                <NavLink
+                  to="/contact"
+                  className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                  onClick={toggleMenu}>
+                  Contact
+                </NavLink>
+                <NavLink to="/book-now" className="sakura-btn mt-4 text-xl" onClick={toggleMenu}>
+                  Disponibilités
+                </NavLink>
+              </nav>
             </div>
-            {/* --- End Mobile Tarifs Links --- */}
-            <NavLink to="/gallery" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Galerie {/* Changed from Gallery */}
-            </NavLink>
-            <NavLink to="/contact" className={({ isActive }) => getMobileNavLinkClass(isActive)} onClick={toggleMenu}>
-              Contact
-            </NavLink>
-            {/* Use the custom button style for Book Now */}
-            <NavLink to="/book-now" className="sakura-btn mt-4 text-xl" onClick={toggleMenu}>
-              {" "}
-              {/* Added margin-top */}
-              Disponibilités
-            </NavLink>
-          </nav>
-        )}
+          </div>
+        ) : null}
       </header>
 
       {/* --- Main Content Area --- */}
@@ -358,7 +368,7 @@ const Layout: React.FC = () => {
                 MOM.B
               </Link>
               <p className="mt-2 font-bad-script text-sm tracking-widest text-gray-500">
-                Barbara - Photographe famille, grossesse, bébé
+                Barbara - Photographe famille, mariage, grossesse, bébé
               </p>
             </div>
 

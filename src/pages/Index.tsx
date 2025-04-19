@@ -1,4 +1,7 @@
 import React from "react"
+import { BiBriefcaseAlt2 } from "react-icons/bi"
+import { BsHouseDoor } from "react-icons/bs"
+import { HiOutlineSparkles } from "react-icons/hi"
 // Import Link for internal navigation.
 import { Link } from "react-router-dom"
 
@@ -283,17 +286,61 @@ const Index: React.FC = () => {
       </section>
 
       {/* --- Call to Action (CTA) Section --- */}
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-white py-20 md:py-32">
         <div className="sakura-container text-center">
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">Ready for Your Session?</h2>
-          <div className="section-divider"></div>
-          <p className="mx-auto mb-8 mt-6 max-w-lg text-lg text-gray-600">
-            Let us help you capture memories that bloom eternally.
-          </p>
-          {/* Uses the main `sakura-btn` style. */}
-          <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
-            Disponibilités
-          </Link>
+          <div className="mx-auto max-w-3xl">
+            <h2 className="relative mb-6 font-bad-script text-4xl font-bold tracking-widest md:text-6xl">
+              <span className="relative block">Besoin d&apos;un</span>
+              <span className="relative mt-2 block text-sakura-pink">Projet Personnalisé ?</span>
+            </h2>
+          </div>
+          <div className="section-divider mb-12"></div>
+
+          {/* Projects Showcase Box */}
+          <div className="mx-auto max-w-4xl transform space-y-4 rounded-xl bg-gradient-to-br from-[#f8f8f8] to-white px-8 py-4 shadow-lg transition-all duration-300 hover:shadow-xl md:px-12 md:py-6">
+            {/* Project Types Grid */}
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {[
+                {
+                  title: "Événements",
+                  description: "Mariages, anniversaires, célébrations spéciales",
+                  icon: HiOutlineSparkles,
+                },
+                {
+                  title: "Entreprise",
+                  description: "Photos corporate, événements professionnels",
+                  icon: BiBriefcaseAlt2,
+                },
+                {
+                  title: "Projets Immobiliers",
+                  description: "Vente, location, ou gestion d'appartements, de maisons ou de villas",
+                  icon: BsHouseDoor,
+                },
+              ].map((item) => (
+                <div
+                  key={item.title}
+                  className="group relative transform rounded-lg bg-white p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                  <div className="mb-4 flex justify-center">
+                    <div className="rounded-full bg-sakura-pink/15 p-4 text-sakura-pink transition-all duration-300 group-hover:bg-sakura-pink group-hover:text-white">
+                      <item.icon className="h-8 w-8" />
+                    </div>
+                  </div>
+                  <h4 className="mb-3 text-xl font-semibold text-[#333333]">{item.title}</h4>
+                  <p className="text-sm leading-relaxed text-gray-700">{item.description}</p>
+                </div>
+              ))}
+            </div>
+            {/* Quotation Text */}
+            <div className="mx-auto max-w-2xl rounded-lg p-8">
+              <p className="mb-4 text-2xl font-medium text-[#333333]">Sur devis personnalisé</p>
+              <p className="text-lg text-gray-700">Chaque projet est unique et mérite une attention particulière</p>
+              <Link
+                to="/book-now"
+                className="sakura-btn hover-float text-shadow-md mt-12 inline-block px-8 py-4 text-lg font-medium">
+                Contactez-moi pour un devis
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
