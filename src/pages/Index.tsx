@@ -228,59 +228,39 @@ const Index: React.FC = () => {
           </div>
         </section>
       </div>
-
-      {/* --- Featured Work Section --- */}
-      {/* Light gray background (`bg-sakura-light-gray`). */}
-      <section className="bg-sakura-light-gray py-20 md:py-28">
+      <div className="section-divider"></div>
+      {/* --- About Me Section --- */}
+      <section className="bg-sakura-pink bg-opacity-30 py-20 md:py-20">
         <div className="sakura-container">
           {/* Section Heading Area */}
           <div className="mb-16 text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">Featured Gallery</h2>
+            <h2 className="relative mb-6 font-bad-script text-4xl font-bold tracking-widest md:text-6xl">
+              À propos de moi
+            </h2>
             <div className="section-divider"></div>
           </div>
 
-          {/* Image Grid */}
-          {/* Responsive grid: 1 column default, 2 on small, 3 on large screens. `gap-8` for spacing. */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Image Item 1 */}
-            {/* `overflow-hidden rounded-md` clips the image to rounded corners. `hover-scale` adds subtle zoom container. */}
-            <div className="hover-scale overflow-hidden rounded-md">
-              {/* NOTE: Alt text should be more descriptive if possible. Image URLs could be dynamic. */}
-              <img
-                src="https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80"
-                alt="Orange flowers field during daytime"
-                className="h-80 w-full object-cover transition-transform duration-700 hover:scale-105" // Image scales on container hover
-                loading="lazy" // Add lazy loading for images below the fold
-              />
+          {/* About Me Content */}
+          <div className="mx-auto max-w-4xl">
+            <div className="rounded-lg bg-white p-8 shadow-lg">
+              <div className="prose prose-lg mx-auto text-xl">
+                {/* Add your content here */}
+                <p className="mb-6">
+                  📍 Basée à Cazouls-Lès-Béziers (Hérault), je me déplace pour donner vie à vos projets, que ce soit en
+                  extérieur, à domicile ou en studio.
+                </p>
+                <p className="mb-6">
+                  📸 Spécialiste de la photographie de famille, de grossesse, de bébé et de mariage. <br /> Je mets tout
+                  mon cœur et mon expertise au service de vos plus beaux souvenirs. Chaque séance est une rencontre, une
+                  histoire à raconter, une émotion à immortaliser avec douceur et authenticité.
+                </p>
+                <p>
+                  ✨ Capturer l&apos;émotion d&apos;un instant, figer un regard, une complicité, une histoire... <br />
+                  Chez MOM.B, la photographie est bien plus qu&apos;une image : c&apos;est un souvenir intemporel, un
+                  moment de vie sublimé.
+                </p>
+              </div>
             </div>
-            {/* Image Item 2 */}
-            <div className="hover-scale overflow-hidden rounded-md">
-              <img
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80"
-                alt="Scenic landscape view of mountains and lake"
-                className="h-80 w-full object-cover transition-transform duration-700 hover:scale-105"
-                loading="lazy"
-              />
-            </div>
-            {/* Image Item 3 */}
-            <div className="hover-scale overflow-hidden rounded-md">
-              <img
-                src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=600&q=80"
-                alt="Mountain valley with river and green foliage"
-                className="h-80 w-full object-cover transition-transform duration-700 hover:scale-105"
-                loading="lazy"
-              />
-            </div>
-          </div>
-
-          {/* Link to Full Gallery */}
-          <div className="mt-14 text-center">
-            {/* Button styled with border, pink text, hover effect changes background/text color. */}
-            <Link
-              to="/gallery"
-              className="hover-float rounded-md border border-sakura-pink px-6 py-3 font-medium text-sakura-pink transition-all duration-300 hover:bg-sakura-pink hover:text-white">
-              View Full Gallery
-            </Link>
           </div>
         </div>
       </section>
