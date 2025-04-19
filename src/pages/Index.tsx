@@ -24,7 +24,8 @@ const Index: React.FC = () => {
         {/* `absolute inset-0` makes it fill the parent section. */}
         {/* `bg-[url(...)] bg-cover bg-center` sets the background image, ensures it covers the area, and centers it. */}
         {/* NOTE: Consider moving the background image URL to a constant or configuration file for easier updates. */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center">
+        {/* <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center"> */}
+        <div className="absolute inset-0 bg-[url('@/assets/cropped-FC7A0286-2-scaled-1.jpg')] bg-cover bg-center">
           {/* Dark Overlay: Adds a semi-transparent black layer over the background image for better text contrast. */}
           <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
@@ -42,8 +43,10 @@ const Index: React.FC = () => {
             Bienvenue sur MOM.B
           </p>
           {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
-          <Link to="/book-now" className="sakura-btn hover-float flex justify-center px-1 py-2">
-            Book a Session
+          <Link
+            to="/book-now"
+            className="sakura-btn hover-float text-shadow-md flex justify-center px-1 py-2 shadow-md">
+            Prendre rendez-vous
           </Link>
         </div>
       </section>
@@ -169,7 +172,7 @@ const Index: React.FC = () => {
           </p>
           {/* Uses the main `sakura-btn` style. */}
           <Link to="/book-now" className="sakura-btn hover-float inline-block">
-            Book Now
+            Disponibilités
           </Link>
         </div>
       </section>

@@ -268,7 +268,7 @@ const Layout: React.FC = () => {
             {/* "Book Now" Button - styled differently using custom class and inline styles. */}
             <NavLink
               to="/book-now"
-              className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 hover:bg-opacity-90">
+              className="hover-float text-shadow-md rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 hover:bg-opacity-90">
               Book Now
             </NavLink>
           </nav>
@@ -334,7 +334,7 @@ const Layout: React.FC = () => {
             <NavLink to="/book-now" className="sakura-btn mt-4 text-xl" onClick={toggleMenu}>
               {" "}
               {/* Added margin-top */}
-              Book Now
+              Disponibilités
             </NavLink>
           </nav>
         )}
@@ -344,8 +344,6 @@ const Layout: React.FC = () => {
       {/* `flex-grow` makes this section take up available vertical space. */}
       {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */}
       <main className="pt-21 flex-grow">
-        {" "}
-        {/* Adjusted padding-top slightly */}
         {/* The Outlet component renders the content of the matched child route (the specific page). */}
         <Outlet />
       </main>
@@ -356,10 +354,12 @@ const Layout: React.FC = () => {
           <div className="flex flex-col items-center justify-between text-center md:flex-row md:text-left">
             {/* Footer Logo and Tagline */}
             <div className="mb-6 md:mb-0">
-              <Link to="/" className="font-playfair text-xl font-bold text-sakura-dark-text">
-                Sakura Lens
+              <Link to="/" className="font-bad-script text-xl font-bold text-sakura-dark-text">
+                MOM.B
               </Link>
-              <p className="mt-2 text-sm text-gray-500">Photography with a cherry blossom touch</p>
+              <p className="mt-2 font-bad-script text-sm tracking-widest text-gray-500">
+                Barbara - Photographe famille, grossesse, bébé
+              </p>
             </div>
 
             {/* Social Media Links */}

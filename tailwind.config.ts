@@ -8,6 +8,7 @@
 import type { Config } from "tailwindcss"
 // Import the 'tailwindcss-animate' plugin, often used by shadcn-ui for animations.
 import tailwindcssAnimate from "tailwindcss-animate"
+import textshadow from "tailwindcss-textshadow"
 
 // Export the configuration object.
 export default {
@@ -163,6 +164,6 @@ export default {
   },
   // Adding Tailwind plugins.
   // 'tailwindcss-animate' provides utilities for the animations defined above.
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, textshadow],
   // TypeScript assertion: ensures the config object matches the 'Config' type from Tailwind.
 } satisfies Config
