@@ -74,7 +74,7 @@ const Index: React.FC = () => {
           {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
           <Link
             to="/book-now"
-            className="sakura-btn hover-float text-shadow-md flex justify-center px-1 py-2 shadow-md">
+            className="sakura-btn hover-float flex justify-center px-1 py-2 shadow-md text-shadow-md">
             Prendre rendez-vous
           </Link>
         </div>
@@ -94,7 +94,7 @@ const Index: React.FC = () => {
                   Chez vous dans votre cocon, ou en extérieur, je vous propose une douce séance pour immortaliser ces 9
                   mois de bonheur et de découverte
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
+                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -148,7 +148,7 @@ const Index: React.FC = () => {
                   Au cœur même de votre quotidien chez vous ou petite escapade en extérieur, c&apos;est vous qui décidez
                   !
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
+                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -167,7 +167,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   Capturer chaque émotion, chaque détail de votre bébé.
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
+                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -220,7 +220,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   En couple, entre mère et fille, entre père et fils ou l&apos;inverse, partagez une séance à deux.
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float text-shadow-md inline-block">
+                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -316,7 +316,7 @@ const Index: React.FC = () => {
               <p className="text-lg text-gray-700">Chaque projet est unique et mérite une attention particulière</p>
               <Link
                 to="/book-now"
-                className="sakura-btn hover-float text-shadow-md mt-12 inline-block px-8 py-4 text-lg font-medium">
+                className="sakura-btn hover-float mt-12 inline-block px-8 py-4 text-lg font-medium text-shadow-md">
                 Contactez-moi pour un devis
               </Link>
             </div>
