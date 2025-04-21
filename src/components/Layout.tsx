@@ -277,7 +277,7 @@ const Layout: React.FC = () => {
             {/* "Book Now" Button - styled differently using custom class and inline styles. */}
             <NavLink
               to="/book-now"
-              className="hover-float text-shadow-md rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 hover:bg-opacity-90">
+              className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 text-shadow-md hover:bg-opacity-90">
               Disponibilités
             </NavLink>
           </nav>

@@ -16,7 +16,7 @@ const MentionsLegales: React.FC = () => {
           <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
         <div className="sakura-container relative z-10 text-center text-white">
-          <h1 className="text-shadow-md font-bad-script text-4xl font-bold tracking-widest text-sakura-pink md:text-5xl">
+          <h1 className="font-bad-script text-4xl font-bold tracking-widest text-sakura-pink text-shadow-md md:text-5xl">
             Mentions Légales
           </h1>
         </div>
