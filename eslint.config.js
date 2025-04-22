@@ -62,5 +62,21 @@ export default tseslint.config(
       react: { version: "detect" },
     },
   },
+
+  // Config for JavaScript files in scripts/ directory
+  {
+    files: ["scripts/**/*.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module", // Since dev.js uses import/export
+      globals: {
+        ...globals.node, // Add Node.js globals
+      },
+    },
+    rules: {
+      // Add any script-specific rules here if needed
+    },
+  },
+
   eslintConfigPrettier // Apply Prettier overrides last
 )

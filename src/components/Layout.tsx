@@ -15,8 +15,6 @@ import React, { useState, useEffect, useRef } from "react"
 import { FaBars, FaTimes, FaInstagram, FaFacebook, FaChevronDown, FaWhatsapp } from "react-icons/fa"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 
-import logo from "@/assets/logomompink-300x150.png" // Import the logo image
-
 // Define the Layout component as a Functional Component (React.FC).
 const Layout: React.FC = () => {
   // --- State --- //
@@ -181,11 +179,12 @@ const Layout: React.FC = () => {
               isScrolled ? "text-sakura-dark-text" : "text-white" // Text color changes on scroll
             }`}>
             <img
-              src={logo}
+              src={"https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomompink-300x150.png"}
               alt="MOM.B Logo Header"
               className={`transition-all duration-300 ${
                 isScrolled ? "h-10 w-auto" : "h-16 w-auto" // Larger when not scrolled, smaller when scrolled
               }`}
+              loading="eager"
             />
           </Link>
 

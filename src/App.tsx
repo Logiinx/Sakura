@@ -7,10 +7,9 @@
 
 // --- Imports --- //
 
-// Data Fetching Library (React Query)
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query" // Data Fetching Library (React Query)
 // QueryClient: Manages the cache for fetched data.
 // QueryClientProvider: Makes the QueryClient available to all components in the app.
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 // Routing Library (React Router DOM)
 // BrowserRouter: Provides routing capabilities using the browser's history API.
 // Routes: Container for defining individual Route components.
@@ -25,7 +24,6 @@ import { Toaster } from "@/components/ui/toaster"
 // TooltipProvider: Enables the use of tooltips throughout the application (required by shadcn-ui tooltips).
 import { TooltipProvider } from "@/components/ui/tooltip"
 
-// Layout Components (located in ./components/)
 // Layout: A wrapper component that likely contains common UI elements like header/footer.
 import Layout from "./components/Layout"
 // SakuraPetals: A custom component, possibly for background animation or decoration.
@@ -63,56 +61,51 @@ const queryClient = new QueryClient({
   },
 })
 
-// --- App Component Definition --- //
+const App = () => {
+  // Correctly return the main application structure
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* Provide tooltip context (required for shadcn-ui tooltips). */}
+      <TooltipProvider>
+        {/* Render the Toaster component - this is where toast notifications will appear. */}
+        <Toaster />
+        {/* Render the Sonner component - for other toast notifications. */}
+        <Sonner />
+        {/* Render the custom SakuraPetals component. */}
+        <SakuraPetals />
 
-/**
- * The main App functional component.
- * It wraps the application content with necessary providers and sets up routes.
- */
-const App = () => (
-  // Provide the React Query client to the entire application.
-  // Any component within this provider can now use React Query hooks (like useQuery).
-  <QueryClientProvider client={queryClient}>
-    {/* Provide tooltip context (required for shadcn-ui tooltips). */}
-    <TooltipProvider>
-      {/* Render the Toaster component - this is where toast notifications will appear. */}
-      <Toaster />
-      {/* Render the Sonner component - for other toast notifications. */}
-      <Sonner />
-      {/* Render the custom SakuraPetals component. */}
-      <SakuraPetals />
-
-      {/* Set up client-side routing using BrowserRouter. */}
-      <BrowserRouter>
-        {/* Component to handle scrolling to top on route changes */}
-        <ScrollToTop />
-        {/* Floating button to scroll to top */}
-        <ScrollToTopButton />
-        {/* Define the routes for the application. */}
-        <Routes>
-          {/* Define a parent route that uses the Layout component. */}
-          {/* All nested routes will render inside the Layout component's <Outlet />. */}
-          <Route path="/" element={<Layout />}>
-            {/* Index Route: Rendered when the path is exactly "/". Uses the Index page component. */}
-            <Route index element={<Index />} />
-            {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/book-now" element={<BookNow />} />
-            <Route path="/package-one" element={<PackageOnePage />} />
-            <Route path="/package-two" element={<PackageTwoPage />} />
-            <Route path="/package-three" element={<PackageThreePage />} />
-            <Route path="/package-four" element={<PackageFourPage />} />
-            <Route path="/mentions-legales" element={<MentionsLegales />} />
-            {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-)
+        {/* Set up client-side routing using BrowserRouter. */}
+        <BrowserRouter>
+          {/* Component to handle scrolling to top on route changes */}
+          <ScrollToTop />
+          {/* Floating button to scroll to top */}
+          <ScrollToTopButton />
+          {/* Define the routes for the application. */}
+          <Routes>
+            {/* Define a parent route that uses the Layout component. */}
+            {/* All nested routes will render inside the Layout component's <Outlet />. */}
+            <Route path="/" element={<Layout />}>
+              {/* Index Route: Rendered when the path is exactly "/". Uses the Index page component. */}
+              <Route index element={<Index />} />
+              {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/book-now" element={<BookNow />} />
+              <Route path="/package-one" element={<PackageOnePage />} />
+              <Route path="/package-two" element={<PackageTwoPage />} />
+              <Route path="/package-three" element={<PackageThreePage />} />
+              <Route path="/package-four" element={<PackageFourPage />} />
+              <Route path="/mentions-legales" element={<MentionsLegales />} />
+              {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  )
+}
 
 // Export the App component to be used in main.tsx.
 export default App
