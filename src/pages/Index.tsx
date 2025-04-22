@@ -1,4 +1,5 @@
 import React from "react"
+import { useEffect, useState } from "react"
 import { BiBriefcaseAlt2 } from "react-icons/bi"
 import { BsHouseDoor } from "react-icons/bs"
 import { HiOutlineSparkles } from "react-icons/hi"
@@ -8,6 +9,7 @@ import { Link } from "react-router-dom"
 import { ResponsiveImage } from "@/components/ResponsiveImage"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
+import { getSectionText } from "@/lib/supabasedb"
 import Autoplay from "embla-carousel-autoplay"
 /**
  * src/pages/Index.tsx
@@ -19,8 +21,26 @@ import Autoplay from "embla-carousel-autoplay"
 // Create autoplay plugin factory function
 const createAutoplayPlugin = () => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })
 
+//Supabase Section Text
+function useSectionText(section: string) {
+  const [text, setText] = useState<string | null>(null)
+
+  useEffect(() => {
+    getSectionText(section).then(setText)
+  }, [section])
+
+  return text
+}
+
 // Define the Index page component.
 const Index: React.FC = () => {
+  //SUPABASE SECTION TEXT
+  const grossesseText = useSectionText("grossesse")
+  const familleText = useSectionText("famille")
+  const bebeText = useSectionText("bebe")
+  const complicesText = useSectionText("complices")
+  const aproposdeMoiText = useSectionText("aproposdemoi")
+
   // Create refs for each section
   const maternityTextRef = useScrollAnimation()
   const maternityCarouselRef = useScrollAnimation()
@@ -91,8 +111,7 @@ const Index: React.FC = () => {
                   La beauté de la grossesse
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  Chez vous dans votre cocon, ou en extérieur, je vous propose une douce séance pour immortaliser ces 9
-                  mois de bonheur et de découverte
+                  {grossesseText}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -169,8 +188,7 @@ const Index: React.FC = () => {
                   Moments en Famille
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  Au cœur même de votre quotidien chez vous ou petite escapade en extérieur, c&apos;est vous qui décidez
-                  !
+                  {familleText}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -188,9 +206,7 @@ const Index: React.FC = () => {
                 <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
                   Bébé & nous
                 </h2>
-                <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  Capturer chaque émotion, chaque détail de votre bébé.
-                </p>
+                <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">{bebeText}</p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
@@ -266,7 +282,7 @@ const Index: React.FC = () => {
                   Complices à deux
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  En couple, entre mère et fille, entre père et fils ou l&apos;inverse, partagez une séance à deux.
+                  {complicesText}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -292,21 +308,7 @@ const Index: React.FC = () => {
           <div className="mx-auto max-w-4xl">
             <div className="rounded-lg bg-white p-8 shadow-lg">
               <div className="prose prose-lg mx-auto text-xl">
-                {/* Add your content here */}
-                <p className="mb-6">
-                  📍 Basée à Cazouls-Lès-Béziers (Hérault), je me déplace pour donner vie à vos projets, que ce soit en
-                  extérieur, à domicile ou en studio.
-                </p>
-                <p className="mb-6">
-                  📸 Spécialiste de la photographie de famille, de grossesse, de bébé et de mariage. <br /> Je mets tout
-                  mon cœur et mon expertise au service de vos plus beaux souvenirs. Chaque séance est une rencontre, une
-                  histoire à raconter, une émotion à immortaliser avec douceur et authenticité.
-                </p>
-                <p>
-                  ✨ Capturer l&apos;émotion d&apos;un instant, figer un regard, une complicité, une histoire... <br />
-                  Chez MOM.B, la photographie est bien plus qu&apos;une image : c&apos;est un souvenir intemporel, un
-                  moment de vie sublimé.
-                </p>
+                <p className="whitespace-pre-line">{aproposdeMoiText}</p>
               </div>
             </div>
           </div>
