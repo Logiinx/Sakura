@@ -10,8 +10,8 @@
     "lint": "eslint --fix .",
     "format": "prettier --write .",
     "lint:format": "eslint --fix . && prettier --write .",
-    "clean": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
-    "prepare": "bun run lint:format && bun run build",
+    "cleanpackages": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
+    "buildpropre": "bun run lint:format && bun run build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -88,7 +88,6 @@
     "prettier-plugin-tailwindcss": "^0.6.8",
     "tailwindcss": "^3.4.17",
     "tailwindcss-textshadow": "^2.1.3",
-    "task-master-ai": "^0.12.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^5.4.18"
