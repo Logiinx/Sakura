@@ -5,21 +5,16 @@ import { HiOutlineSparkles } from "react-icons/hi"
 // Import Link for internal navigation.
 import { Link } from "react-router-dom"
 
-import maternityImage from "@/assets/FC7A0306-768x512.jpg" // Import the maternity image
-import complicesImage from "@/assets/FC7A0424-scaled-r3ruxwf3ztp2vnsm7azxhjpeinnhvhn4hg4xhujiiw.jpg" // Import the complices image
-import familyImage from "@/assets/FC7A1564-768x512.jpg" // Import the family image
-import babyImage from "@/assets/FC7A8567-1024x683.jpg" // Import the baby image
+import { ResponsiveImage } from "@/components/ResponsiveImage"
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
+import { useScrollAnimation } from "@/hooks/useScrollAnimation"
+import Autoplay from "embla-carousel-autoplay"
 /**
  * src/pages/Index.tsx
  *
  * This component renders the homepage of the application.
  * It includes sections like Hero, About, Featured Gallery, and a Call to Action.
  */
-import logo from "@/assets/logomom.png" // Import the logo
-import { ResponsiveImage } from "@/components/ResponsiveImage"
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
-import { useScrollAnimation } from "@/hooks/useScrollAnimation"
-import Autoplay from "embla-carousel-autoplay"
 
 // Create autoplay plugin factory function
 const createAutoplayPlugin = () => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })
@@ -54,7 +49,7 @@ const Index: React.FC = () => {
         {/* `bg-[url(...)] bg-cover bg-center` sets the background image, ensures it covers the area, and centers it. */}
         {/* NOTE: Consider moving the background image URL to a constant or configuration file for easier updates. */}
         {/* <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center"> */}
-        <div className="absolute inset-0 bg-[url('@/assets/cropped-FC7A0286-2-scaled-1.jpg')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-[url('https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/homepage.jpg')] bg-cover bg-center">
           {/* Dark Overlay: Adds a semi-transparent black layer over the background image for better text contrast. */}
           <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
@@ -65,7 +60,12 @@ const Index: React.FC = () => {
         <div className="sakura-container relative z-10 text-white">
           {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
           <h1 className="mb-6 text-4xl font-bold md:text-5xl lg:text-7xl">
-            <img src={logo} alt="Sakura Lens Logo" /> {/* Use the imported logo */}
+            <img
+              src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomom.png"
+              alt="Mom.B Logo"
+              className="mx-auto"
+              loading="eager"
+            />
           </h1>
           {/* Subheading/Tagline: Lighter font weight. */}
           <p className="mb-8 flex max-w-lg justify-center font-bad-script text-2xl tracking-widest">
@@ -102,13 +102,25 @@ const Index: React.FC = () => {
                 <Carousel className="w-full" plugins={[maternityAutoplay]}>
                   <CarouselContent>
                     <CarouselItem>
-                      <ResponsiveImage src={maternityImage} alt="Maternity session on beach" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse1.jpg"
+                        alt="Maternity session on beach"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={maternityImage} alt="Indoor maternity session" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse2.jpg"
+                        alt="Indoor maternity session"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={maternityImage} alt="Natural light maternity" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse3.jpg"
+                        alt="Natural light maternity"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                   </CarouselContent>
                   <CarouselPrevious />
@@ -127,13 +139,25 @@ const Index: React.FC = () => {
                 <Carousel className="w-full" plugins={[familyAutoplay]}>
                   <CarouselContent>
                     <CarouselItem>
-                      <ResponsiveImage src={familyImage} alt="Family session" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille1.jpg"
+                        alt="Family session"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={familyImage} alt="Family outdoor session" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille2.jpg"
+                        alt="Family outdoor session"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={familyImage} alt="Family lifestyle" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille3.jpg"
+                        alt="Family lifestyle"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                   </CarouselContent>
                   <CarouselPrevious />
@@ -175,13 +199,25 @@ const Index: React.FC = () => {
                 <Carousel className="w-full" plugins={[babyAutoplay]}>
                   <CarouselContent>
                     <CarouselItem>
-                      <ResponsiveImage src={babyImage} alt="Baby portrait" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe1.jpg"
+                        alt="Baby portrait"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={babyImage} alt="Baby with family" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe2.jpg"
+                        alt="Baby with family"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={babyImage} alt="Baby details" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe3.jpg"
+                        alt="Baby details"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                   </CarouselContent>
                   <CarouselPrevious />
@@ -200,13 +236,25 @@ const Index: React.FC = () => {
                 <Carousel className="w-full" plugins={[complicesAutoplay]}>
                   <CarouselContent>
                     <CarouselItem>
-                      <ResponsiveImage src={complicesImage} alt="Parent-child moment" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices1.jpg"
+                        alt="Parent-child moment"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={complicesImage} alt="Special bond" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices2.jpg"
+                        alt="Special bond"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                     <CarouselItem>
-                      <ResponsiveImage src={complicesImage} alt="Tender moments" />
+                      <ResponsiveImage
+                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices3.jpg"
+                        alt="Tender moments"
+                        loading="lazy"
+                      />
                     </CarouselItem>
                   </CarouselContent>
                   <CarouselPrevious />

@@ -4,9 +4,10 @@ interface ResponsiveImageProps {
   src: string
   alt: string
   className?: string
+  loading?: "lazy" | "eager"
 }
 
-export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({ src, alt, className = "" }) => {
+export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({ src, alt, className = "", loading }) => {
   const [isVertical, setIsVertical] = useState(false)
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({ src, alt, clas
         src={src}
         alt={alt}
         className={`h-full w-full ${isVertical ? "object-contain" : "object-cover"} ${className}`}
+        loading={loading}
       />
     </div>
   )

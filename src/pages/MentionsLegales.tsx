@@ -12,7 +12,7 @@ const MentionsLegales: React.FC = () => {
     <div className="animate-fade-in">
       {/* Hero Section */}
       <section className="relative flex h-96 items-center bg-sakura-dark-text">
-        <div className="absolute inset-0 bg-[url('@/assets/cropped-camera-581126_1920.jpg')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-[url('https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/camera404.jpg')] bg-cover bg-center">
           <div className="absolute inset-0 bg-black bg-opacity-30"></div>
         </div>
         <div className="sakura-container relative z-10 text-center text-white">
