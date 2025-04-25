@@ -24,6 +24,8 @@ import { Toaster } from "@/components/ui/toaster"
 // TooltipProvider: Enables the use of tooltips throughout the application (required by shadcn-ui tooltips).
 import { TooltipProvider } from "@/components/ui/tooltip"
 
+import AdminImages from "./admin/AdminImages"
+import ProtectedRoute from "./admin/ProtectedRoute"
 // Layout: A wrapper component that likely contains common UI elements like header/footer.
 import Layout from "./components/Layout"
 // SakuraPetals: A custom component, possibly for background animation or decoration.
@@ -97,6 +99,14 @@ const App = () => {
               <Route path="/package-three" element={<PackageThreePage />} />
               <Route path="/package-four" element={<PackageFourPage />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminImages />
+                  </ProtectedRoute>
+                }
+              />
               {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
               <Route path="*" element={<NotFound />} />
             </Route>

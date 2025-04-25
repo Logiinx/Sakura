@@ -1,0 +1,417 @@
+import React, { useState, useEffect, useCallback } from "react"
+import type { ChangeEvent } from "react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress" // For upload progress
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Textarea } from "@/components/ui/textarea"
+import { supabase } from "@/lib/supabase" // Adjust path if needed
+import type { SiteImageData } from "@/lib/supabasedb"
+import { getAllSiteImages, updateImageAltText } from "@/lib/supabasedb" // Adjust path if needed
+import { toast } from "sonner" // Assuming you use shadcn's Sonner for notifications
+
+// Define the sections you want to manage
+const VALID_SECTIONS = [
+  "hero",
+  "grossesse-1",
+  "grossesse-2",
+  "grossesse-3",
+  "famille-1",
+  "famille-2",
+  "famille-3",
+  "bebe-1",
+  "bebe-2",
+  "bebe-3",
+  "complices-1",
+  "complices-2",
+  "complices-3",
+  "about", // Example
+]
+
+const AdminImages: React.FC = () => {
+  const [images, setImages] = useState<SiteImageData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Upload state
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [isInvokingFunction, setIsInvokingFunction] = useState(false)
+  const [uploadSection, setUploadSection] = useState<string>("")
+  const [uploadAltText, setUploadAltText] = useState("")
+
+  // Editing state
+  const [editingImageId, setEditingImageId] = useState<number | null>(null)
+  const [editingAltText, setEditingAltText] = useState("")
+  const [isSavingAlt, setIsSavingAlt] = useState(false)
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const fetchImages = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await getAllSiteImages()
+      setImages(data)
+    } catch (err) {
+      console.error("Failed to fetch images:", err)
+      setError("Erreur lors du chargement des images.")
+      toast.error("Erreur lors du chargement des images.")
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchImages()
+  }, [fetchImages])
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0])
+    } else {
+      setSelectedFile(null)
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile || !uploadSection) {
+      toast.warning("Veuillez sélectionner un fichier et une section.")
+      return
+    }
+
+    setUploading(true)
+    setIsInvokingFunction(false)
+    setUploadProgress(0)
+    setError(null)
+
+    const fileExtension = selectedFile.name.split(".").pop() || "jpg"
+    const uniqueFileName = `${uploadSection}-${Date.now()}.${fileExtension}`
+    const filePath = `${uploadSection}/${uniqueFileName}`
+
+    try {
+      // --- Add Logging --- START
+      console.log(`Attempting direct upload to Storage. Bucket: assets, Path: ${filePath}`)
+      console.log(`File selected: ${selectedFile?.name}, Size: ${selectedFile?.size}, Type: ${selectedFile?.type}`)
+      console.log(`Current Auth Session:`, await supabase.auth.getSession()) // Log session info
+      // --- Add Logging --- END
+
+      const { data: storageData, error: storageError } = await supabase.storage
+        .from("assets") // <<< Your BUCKET NAME
+        .upload(filePath, selectedFile, {
+          cacheControl: "3600",
+          upsert: false, // Keep upsert false for now while debugging
+        })
+
+      // --- Add Logging --- START
+      if (storageError) {
+        console.error("STORAGE UPLOAD FAILED:", storageError)
+        // Throw error to be caught below
+        throw new Error(`Erreur Storage: ${storageError.message}`)
+      } else {
+        console.log("STORAGE UPLOAD SUCCEEDED:", storageData)
+      }
+      // --- Add Logging --- END
+
+      // Only proceed if storage upload was successful
+      if (!storageData?.path) {
+        console.error("Storage upload succeeded but no path was returned:", storageData)
+        throw new Error("Le chemin du fichier uploadé n'a pas été retourné par Storage.")
+      }
+
+      setUploadProgress(50) // Indicate storage part done
+
+      const uploadedPath = storageData.path
+      console.log(`Direct upload successful. Path: ${uploadedPath}`)
+      setUploadProgress(100)
+
+      setIsInvokingFunction(true)
+      console.log(`Invoking Edge Function with path: ${uploadedPath}`)
+
+      // Prepare the payload as an object
+      const payloadObject = {
+        filePath: uploadedPath,
+        section: uploadSection,
+        altText: uploadAltText || "", // Use empty string if undefined/null
+        contentType: selectedFile.type,
+      }
+      console.log("Invoking Edge Function with payload object:", payloadObject) // Log the object being sent
+
+      // Invoke the function, passing the object directly
+      const { data: functionData, error: functionError } = await supabase.functions.invoke(
+        "upload-site-image", // Your function name
+        {
+          body: payloadObject, // Pass the object directly
+          // No need to set Content-Type header manually here,
+          // supabase-js handles it when body is an object.
+        }
+      )
+
+      if (functionError) {
+        // --- Add More Detailed Logging --- START
+        console.error("Supabase function invocation failed:", functionError)
+        if (functionError.context) {
+          // Log context if available (might contain status code or response details)
+          console.error("Function error context:", functionError.context)
+        }
+        // --- Add More Detailed Logging --- END
+        throw new Error(`Erreur Fonction (Invoke): ${functionError.message}`)
+      }
+
+      // --- Add Logging for Function Response --- START
+      console.log("Supabase function invocation successful. Raw data:", functionData)
+      // --- Add Logging for Function Response --- END
+
+      type FunctionResponse = { success: boolean } | { error: string }
+      const response = functionData as FunctionResponse
+
+      // Check if the function itself returned a logical error in its JSON response
+      if (response && typeof response === "object" && "error" in response && response.error) {
+        throw new Error(`Erreur Fonction (Logic): ${response.error}`)
+      }
+
+      // Also check if the response indicates success explicitly if applicable
+      if (!(response && typeof response === "object" && "success" in response && response.success)) {
+        // Handle cases where the function completed (2xx) but didn't return the expected success structure
+        console.warn("Function completed but response structure might not indicate success:", response)
+        // Depending on function logic, you might still consider this a success or throw an error
+        // For now, let's assume a 2xx without a specific {success: true} is okay, but log it.
+        // If your function *must* return {success: true}, uncomment the throw below:
+        // throw new Error("La fonction a retourné une réponse inattendue.");
+      }
+
+      toast.success(`Image pour la section "${uploadSection}" traitée avec succès!`)
+      fetchImages() // Refresh the image list
+    } catch (err) {
+      let errorMessage = "Une erreur inconnue est survenue."
+      if (err instanceof Error) {
+        errorMessage = err.message
+      } else if (typeof err === "string") {
+        errorMessage = err
+      }
+      console.error("Upload or Function process failed:", err)
+      setError(`Échec: ${errorMessage}`)
+      toast.error(`Échec: ${errorMessage}`)
+    } finally {
+      setUploading(false)
+      setIsInvokingFunction(false)
+      setUploadProgress(0)
+      setSelectedFile(null)
+      setUploadSection("")
+      setUploadAltText("")
+      const fileInput = document.getElementById("file-input") as HTMLInputElement | null
+      if (fileInput) fileInput.value = ""
+    }
+  }
+
+  const handleEditClick = (image: SiteImageData) => {
+    setEditingImageId(image.id)
+    setEditingAltText(image.alt_text || "")
+  }
+
+  const handleCancelEdit = () => {
+    setEditingImageId(null)
+    setEditingAltText("")
+  }
+
+  const handleSaveAltText = async (id: number) => {
+    setIsSavingAlt(true)
+    const success = await updateImageAltText(id, editingAltText)
+    setIsSavingAlt(false)
+    if (success) {
+      toast.success("Texte alternatif mis à jour.")
+      setEditingImageId(null)
+      setImages((prevImages) => prevImages.map((img) => (img.id === id ? { ...img, alt_text: editingAltText } : img)))
+    } else {
+      toast.error("Erreur lors de la mise à jour du texte alternatif.")
+    }
+  }
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        throw error
+      }
+      toast.success("Déconnexion réussie.")
+      // The ProtectedRoute component will automatically detect the session change
+      // and redirect to the Login component.
+    } catch (err) {
+      console.error("Logout failed:", err)
+      let errorMessage = "Échec de la déconnexion."
+      if (err instanceof Error) {
+        errorMessage = err.message
+      }
+      toast.error(errorMessage)
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-gray-800">Gestion des Images du Site</h1>
+        <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
+          {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
+        </Button>
+      </div>
+
+      <Card className="mb-12 shadow-md">
+        <CardHeader>
+          <CardTitle className="text-xl">Uploader/Remplacer une Image</CardTitle>
+          <CardDescription>Sélectionnez une image et la section où elle doit apparaître.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid w-full max-w-md items-center gap-2">
+            <Label htmlFor="file-input" className="font-medium">
+              Image
+            </Label>
+            <Input
+              id="file-input"
+              type="file"
+              accept="image/png, image/jpeg, image/webp, image/gif"
+              onChange={handleFileChange}
+              disabled={uploading || isInvokingFunction}
+              className="file:mr-4 file:rounded-full file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100"
+            />
+          </div>
+          <div className="grid w-full max-w-md items-center gap-2">
+            <Label htmlFor="section-select" className="font-medium">
+              Section
+            </Label>
+            <Select value={uploadSection} onValueChange={setUploadSection} disabled={uploading || isInvokingFunction}>
+              <SelectTrigger id="section-select" className="w-full">
+                <SelectValue placeholder="Choisir une section..." />
+              </SelectTrigger>
+              <SelectContent>
+                {VALID_SECTIONS.map((sec) => (
+                  <SelectItem key={sec} value={sec}>
+                    {sec}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid w-full max-w-md items-center gap-2">
+            <Label htmlFor="alt-text-input" className="font-medium">
+              Texte Alternatif (pour SEO)
+            </Label>
+            <Textarea
+              id="alt-text-input"
+              placeholder="Description brève et utile de l'image..."
+              value={uploadAltText}
+              onChange={(e) => setUploadAltText(e.target.value)}
+              disabled={uploading || isInvokingFunction}
+              rows={3}
+            />
+          </div>
+          {(uploading || isInvokingFunction) && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-600">
+                {isInvokingFunction ? "Traitement des données..." : "Progression de l'upload..."}
+              </Label>
+              <Progress value={uploading ? uploadProgress : 100} className="w-full" />
+            </div>
+          )}
+          {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
+        </CardContent>
+        <CardFooter>
+          <Button onClick={handleUpload} disabled={uploading || isInvokingFunction || !selectedFile || !uploadSection}>
+            {uploading || isInvokingFunction ? "Traitement en cours..." : "Uploader l'Image"}
+          </Button>
+        </CardFooter>
+      </Card>
+
+      <h2 className="mb-6 text-2xl font-semibold text-gray-700">Images Actuelles</h2>
+      {loading && <p className="text-center text-gray-500">Chargement des images...</p>}
+      {!loading && images.length === 0 && <p className="py-4 text-center text-gray-500">Aucune image trouvée.</p>}
+      {!loading && images.length > 0 && (
+        <Card className="overflow-hidden shadow-md">
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[80px] sm:w-[100px]">Aperçu</TableHead>
+                    <TableHead>Section</TableHead>
+                    <TableHead>Texte Alt</TableHead>
+                    <TableHead className="hidden md:table-cell">Dimensions</TableHead>
+                    <TableHead>URL</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {images.map((image) => (
+                    <TableRow key={image.id} className="hover:bg-gray-50">
+                      <TableCell>
+                        <img
+                          src={image.image_url}
+                          alt={image.alt_text || `Image ${image.section}`}
+                          className="h-12 w-12 rounded border object-cover sm:h-16 sm:w-16"
+                          loading="lazy"
+                        />
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap font-medium text-gray-700">{image.section}</TableCell>
+                      <TableCell className="min-w-[200px]">
+                        {editingImageId === image.id ? (
+                          <Textarea
+                            value={editingAltText}
+                            onChange={(e) => setEditingAltText(e.target.value)}
+                            placeholder="Description..."
+                            className="min-h-[60px] text-sm"
+                            disabled={isSavingAlt}
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-600">
+                            {image.alt_text || <span className="italic text-gray-400">Non défini</span>}
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden text-sm text-gray-500 md:table-cell">
+                        {image.width && image.height ? `${image.width}x${image.height}` : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <a
+                          href={image.image_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="whitespace-nowrap text-sm text-blue-600 underline hover:text-blue-800">
+                          Voir Fichier
+                        </a>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-right">
+                        {editingImageId === image.id ? (
+                          <div className="flex justify-end gap-2">
+                            <Button size="sm" variant="outline" onClick={handleCancelEdit} disabled={isSavingAlt}>
+                              Annuler
+                            </Button>
+                            <Button size="sm" onClick={() => handleSaveAltText(image.id)} disabled={isSavingAlt}>
+                              {isSavingAlt ? "Sauv..." : "Sauver"}
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button size="sm" variant="outline" onClick={() => handleEditClick(image)}>
+                            Modifier Alt
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}
+
+export default AdminImages
