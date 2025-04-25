@@ -1,15 +1,16 @@
-import React from "react"
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import React, { useMemo, useCallback } from "react"
 import { BiBriefcaseAlt2 } from "react-icons/bi"
 import { BsHouseDoor } from "react-icons/bs"
 import { HiOutlineSparkles } from "react-icons/hi"
 // Import Link for internal navigation.
 import { Link } from "react-router-dom"
 
-import { ResponsiveImage } from "@/components/ResponsiveImage"
+import { BlurImage } from "@/components/BlurImage"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
-import { getSectionText } from "@/lib/supabasedb"
+import { getSectionText, getSectionImages } from "@/lib/supabasedb"
+import type { SiteImageData } from "@/lib/supabasedb"
 import Autoplay from "embla-carousel-autoplay"
 /**
  * src/pages/Index.tsx
@@ -21,25 +22,73 @@ import Autoplay from "embla-carousel-autoplay"
 // Create autoplay plugin factory function
 const createAutoplayPlugin = () => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })
 
-//Supabase Section Text
-function useSectionText(section: string) {
-  const [text, setText] = useState<string | null>(null)
-
-  useEffect(() => {
-    getSectionText(section).then(setText)
-  }, [section])
-
-  return text
+// --- START: Modified Hooks ---
+// Hook for fetching text sections
+function useSectionTextQuery(section: string) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["sectionText", section],
+    queryFn: () => getSectionText(section),
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  })
+  if (error) console.error(`Error fetching text for ${section}:`, error)
+  return { text: data, isLoading, error }
 }
+
+// Hook for fetching image sections
+function useSectionImagesQuery(sections: string[]) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["sectionImages", sections.sort().join(",")], // Stable query key
+    queryFn: () => getSectionImages(sections),
+    enabled: sections.length > 0,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  })
+  if (error) console.error(`Error fetching images for ${sections.join(", ")}:`, error)
+  return { images: data, isLoading, error }
+}
+// --- END: Modified Hooks ---
 
 // Define the Index page component.
 const Index: React.FC = () => {
-  //SUPABASE SECTION TEXT
-  const grossesseText = useSectionText("grossesse")
-  const familleText = useSectionText("famille")
-  const bebeText = useSectionText("bebe")
-  const complicesText = useSectionText("complices")
-  const aproposdeMoiText = useSectionText("aproposdemoi")
+  // --- START: Use TanStack Query Hooks ---
+  // Define sections for text and images
+  const imageSections = useMemo(
+    () => [
+      "hero", // For background
+      "grossesse-1",
+      "grossesse-2",
+      "grossesse-3",
+      "famille-1",
+      "famille-2",
+      "famille-3",
+      "bebe-1",
+      "bebe-2",
+      "bebe-3",
+      "complices-1",
+      "complices-2",
+      "complices-3",
+      // Add other single images if needed, e.g., "about-me-photo"
+    ],
+    []
+  )
+
+  // Fetch text data
+  const { text: grossesseText } = useSectionTextQuery("grossesse")
+  const { text: familleText } = useSectionTextQuery("famille")
+  const { text: bebeText } = useSectionTextQuery("bebe")
+  const { text: complicesText } = useSectionTextQuery("complices")
+  const { text: aproposdeMoiText } = useSectionTextQuery("aproposdemoi")
+
+  // Fetch image data
+  const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
+
+  // Helper to get specific image data safely
+  const getImageData = useCallback(
+    (section: string): SiteImageData | null | undefined => {
+      return sectionImages?.[section]
+    },
+    [sectionImages]
+  )
+  // --- END: Use TanStack Query Hooks ---
 
   // Create refs for each section
   const maternityTextRef = useScrollAnimation()
@@ -56,7 +105,10 @@ const Index: React.FC = () => {
   const familyAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
   const babyAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
   const complicesAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
-
+  const heroImageData = getImageData("hero")
+  console.log("Hero Image Data:", heroImageData)
+  console.log("Images Loading:", imagesLoading)
+  console.log("Images Error:", imagesError)
   return (
     // Apply a fade-in animation to the entire page content.
     <div className="animate-fade-in">
@@ -64,15 +116,28 @@ const Index: React.FC = () => {
       {/* `relative` allows absolute positioning of children. `h-screen` makes it full viewport height. */}
       {/* `flex items-center` vertically centers the content. */}
       <section className="relative flex h-screen items-center">
-        {/* Background Image Container */}
-        {/* `absolute inset-0` makes it fill the parent section. */}
-        {/* `bg-[url(...)] bg-cover bg-center` sets the background image, ensures it covers the area, and centers it. */}
-        {/* NOTE: Consider moving the background image URL to a constant or configuration file for easier updates. */}
-        {/* <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center"> */}
-        <div className="absolute inset-0 bg-[url('https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/homepage.jpg')] bg-cover bg-center">
-          {/* Dark Overlay: Adds a semi-transparent black layer over the background image for better text contrast. */}
-          <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-        </div>
+        {/* Background Image Container - Now dynamic */}
+        {imagesLoading && <div className="absolute inset-0 animate-pulse bg-gray-300"></div>}
+        {imagesError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600">
+            Erreur chargement fond
+          </div>
+        )}
+        {getImageData("hero") ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${getImageData("hero")?.image_url})` }}>
+            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+          </div>
+        ) : (
+          // Fallback only if not loading and no error
+          !imagesLoading &&
+          !imagesError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-400 text-white">
+              Fond par défaut
+            </div>
+          )
+        )}
         {/* Hero Content Container */}
         {/* `sakura-container` provides consistent padding/max-width. */}
         {/* `relative z-10` ensures content appears above the background and overlay. */}
@@ -111,7 +176,7 @@ const Index: React.FC = () => {
                   La beauté de la grossesse
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  {grossesseText}
+                  {grossesseText ?? "Chargement du texte..."}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -120,27 +185,29 @@ const Index: React.FC = () => {
               <div ref={maternityCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
                 <Carousel className="w-full" plugins={[maternityAutoplay]}>
                   <CarouselContent>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse1.jpg"
-                        alt="Maternity session on beach"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse2.jpg"
-                        alt="Indoor maternity session"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/grossesse/grossesse3.jpg"
-                        alt="Natural light maternity"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
+                    {/* Dynamic Carousel Items */}
+                    {[1, 2, 3].map((index) => {
+                      const imgData = getImageData(`grossesse-${index}`)
+                      const sectionKey = `grossesse-${index}`
+                      return (
+                        <CarouselItem key={sectionKey}>
+                          {imgData ? (
+                            <BlurImage
+                              src={imgData.image_url}
+                              hash={imgData.blur_hash}
+                              alt={imgData.alt_text || `Grossesse ${index}`}
+                              width={imgData.width ?? 500} // Provide default/sensible dims
+                              height={imgData.height ?? 300}
+                              className="aspect-video w-full rounded-lg object-cover shadow-md"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                            </div>
+                          )}
+                        </CarouselItem>
+                      )
+                    })}
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
@@ -157,27 +224,28 @@ const Index: React.FC = () => {
               <div ref={familyCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
                 <Carousel className="w-full" plugins={[familyAutoplay]}>
                   <CarouselContent>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille1.jpg"
-                        alt="Family session"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille2.jpg"
-                        alt="Family outdoor session"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/famille/famille3.jpg"
-                        alt="Family lifestyle"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
+                    {[1, 2, 3].map((index) => {
+                      const imgData = getImageData(`famille-${index}`)
+                      const sectionKey = `famille-${index}`
+                      return (
+                        <CarouselItem key={sectionKey}>
+                          {imgData ? (
+                            <BlurImage
+                              src={imgData.image_url}
+                              hash={imgData.blur_hash}
+                              alt={imgData.alt_text || `Famille ${index}`}
+                              width={imgData.width ?? 500}
+                              height={imgData.height ?? 300}
+                              className="aspect-video w-full rounded-lg object-cover shadow-md"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                            </div>
+                          )}
+                        </CarouselItem>
+                      )
+                    })}
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
@@ -188,7 +256,7 @@ const Index: React.FC = () => {
                   Moments en Famille
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  {familleText}
+                  {familleText ?? "Chargement du texte..."}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -206,7 +274,9 @@ const Index: React.FC = () => {
                 <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
                   Bébé & nous
                 </h2>
-                <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">{bebeText}</p>
+                <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
+                  {bebeText ?? "Chargement du texte..."}
+                </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
@@ -214,27 +284,28 @@ const Index: React.FC = () => {
               <div ref={babyCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
                 <Carousel className="w-full" plugins={[babyAutoplay]}>
                   <CarouselContent>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe1.jpg"
-                        alt="Baby portrait"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe2.jpg"
-                        alt="Baby with family"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/bebe/bebe3.jpg"
-                        alt="Baby details"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
+                    {[1, 2, 3].map((index) => {
+                      const imgData = getImageData(`bebe-${index}`)
+                      const sectionKey = `bebe-${index}`
+                      return (
+                        <CarouselItem key={sectionKey}>
+                          {imgData ? (
+                            <BlurImage
+                              src={imgData.image_url}
+                              hash={imgData.blur_hash}
+                              alt={imgData.alt_text || `Bébé ${index}`}
+                              width={imgData.width ?? 500}
+                              height={imgData.height ?? 300}
+                              className="aspect-video w-full rounded-lg object-cover shadow-md"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                            </div>
+                          )}
+                        </CarouselItem>
+                      )
+                    })}
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
@@ -251,27 +322,28 @@ const Index: React.FC = () => {
               <div ref={complicesCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
                 <Carousel className="w-full" plugins={[complicesAutoplay]}>
                   <CarouselContent>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices1.jpg"
-                        alt="Parent-child moment"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices2.jpg"
-                        alt="Special bond"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
-                    <CarouselItem>
-                      <ResponsiveImage
-                        src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/complices/complices3.jpg"
-                        alt="Tender moments"
-                        loading="lazy"
-                      />
-                    </CarouselItem>
+                    {[1, 2, 3].map((index) => {
+                      const imgData = getImageData(`complices-${index}`)
+                      const sectionKey = `complices-${index}`
+                      return (
+                        <CarouselItem key={sectionKey}>
+                          {imgData ? (
+                            <BlurImage
+                              src={imgData.image_url}
+                              hash={imgData.blur_hash}
+                              alt={imgData.alt_text || `Complices ${index}`}
+                              width={imgData.width ?? 500}
+                              height={imgData.height ?? 300}
+                              className="aspect-video w-full rounded-lg object-cover shadow-md"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                            </div>
+                          )}
+                        </CarouselItem>
+                      )
+                    })}
                   </CarouselContent>
                   <CarouselPrevious />
                   <CarouselNext />
@@ -282,7 +354,7 @@ const Index: React.FC = () => {
                   Complices à deux
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
-                  {complicesText}
+                  {complicesText ?? "Chargement du texte..."}
                 </p>
                 <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
@@ -308,7 +380,7 @@ const Index: React.FC = () => {
           <div className="mx-auto max-w-4xl">
             <div className="rounded-lg bg-white p-8 shadow-lg">
               <div className="prose prose-lg mx-auto text-xl">
-                <p className="whitespace-pre-line">{aproposdeMoiText}</p>
+                <p className="whitespace-pre-line">{aproposdeMoiText ?? "Chargement du texte..."}</p>
               </div>
             </div>
           </div>
