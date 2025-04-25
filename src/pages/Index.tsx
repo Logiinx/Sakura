@@ -116,28 +116,25 @@ const Index: React.FC = () => {
       {/* `relative` allows absolute positioning of children. `h-screen` makes it full viewport height. */}
       {/* `flex items-center` vertically centers the content. */}
       <section className="relative flex h-screen items-center">
-        {/* Background Image Container - Now dynamic */}
-        {imagesLoading && <div className="absolute inset-0 animate-pulse bg-gray-300"></div>}
-        {imagesError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-600">
-            Erreur chargement fond
-          </div>
-        )}
-        {getImageData("hero") ? (
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${getImageData("hero")?.image_url})` }}>
-            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-          </div>
-        ) : (
-          // Fallback only if not loading and no error
-          !imagesLoading &&
-          !imagesError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-400 text-white">
-              Fond par défaut
+        {/* Background Image Container - Simplified Logic */}
+        <div
+          className="transition-background-image absolute inset-0 bg-cover bg-center duration-500 ease-in-out" // Added transition class (ensure defined in CSS/Tailwind)
+          style={{
+            backgroundImage: getImageData("hero") ? `url(${getImageData("hero")!.image_url})` : undefined, // Set background only if image data exists
+            backgroundColor: !getImageData("hero") ? "#A0AEC0" : undefined, // Fallback background color if no image (Tailwind gray-500)
+          }}>
+          {/* Dark Overlay: Applied only when the image is successfully loaded */}
+          {getImageData("hero") && <div className="absolute inset-0 bg-black bg-opacity-30"></div>}
+        </div>
+
+        {/* Error Message (Overlay) */}
+        {imagesError &&
+          !imagesLoading && ( // Prevent showing error during initial load
+            <div className="absolute inset-0 flex items-center justify-center bg-red-700 bg-opacity-75 text-white">
+              Erreur lors du chargement de l&apos;image de fond.
             </div>
-          )
-        )}
+          )}
+
         {/* Hero Content Container */}
         {/* `sakura-container` provides consistent padding/max-width. */}
         {/* `relative z-10` ensures content appears above the background and overlay. */}
