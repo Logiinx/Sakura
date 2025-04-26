@@ -8,6 +8,7 @@ interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   hashHeight?: number // Height for blurhash canvas
   punch?: number
   alt: string
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down" // Add objectFit prop
 }
 
 export const BlurImage: React.FC<BlurImageProps> = ({
@@ -18,6 +19,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
   punch = 1,
   alt,
   className, // Pass through className
+  objectFit = "cover", // Default to 'cover'
   ...rest // Pass through other img attributes like width, height
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -62,10 +64,10 @@ export const BlurImage: React.FC<BlurImageProps> = ({
         alt={alt}
         loading="lazy" // Keep lazy loading
         onLoad={() => setImageLoaded(true)}
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ${
+        className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
           imageLoaded ? "opacity-100" : "opacity-0"
         }`}
-        style={{ objectFit: "cover" }} // Ensure image covers the area
+        style={{ objectFit: objectFit }}
         {...imgRest} // Apply remaining props like style, etc.
         // Apply explicit width/height if passed
         width={width}

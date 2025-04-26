@@ -186,22 +186,50 @@ const Index: React.FC = () => {
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`grossesse-${index}`)
                       const sectionKey = `grossesse-${index}`
+                      // Define desired dimensions and container height
+                      const containerHeight = 384 // Corresponds to h-96
+                      const landscapeTargetWidth = 600
+
+                      let transformedSrc: string | undefined = undefined
+                      let objectFitClass: "cover" | "contain" = "cover" // Default
+
+                      if (imgData?.image_url) {
+                        if (imgData.width && imgData.height && imgData.height > 0) {
+                          const aspectRatio = imgData.width / imgData.height
+                          if (aspectRatio < 1) {
+                            // Vertical image: Resize based on height, contain
+                            objectFitClass = "contain"
+                            transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
+                          } else {
+                            // Landscape/Square image: Resize with cover
+                            objectFitClass = "cover"
+                            transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                          }
+                        } else {
+                          // Fallback if dimensions are missing
+                          transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                        }
+                      }
+
                       return (
-                        <CarouselItem key={sectionKey}>
-                          {imgData ? (
-                            <BlurImage
-                              src={imgData.image_url}
-                              hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `Grossesse ${index}`}
-                              width={imgData.width ?? 500} // Provide default/sensible dims
-                              height={imgData.height ?? 300}
-                              className="aspect-video w-full rounded-lg object-cover shadow-md"
-                            />
-                          ) : (
-                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
-                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
-                            </div>
-                          )}
+                        <CarouselItem key={sectionKey} className="basis-full overflow-hidden">
+                          {/* Added fixed height h-96 here */}
+                          <div className="relative h-96 w-full">
+                            {imgData && transformedSrc ? (
+                              <BlurImage
+                                src={transformedSrc} // Use transformed URL
+                                hash={imgData.blur_hash}
+                                alt={imgData.alt_text || `Grossesse ${index}`}
+                                // Apply styles directly for fill/cover behavior
+                                className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
+                                objectFit={objectFitClass} // Pass objectFit as a prop
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                                {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                              </div>
+                            )}
+                          </div>
                         </CarouselItem>
                       )
                     })}
@@ -224,22 +252,50 @@ const Index: React.FC = () => {
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`famille-${index}`)
                       const sectionKey = `famille-${index}`
+                      // Define desired dimensions and container height
+                      const containerHeight = 384 // Corresponds to h-96
+                      const landscapeTargetWidth = 600
+
+                      let transformedSrc: string | undefined = undefined
+                      let objectFitClass: "cover" | "contain" = "cover" // Default
+
+                      if (imgData?.image_url) {
+                        if (imgData.width && imgData.height && imgData.height > 0) {
+                          const aspectRatio = imgData.width / imgData.height
+                          if (aspectRatio < 1) {
+                            // Vertical image: Resize based on height, contain
+                            objectFitClass = "contain"
+                            transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
+                          } else {
+                            // Landscape/Square image: Resize with cover
+                            objectFitClass = "cover"
+                            transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                          }
+                        } else {
+                          // Fallback if dimensions are missing
+                          transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                        }
+                      }
+
                       return (
                         <CarouselItem key={sectionKey}>
-                          {imgData ? (
-                            <BlurImage
-                              src={imgData.image_url}
-                              hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `Famille ${index}`}
-                              width={imgData.width ?? 500}
-                              height={imgData.height ?? 300}
-                              className="aspect-video w-full rounded-lg object-cover shadow-md"
-                            />
-                          ) : (
-                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
-                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
-                            </div>
-                          )}
+                          {/* Added fixed height h-96 here */}
+                          <div className="relative h-96 w-full">
+                            {imgData && transformedSrc ? (
+                              <BlurImage
+                                src={transformedSrc} // Use transformed URL
+                                hash={imgData.blur_hash}
+                                alt={imgData.alt_text || `Famille ${index}`}
+                                // Apply styles directly for fill/cover behavior
+                                className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
+                                objectFit={objectFitClass} // Pass objectFit as a prop
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                                {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                              </div>
+                            )}
+                          </div>
                         </CarouselItem>
                       )
                     })}
@@ -284,22 +340,50 @@ const Index: React.FC = () => {
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`bebe-${index}`)
                       const sectionKey = `bebe-${index}`
+                      // Define desired dimensions and container height
+                      const containerHeight = 384 // Corresponds to h-96
+                      const landscapeTargetWidth = 600
+
+                      let transformedSrc: string | undefined = undefined
+                      let objectFitClass: "cover" | "contain" = "cover" // Default
+
+                      if (imgData?.image_url) {
+                        if (imgData.width && imgData.height && imgData.height > 0) {
+                          const aspectRatio = imgData.width / imgData.height
+                          if (aspectRatio < 1) {
+                            // Vertical image: Resize based on height, contain
+                            objectFitClass = "contain"
+                            transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
+                          } else {
+                            // Landscape/Square image: Resize with cover
+                            objectFitClass = "cover"
+                            transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                          }
+                        } else {
+                          // Fallback if dimensions are missing
+                          transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                        }
+                      }
+
                       return (
                         <CarouselItem key={sectionKey}>
-                          {imgData ? (
-                            <BlurImage
-                              src={imgData.image_url}
-                              hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `Bébé ${index}`}
-                              width={imgData.width ?? 500}
-                              height={imgData.height ?? 300}
-                              className="aspect-video w-full rounded-lg object-cover shadow-md"
-                            />
-                          ) : (
-                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
-                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
-                            </div>
-                          )}
+                          {/* Added fixed height h-96 here */}
+                          <div className="relative h-96 w-full">
+                            {imgData && transformedSrc ? (
+                              <BlurImage
+                                src={transformedSrc} // Use transformed URL
+                                hash={imgData.blur_hash}
+                                alt={imgData.alt_text || `Bébé ${index}`}
+                                // Apply styles directly for fill/cover behavior
+                                className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
+                                objectFit={objectFitClass} // Pass objectFit as a prop
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                                {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                              </div>
+                            )}
+                          </div>
                         </CarouselItem>
                       )
                     })}
@@ -322,22 +406,60 @@ const Index: React.FC = () => {
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`complices-${index}`)
                       const sectionKey = `complices-${index}`
+                      // Define desired dimensions and container height
+                      const containerHeight = 384 // Corresponds to h-96
+                      const landscapeTargetWidth = 600
+
+                      let transformedSrc: string | undefined = undefined
+                      let objectFitClass: "cover" | "contain" = "cover" // Default
+
+                      if (imgData?.image_url) {
+                        if (imgData.width && imgData.height && imgData.height > 0) {
+                          const aspectRatio = imgData.width / imgData.height
+                          if (aspectRatio < 1) {
+                            // Vertical image: Resize based on height, contain
+                            objectFitClass = "contain"
+                            transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
+                          } else {
+                            // Landscape/Square image: Resize with cover
+                            objectFitClass = "cover"
+                            transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                          }
+                        } else {
+                          // Fallback if dimensions are missing
+                          transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                        }
+                      }
+
+                      // DEBUG LOG for complices-1
+                      if (sectionKey === "complices-1") {
+                        console.log("DEBUG complices-1:", {
+                          imgData,
+                          aspectRatio: imgData?.width && imgData?.height ? imgData.width / imgData.height : "N/A",
+                          objectFitClass,
+                          transformedSrc,
+                        })
+                      }
+
                       return (
                         <CarouselItem key={sectionKey}>
-                          {imgData ? (
-                            <BlurImage
-                              src={imgData.image_url}
-                              hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `Complices ${index}`}
-                              width={imgData.width ?? 500}
-                              height={imgData.height ?? 300}
-                              className="aspect-video w-full rounded-lg object-cover shadow-md"
-                            />
-                          ) : (
-                            <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
-                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
-                            </div>
-                          )}
+                          {/* Added fixed height h-96 here */}
+                          <div className="relative h-96 w-full">
+                            {imgData && transformedSrc ? (
+                              <BlurImage
+                                src={transformedSrc} // Use transformed URL
+                                hash={imgData.blur_hash}
+                                alt={imgData.alt_text || `Complices ${index}`}
+                                // Apply styles directly for fill/cover behavior
+                                className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
+                                objectFit={objectFitClass} // Pass objectFit as a prop
+                              />
+                            ) : (
+                              <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                                {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                              </div>
+                            )}
+                          </div>
                         </CarouselItem>
                       )
                     })}
