@@ -216,7 +216,7 @@ const Index: React.FC = () => {
           {/* Main Heading: Uses Playfair Display font (from Layout/index.css). Responsive text size. */}
           <h1 className="mb-6 text-4xl font-bold md:text-5xl lg:text-7xl">
             <img
-              src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomom.png"
+              src="https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomom.webp"
               alt="Mom.B Logo"
               className="mx-auto"
               loading="eager"

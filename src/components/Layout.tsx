@@ -179,7 +179,7 @@ const Layout: React.FC = () => {
               isScrolled ? "text-sakura-dark-text" : "text-white" // Text color changes on scroll
             }`}>
             <img
-              src={"https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomompink-300x150.png"}
+              src={"https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomompink-300x150.webp"}
               alt="MOM.B Logo Header"
               className={`transition-all duration-300 ${
                 isScrolled ? "h-10 w-auto" : "h-16 w-auto" // Larger when not scrolled, smaller when scrolled

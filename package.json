@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint --fix .",
     "format": "prettier --write .",
-    "lint:format": "eslint --fix . && prettier --write .",
+    "propre": "eslint --fix . && prettier --write .",
     "cleandep": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
     "buildpropre": "bun run lint:format && bun run build",
     "preview": "vite preview",

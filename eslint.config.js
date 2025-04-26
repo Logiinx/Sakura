@@ -77,6 +77,5 @@ export default tseslint.config(
       // Add any script-specific rules here if needed
     },
   },
-
   eslintConfigPrettier // Apply Prettier overrides last
 )
