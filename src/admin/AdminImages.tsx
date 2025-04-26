@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react"
 import type { ChangeEvent } from "react"
 
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Progress } from "@/components/ui/progress" // For upload progress
+import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { supabase } from "@/lib/supabase" // Adjust path if needed
-import type { SiteImageData } from "@/lib/supabasedb"
+import { supabase } from "@/lib/supabase" // Changed path
+import type { SiteImageData } from "@/lib/supabasedb" // Adjust path if needed
 import { getAllSiteImages, updateImageAltText } from "@/lib/supabasedb" // Adjust path if needed
-import { toast } from "sonner" // Assuming you use shadcn's Sonner for notifications
+import { encode } from "blurhash" // <-- Import blurhash
+import { toast } from "sonner" // Assuming you use sonner for toasts
 
 // Define the sections you want to manage
 const VALID_SECTIONS = [
@@ -32,6 +34,48 @@ const VALID_SECTIONS = [
   "about", // Example
 ]
 
+// --- Helper Functions for Client-Side BlurHash ---
+
+// Loads an image file into an HTMLImageElement
+const loadImage = (file: File): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = (...args) => reject(args)
+    img.src = URL.createObjectURL(file)
+  })
+
+// Draws an image to a canvas and returns its ImageData
+const getImageData = (image: HTMLImageElement): ImageData => {
+  const canvas = document.createElement("canvas")
+  canvas.width = image.width
+  canvas.height = image.height
+  const context = canvas.getContext("2d")
+  if (!context) {
+    throw new Error("Failed to get canvas context")
+  }
+  context.drawImage(image, 0, 0)
+  return context.getImageData(0, 0, image.width, image.height)
+}
+
+// Encodes an image file to a BlurHash string
+const encodeImageToBlurhash = async (file: File): Promise<{ hash: string; width: number; height: number }> => {
+  try {
+    const image = await loadImage(file)
+    const imageData = getImageData(image)
+    // Adjust componentX/Y for quality vs performance (e.g., 4x3 is common)
+    const componentX = 4
+    const componentY = 3
+    const hash = encode(imageData.data, imageData.width, imageData.height, componentX, componentY)
+    return { hash, width: image.width, height: image.height }
+  } catch (error) {
+    console.error("Failed to encode blurhash:", error)
+    throw new Error("Could not generate BlurHash for the image.")
+  }
+}
+
+// --- Component Start ---
+
 const AdminImages: React.FC = () => {
   const [images, setImages] = useState<SiteImageData[]>([])
   const [loading, setLoading] = useState(true)
@@ -39,6 +83,10 @@ const AdminImages: React.FC = () => {
 
   // Upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [isHashing, setIsHashing] = useState(false)
+  const [generatedBlurhash, setGeneratedBlurhash] = useState<string | null>(null)
+  const [imageWidth, setImageWidth] = useState<number | null>(null)
+  const [imageHeight, setImageHeight] = useState<number | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isInvokingFunction, setIsInvokingFunction] = useState(false)
@@ -71,17 +119,53 @@ const AdminImages: React.FC = () => {
     fetchImages()
   }, [fetchImages])
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setSelectedFile(null) // Reset previous file
+    setGeneratedBlurhash(null)
+    setImageWidth(null)
+    setImageHeight(null)
+
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0])
+      const file = e.target.files[0]
+      setSelectedFile(file)
+      setIsHashing(true)
+      setError(null) // Clear previous errors
+      console.log("Starting BlurHash encoding...")
+      try {
+        const { hash, width, height } = await encodeImageToBlurhash(file)
+        setGeneratedBlurhash(hash)
+        setImageWidth(width)
+        setImageHeight(height)
+        console.log("BlurHash encoding successful:", { hash, width, height })
+      } catch (hashError) {
+        const msg = hashError instanceof Error ? hashError.message : "Erreur inconnue lors du hashage."
+        console.error("BlurHash encoding failed:", hashError)
+        toast.error(`Erreur BlurHash: ${msg}`)
+        setError(`Erreur BlurHash: ${msg}`) // Show error to user
+        setSelectedFile(null) // Prevent upload if hashing fails
+        // Optionally reset file input
+        e.target.value = ""
+      } finally {
+        setIsHashing(false)
+      }
     } else {
+      // No file selected or selection cancelled
       setSelectedFile(null)
+      setGeneratedBlurhash(null)
+      setImageWidth(null)
+      setImageHeight(null)
+      setIsHashing(false)
     }
   }
 
   const handleUpload = async () => {
-    if (!selectedFile || !uploadSection) {
-      toast.warning("Veuillez sélectionner un fichier et une section.")
+    // Also check if hashing is done and hash exists
+    if (!selectedFile || !uploadSection || isHashing || !generatedBlurhash) {
+      toast.warning(
+        `Veuillez sélectionner un fichier et une section${
+          isHashing ? " (Hashage en cours...)" : !generatedBlurhash && selectedFile ? " (Erreur BlurHash)" : ""
+        }.`
+      )
       return
     }
 
@@ -138,7 +222,11 @@ const AdminImages: React.FC = () => {
         filePath: uploadedPath,
         section: uploadSection,
         altText: uploadAltText || "", // Use empty string if undefined/null
-        contentType: selectedFile.type,
+        // contentType: selectedFile.type, // Edge func doesn't use this anymore
+        // Pass the generated data
+        blurHash: generatedBlurhash, // Send the generated hash
+        width: imageWidth, // Send the width
+        height: imageHeight, // Send the height
       }
       console.log("Invoking Edge Function with payload object:", payloadObject) // Log the object being sent
 
@@ -323,8 +411,12 @@ const AdminImages: React.FC = () => {
           {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
         </CardContent>
         <CardFooter>
-          <Button onClick={handleUpload} disabled={uploading || isInvokingFunction || !selectedFile || !uploadSection}>
-            {uploading || isInvokingFunction ? "Traitement en cours..." : "Uploader l'Image"}
+          <Button
+            onClick={handleUpload}
+            disabled={
+              uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
+            }>
+            {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
           </Button>
         </CardFooter>
       </Card>

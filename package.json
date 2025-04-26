@@ -15,7 +15,8 @@
     "preview": "vite preview",
     "list": "node scripts/dev.js list",
     "generate": "node scripts/dev.js generate",
-    "parse-prd": "node scripts/dev.js parse-prd"
+    "parse-prd": "node scripts/dev.js parse-prd",
+    "deploy": "bunx supabase functions deploy upload-site-image --project-ref mjlgssaipclicfybxjnj"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -111,6 +112,8 @@
     "vite": "^5.4.18"
   },
   "trustedDependencies": [
-    "@swc/core"
+    "@swc/core",
+    "esbuild",
+    "supabase"
   ]
 }

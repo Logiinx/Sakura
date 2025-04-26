@@ -48,6 +48,7 @@
 | 8   | Individual Gallery Pages   | ⭕ Pending | 🔥 High   | 5, 7 | 8     | Dynamically generated pages for each photo gallery category.            | Wedding, Baby, Family, etc. Fetch photos from Supabase based on category.                                                   |
 | 15  | Lazy Loading for Galleries | ⭕ Pending | 🔶 Medium | 8    | 14    | Implement lazy loading for images within gallery pages.                 | Improve initial page load performance.                                                                                      |
 | 23  | Fix Carousel Image Sizing  | ✅ Done    | 🔥 High   | 2, 5 | 7.5   | Ensure consistent image sizes in homepage carousels & optimize loading. | Applied fixed height, Supabase transforms, and conditional object-fit (cover/contain) based on aspect ratio in `Index.tsx`. |
+| 24  | Defer Carousel Autoplay    | ✅ Done    | 🔶 Medium | 2    | 7.6   | Start carousel autoplay only when the carousel enters the viewport.     | Used IntersectionObserver (`useInView`) and Embla API (`play()`) in `Index.tsx`.                                            |
 
 ---
 

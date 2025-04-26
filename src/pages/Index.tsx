@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
-import React, { useMemo, useCallback } from "react"
+// Import Embla API type
+import type { UseEmblaCarouselType } from "embla-carousel-react"
+import React, { useMemo, useCallback, useState, useEffect } from "react"
+// Import icons directly from their subfolders for better tree-shaking
 import { BiBriefcaseAlt2 } from "react-icons/bi"
 import { BsHouseDoor } from "react-icons/bs"
 import { HiOutlineSparkles } from "react-icons/hi"
@@ -8,6 +11,7 @@ import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
+import { useInView } from "@/hooks/useInView"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
 import { getSectionText, getSectionImages } from "@/lib/supabasedb"
 import type { SiteImageData } from "@/lib/supabasedb"
@@ -19,8 +23,9 @@ import Autoplay from "embla-carousel-autoplay"
  * It includes sections like Hero, About, Featured Gallery, and a Call to Action.
  */
 
-// Create autoplay plugin factory function
-const createAutoplayPlugin = () => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })
+// Create autoplay plugin factory function - ensure playOnInit is false
+const createAutoplayPlugin = () =>
+  Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true, playOnInit: false })
 
 // --- START: Modified Hooks ---
 // Hook for fetching text sections
@@ -90,21 +95,77 @@ const Index: React.FC = () => {
   )
   // --- END: Use TanStack Query Hooks ---
 
-  // Create refs for each section
+  // --- START: Use useScrollAnimation for text AND carousels, useInView for carousel visibility ---
+  // Create refs for text sections (using scroll animation)
   const maternityTextRef = useScrollAnimation()
-  const maternityCarouselRef = useScrollAnimation()
   const familyTextRef = useScrollAnimation()
-  const familyCarouselRef = useScrollAnimation()
   const babyTextRef = useScrollAnimation()
-  const babyCarouselRef = useScrollAnimation()
   const complicesTextRef = useScrollAnimation()
-  const complicesCarouselRef = useScrollAnimation()
 
-  // Create separate autoplay plugin instances for each carousel
-  const maternityAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
-  const familyAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
-  const babyAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
-  const complicesAutoplay = React.useMemo(() => createAutoplayPlugin(), [])
+  // Create refs for carousels (using scroll animation for slide-in)
+  const maternityCarouselRef = useScrollAnimation() // Use this for animation
+  const familyCarouselRef = useScrollAnimation() // Use this for animation
+  const babyCarouselRef = useScrollAnimation() // Use this for animation
+  const complicesCarouselRef = useScrollAnimation() // Use this for animation
+
+  // Use useInView *with* the refs from useScrollAnimation just to get visibility status for autoplay
+  // Note: We ignore the first returned value (the ref) from useInView as we already have one.
+  const [, isMaternityCarouselVisible] = useInView({
+    targetRef: maternityCarouselRef,
+    triggerOnce: true,
+    rootMargin: "-100px",
+  })
+  const [, isFamilyCarouselVisible] = useInView({
+    targetRef: familyCarouselRef,
+    triggerOnce: true,
+    rootMargin: "-100px",
+  })
+  const [, isBabyCarouselVisible] = useInView({ targetRef: babyCarouselRef, triggerOnce: true, rootMargin: "-100px" })
+  const [, isComplicesCarouselVisible] = useInView({
+    targetRef: complicesCarouselRef,
+    triggerOnce: true,
+    rootMargin: "-100px",
+  })
+  // --- END: Use useScrollAnimation for text AND carousels, useInView for carousel visibility ---
+
+  // --- START: Get Carousel API instances and manage autoplay ---
+  const [maternityApi, setMaternityApi] = useState<UseEmblaCarouselType[1] | undefined>()
+  const [familyApi, setFamilyApi] = useState<UseEmblaCarouselType[1] | undefined>()
+  const [babyApi, setBabyApi] = useState<UseEmblaCarouselType[1] | undefined>()
+  const [complicesApi, setComplicesApi] = useState<UseEmblaCarouselType[1] | undefined>()
+
+  // Memoize autoplay plugins (no changes needed here, already done via createAutoplayPlugin)
+  const maternityAutoplay = useMemo(() => createAutoplayPlugin(), [])
+  const familyAutoplay = useMemo(() => createAutoplayPlugin(), [])
+  const babyAutoplay = useMemo(() => createAutoplayPlugin(), [])
+  const complicesAutoplay = useMemo(() => createAutoplayPlugin(), [])
+
+  // Effect to play autoplay when carousel is visible and API is ready
+  useEffect(() => {
+    if (isMaternityCarouselVisible && maternityApi) {
+      maternityApi.plugins().autoplay?.play()
+    }
+  }, [isMaternityCarouselVisible, maternityApi])
+
+  useEffect(() => {
+    if (isFamilyCarouselVisible && familyApi) {
+      familyApi.plugins().autoplay?.play()
+    }
+  }, [isFamilyCarouselVisible, familyApi])
+
+  useEffect(() => {
+    if (isBabyCarouselVisible && babyApi) {
+      babyApi.plugins().autoplay?.play()
+    }
+  }, [isBabyCarouselVisible, babyApi])
+
+  useEffect(() => {
+    if (isComplicesCarouselVisible && complicesApi) {
+      complicesApi.plugins().autoplay?.play()
+    }
+  }, [isComplicesCarouselVisible, complicesApi])
+  // --- END: Get Carousel API instances and manage autoplay ---
+
   const heroImageData = getImageData("hero")
   console.log("Hero Image Data:", heroImageData)
   console.log("Images Loading:", imagesLoading)
@@ -116,24 +177,36 @@ const Index: React.FC = () => {
       {/* `relative` allows absolute positioning of children. `h-screen` makes it full viewport height. */}
       {/* `flex items-center` vertically centers the content. */}
       <section className="relative flex h-screen items-center">
-        {/* Background Image Container - Simplified Logic */}
-        <div
-          className="transition-background-image absolute inset-0 bg-cover bg-center duration-500 ease-in-out" // Added transition class (ensure defined in CSS/Tailwind)
-          style={{
-            backgroundImage: getImageData("hero") ? `url(${getImageData("hero")!.image_url})` : undefined, // Set background only if image data exists
-            backgroundColor: !getImageData("hero") ? "#A0AEC0" : undefined, // Fallback background color if no image (Tailwind gray-500)
-          }}>
-          {/* Dark Overlay: Applied only when the image is successfully loaded */}
-          {getImageData("hero") && <div className="absolute inset-0 bg-black bg-opacity-30"></div>}
-        </div>
-
-        {/* Error Message (Overlay) */}
-        {imagesError &&
-          !imagesLoading && ( // Prevent showing error during initial load
-            <div className="absolute inset-0 flex items-center justify-center bg-red-700 bg-opacity-75 text-white">
-              Erreur lors du chargement de l&apos;image de fond.
+        {/* Background Layer */}
+        <div className="absolute inset-0">
+          {/* Show placeholder/error or the actual image */}
+          {imagesError && !heroImageData && (
+            // Error state if image fails to load initially
+            <div className="flex h-full w-full items-center justify-center bg-red-200 text-red-800">
+              Error loading background.
             </div>
           )}
+          {heroImageData && (
+            <BlurImage
+              src={heroImageData.image_url}
+              hash={heroImageData.blur_hash}
+              alt={heroImageData.alt_text || "Hero background image"}
+              className="h-full w-full" // Ensure it fills the container
+              objectFit="cover" // Ensure the image covers the area
+              fetchPriority="high"
+              overlayClassName="absolute inset-0 bg-black bg-opacity-30" // Pass overlay style here
+            />
+          )}
+
+          {/* Error Message (Overlay - shown if fetch fails *after* initial load attempt) */}
+          {imagesError &&
+            !imagesLoading &&
+            !heroImageData && ( // Only show if data couldn't be fetched at all
+              <div className="absolute inset-0 flex items-center justify-center bg-red-700 bg-opacity-75 text-white">
+                Erreur lors du chargement de l&apos;image de fond.
+              </div>
+            )}
+        </div>
 
         {/* Hero Content Container */}
         {/* `sakura-container` provides consistent padding/max-width. */}
@@ -180,7 +253,11 @@ const Index: React.FC = () => {
                 </Link>
               </div>
               <div ref={maternityCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
-                <Carousel className="w-full" plugins={[maternityAutoplay]}>
+                <Carousel
+                  className="w-full"
+                  plugins={[maternityAutoplay]}
+                  opts={{ loop: true }}
+                  setApi={setMaternityApi}>
                   <CarouselContent>
                     {/* Dynamic Carousel Items */}
                     {[1, 2, 3].map((index) => {
@@ -247,7 +324,7 @@ const Index: React.FC = () => {
           <div className="sakura-container">
             <div className="flex flex-col-reverse items-center gap-16 lg:flex-row lg:items-start">
               <div ref={familyCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
-                <Carousel className="w-full" plugins={[familyAutoplay]}>
+                <Carousel className="w-full" plugins={[familyAutoplay]} opts={{ loop: true }} setApi={setFamilyApi}>
                   <CarouselContent>
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`famille-${index}`)
@@ -335,7 +412,7 @@ const Index: React.FC = () => {
                 </Link>
               </div>
               <div ref={babyCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
-                <Carousel className="w-full" plugins={[babyAutoplay]}>
+                <Carousel className="w-full" plugins={[babyAutoplay]} opts={{ loop: true }} setApi={setBabyApi}>
                   <CarouselContent>
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`bebe-${index}`)
@@ -401,7 +478,11 @@ const Index: React.FC = () => {
           <div className="sakura-container">
             <div className="flex flex-col-reverse items-center gap-16 lg:flex-row lg:items-start">
               <div ref={complicesCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
-                <Carousel className="w-full" plugins={[complicesAutoplay]}>
+                <Carousel
+                  className="w-full"
+                  plugins={[complicesAutoplay]}
+                  opts={{ loop: true }}
+                  setApi={setComplicesApi}>
                   <CarouselContent>
                     {[1, 2, 3].map((index) => {
                       const imgData = getImageData(`complices-${index}`)

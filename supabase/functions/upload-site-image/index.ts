@@ -8,38 +8,16 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { corsHeaders } from "../_shared/cors.ts"
-// Import ImageMagick for WASM image processing
-import { ImageMagick, initializeImageMagick, MagickFormat } from "https://deno.land/x/imagemagick_deno@0.0.14/mod.ts"
-// Blurhash calculation is removed for now due to WASM/environment limitations
-// import { encode as encodeBlurhash } from "https://deno.land/x/blurhash@v1.0/mod.ts";
 
-// Initialize ImageMagick WASM Module (do this outside the handler)
-// Use a flag to ensure it only runs once
-let imagemagickInitialized = false
-const initializeIM = async () => {
-  if (!imagemagickInitialized) {
-    console.log("Initializing ImageMagick...")
-    try {
-      await initializeImageMagick()
-      imagemagickInitialized = true
-      console.log("ImageMagick initialized successfully.")
-    } catch (initError) {
-      console.error("Failed to initialize ImageMagick:", initError)
-      // If initialization fails, the function might not work correctly later
-      // Consider how to handle this - maybe throw to prevent function execution?
-    }
-  }
-}
-// Call initialization immediately when the function loads
-initializeIM()
-
-console.log('Function "upload-site-image" starting up (v5 - ImageMagick for dims/size, no blurhash)...')
+console.log('Function "upload-site-image" starting up (v6 - Client-side blurhash)...')
 
 interface RequestBody {
   filePath: string // Path in Storage bucket from client upload
   section: string
   altText?: string
-  contentType?: string // Optional, might still be useful
+  width?: number // Added: width from client
+  height?: number // Added: height from client
+  blurHash?: string // Added: blurHash from client
 }
 
 serve(async (req: Request) => {
@@ -78,14 +56,17 @@ serve(async (req: Request) => {
     }
 
     // If we reach here, JSON parsing succeeded
-    const { filePath, section, altText } = body
+    // Extract data including the new fields
+    const { filePath, section, altText, width, height, blurHash } = body
 
     if (!filePath || !section) {
       // This check might be redundant if the interface matches, but good validation
       throw new Error("Missing required fields in parsed JSON body: filePath and section are required.")
     }
 
-    console.log(`Processing parsed data - Path: ${filePath}, Section: ${section}, Alt: ${altText}`)
+    console.log(
+      `Processing parsed data - Path: ${filePath}, Section: ${section}, Alt: ${altText}, W: ${width}, H: ${height}, Hash: ${blurHash}`
+    )
 
     // 2. Create Supabase Admin Client
     const supabaseAdmin = createClient(
@@ -108,53 +89,8 @@ serve(async (req: Request) => {
     const publicUrl = urlData.publicUrl
     console.log("Public URL obtained:", publicUrl)
 
-    // ---- Start Image Processing (Dimensions and Size only) ----
-    let imageWidth: number | null = null
-    let imageHeight: number | null = null
-    let imageSize: number | null = null // Store size in bytes
-    const blurHash: string | null = null // Blurhash is skipped for now
-
-    if (!imagemagickInitialized) {
-      console.error("ImageMagick not initialized, skipping image processing.")
-      // Proceed without width/height if IM failed to init
-    } else {
-      try {
-        console.log(`Attempting to fetch image from URL: ${publicUrl}`)
-        const imageResponse = await fetch(publicUrl)
-        if (!imageResponse.ok) {
-          throw new Error(`Failed to fetch image from URL (${imageResponse.status}): ${publicUrl}`)
-        }
-        const imageArrayBuffer = await imageResponse.arrayBuffer()
-        const imageUint8Array = new Uint8Array(imageArrayBuffer)
-        imageSize = imageUint8Array.byteLength // Get size in bytes
-        console.log(`Image fetched successfully. Size: ${imageSize} bytes`)
-
-        // Use ImageMagick to read the image and get dimensions
-        console.log("Processing image with ImageMagick to get dimensions...")
-        await new Promise<void>((resolve, reject) => {
-          ImageMagick.read(imageUint8Array, (img) => {
-            try {
-              imageWidth = img.width
-              imageHeight = img.height
-              console.log(`ImageMagick read success. Dimensions: ${imageWidth}x${imageHeight}`)
-              // We don't need to write the image back out, just read dimensions
-              resolve()
-            } catch (readError) {
-              console.error("ImageMagick.read callback error:", readError)
-              reject(readError)
-            }
-          })
-        })
-      } catch (processingError) {
-        console.error("Image processing (dimensions/size) failed:", processingError)
-        // Log the error but don't block the database update.
-        // Width/height/size will remain null.
-        imageWidth = null // Ensure they are null on error
-        imageHeight = null
-        imageSize = null
-      }
-    }
-    // ---- End Image Processing ----
+    // ---- Image processing (size, width, height, blurhash) is now done on the client ----
+    // We will get size from Storage directly if needed later, or assume client handles it.
 
     // 4. Upsert data into the 'site_images' table
     console.log(`Checking existing entry for section: ${section}`)
@@ -173,10 +109,9 @@ serve(async (req: Request) => {
       section: section,
       image_url: publicUrl,
       alt_text: altText || null, // Ensure null if empty string
-      width: imageWidth,
-      height: imageHeight,
-      size: imageSize ? imageSize.toString() : null, // Store size as string or keep null
-      blur_hash: blurHash, // Always null for now
+      width: width ?? null, // Use client-provided width
+      height: height ?? null, // Use client-provided height
+      blur_hash: blurHash ?? null, // Use the potentially updated blurHash value
     }
 
     let dbError: Error | null = null
@@ -207,15 +142,14 @@ serve(async (req: Request) => {
 
     console.log(`Database record upserted successfully for section: ${section}`)
 
-    // 5. Return success response
+    // 5. Return success response (include the received/saved data)
     return new Response(
       JSON.stringify({
         success: true,
         url: publicUrl,
-        width: imageWidth,
-        height: imageHeight,
-        size: imageSize,
-        blurhash: blurHash,
+        width: imageDataToSave.width,
+        height: imageDataToSave.height,
+        blurhash: imageDataToSave.blur_hash,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -240,6 +174,6 @@ serve(async (req: Request) => {
   curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/upload-site-image' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
     --header 'Content-Type: application/json' \
-    --data '{"name":"Functions"}'
+    --data '{"filePath": "public/your-image.jpg", "section": "test-section", "altText": "Test", "width": 800, "height": 600, "blurHash": "LKO2?U%2Tw=w]~RBVZRi};RPxuwH"}'
 
 */

@@ -9,17 +9,19 @@ interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   punch?: number
   alt: string
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down" // Add objectFit prop
+  overlayClassName?: string // Optional class for an overlay div
 }
 
 export const BlurImage: React.FC<BlurImageProps> = ({
   src,
   hash,
-  hashWidth = 128, // Default blurhash render size
-  hashHeight = 128, // Default blurhash render size
+  hashWidth = 32, // Can use lower default resolution for performance if needed
+  hashHeight = 32,
   punch = 1,
   alt,
   className, // Pass through className
   objectFit = "cover", // Default to 'cover'
+  overlayClassName, // Destructure the new prop
   ...rest // Pass through other img attributes like width, height
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -40,42 +42,57 @@ export const BlurImage: React.FC<BlurImageProps> = ({
     }
   }, [src]) // Reload if src changes
 
-  const showBlurhash = hash && !imageLoaded
+  // Keep showBlurhash for checking if hash exists, but don't use for conditional rendering directly
+  const hasBlurhash = !!hash
   const { width, height, ...imgRest } = rest // Separate width/height for blurhash canvas if needed
 
   return (
-    <div className={`relative overflow-hidden ${className || ""}`} style={{ width: width, height: height }}>
-      {/* Blurhash Canvas */}
-      {showBlurhash && (
-        <Blurhash
-          hash={hash}
-          width={width ? Number(width) : hashWidth} // Use actual width if provided
-          height={height ? Number(height) : hashHeight} // Use actual height if provided
-          resolutionX={32} // Lower resolution for performance
-          resolutionY={32}
-          punch={punch}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
+    <div
+      className={`relative overflow-hidden bg-transparent ${className || ""}`}
+      style={{ width: width, height: height }}>
+      {/* Container for image and blurhash */}
+      <div className="absolute inset-0">
+        {/* Blurhash Canvas - Always rendered if hash exists, fades out */}
+        {hasBlurhash && hash && (
+          <Blurhash
+            hash={hash}
+            width="100%" // Explicit width
+            height="100%" // Explicit height
+            resolutionX={hashWidth} // Use prop for resolution
+            resolutionY={hashHeight} // Use prop for resolution
+            punch={punch}
+            className={`absolute inset-0 h-full w-full bg-transparent transition-opacity duration-500 ${
+              imageLoaded ? "opacity-0" : "opacity-100" // Fade out when image loaded
+            }`}
+            // Removed inline style, class takes precedence
+          />
+        )}
 
-      {/* Actual Image */}
-      <img
-        src={src}
-        alt={alt}
-        loading="lazy" // Keep lazy loading
-        onLoad={() => setImageLoaded(true)}
-        className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
-          imageLoaded ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ objectFit: objectFit }}
-        {...imgRest} // Apply remaining props like style, etc.
-        // Apply explicit width/height if passed
-        width={width}
-        height={height}
-      />
-      {/* Fallback in case image fails to load but blurhash isn't shown */}
-      {!showBlurhash && !imageLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">Loading...</div>
+        {/* Actual Image - Always Rendered, Opacity Transitions */}
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy" // Keep lazy loading
+          onLoad={() => setImageLoaded(true)}
+          className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
+            imageLoaded ? "opacity-100" : "opacity-0" // Fade in when image loaded
+          }`}
+          style={{ objectFit: objectFit }}
+          {...imgRest} // Apply remaining props like style, etc.
+          // Apply explicit width/height if passed
+          width={width}
+          height={height}
+        />
+      </div>
+
+      {/* Overlay Div - Rendered on top if class provided */}
+      {overlayClassName && <div className={overlayClassName}></div>}
+
+      {/* Fallback - Shows if NO blurhash AND image not loaded */}
+      {!hasBlurhash && !imageLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-transparent text-gray-500">
+          {/* Loading... */}
+        </div>
       )}
     </div>
   )
