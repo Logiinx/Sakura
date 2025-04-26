@@ -1,24 +1,10 @@
+import type { PostgrestError } from "@supabase/supabase-js"
+
 import { supabase } from "./supabase"
 
-export async function getSectionText(section: string) {
-  try {
-    const { data, error } = await supabase.from("sections_texts").select("content").eq("section", section).maybeSingle()
-
-    if (error) {
-      console.error(`Erreur lors du chargement du texte pour la section "${section}" :`, error.message)
-      return null
-    }
-
-    return data?.content ?? null
-  } catch (error) {
-    console.error(`Erreur lors du chargement du texte pour la section "${section}" :`, error)
-    return null
-  }
-}
-
-// --- START: Added Code for Site Images ---
-
-// Interface for the image data structure matching your table
+/**
+ * Represents the structure of image data stored in the 'site_images' table.
+ */
 export interface SiteImageData {
   id: number
   created_at: string
@@ -29,113 +15,151 @@ export interface SiteImageData {
   section: string
   blur_hash: string | null
   size: string | null // Assuming size is stored as text, adjust if it's numeric
-  // Add updated_at if you have it, needed for updateImageAltText
-  updated_at?: string
+  updated_at?: string // Optional, but recommended for tracking updates
 }
 
-// Fetches image data for one or more sections
-export async function getSectionImages(sections: string[]): Promise<Record<string, SiteImageData | null>> {
-  console.log("[getSectionImages] Requested sections:", sections) // <<< ADDED LOG
+/**
+ * Centralized error handler for Supabase queries.
+ * @param error - The PostgrestError from Supabase.
+ * @param context - A description of the operation being performed (e.g., "loading section text").
+ * @throws Throws an error with a descriptive message.
+ */
+function handleSupabaseError(error: PostgrestError, context: string): never {
+  console.error(`Supabase error during ${context}:`, error.message)
+  throw new Error(`Failed to ${context}. ${error.message}`)
+}
 
+/**
+ * Fetches the content for a specific text section from the 'sections_texts' table.
+ * @param section - The name of the section to fetch.
+ * @returns The content of the section, or null if not found.
+ * @throws If there's an error fetching the data.
+ */
+export async function getSectionText(section: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase
+      .from("sections_texts")
+      .select("content") // Select only necessary column
+      .eq("section", section)
+      .maybeSingle()
+
+    if (error) {
+      handleSupabaseError(error, `loading text for section "${section}"`)
+    }
+
+    return data?.content ?? null
+  } catch (error) {
+    // Catch errors from handleSupabaseError or other unexpected issues
+    console.error(`Unexpected error loading text for section "${section}":`, error)
+    throw error // Re-throw the error to be handled by the caller (e.g., React Query)
+  }
+}
+
+/**
+ * Fetches image data for one or more specified sections from the 'site_images' table.
+ * Organizes the results into a record keyed by section name.
+ * @param sections - An array of section names to fetch images for.
+ * @returns A record where keys are section names and values are the corresponding SiteImageData or null if not found/error.
+ * @throws If there's an error fetching the data.
+ */
+export async function getSectionImages(sections: string[]): Promise<Record<string, SiteImageData | null>> {
   if (!sections || sections.length === 0) {
-    console.log("[getSectionImages] No sections requested, returning empty object.") // <<< ADDED LOG
     return {}
   }
 
-  try {
-    const { data, error } = await supabase
-      .from("site_images")
-      .select("*") // Select all columns defined in the interface
-      .in("section", sections)
+  // Explicitly list columns based on SiteImageData interface
+  const columnsToSelect = "id, created_at, image_url, alt_text, width, height, section, blur_hash, size, updated_at"
 
-    console.log("[getSectionImages] Raw data from Supabase:", data) // <<< ADDED LOG
-    console.log("[getSectionImages] Supabase error:", error) // <<< ADDED LOG
+  try {
+    const { data, error } = await supabase.from("site_images").select(columnsToSelect).in("section", sections)
 
     if (error) {
-      console.error(`[getSectionImages] Error loading images for sections "${sections.join(", ")}":`, error.message)
-      // Return an object with null for each requested section on error
-      const errorResult = sections.reduce(
-        (acc, section) => {
-          acc[section] = null
-          return acc
-        },
-        {} as Record<string, SiteImageData | null>
-      )
-      console.log("[getSectionImages] Returning error result:", errorResult) // <<< ADDED LOG
-      return errorResult
+      handleSupabaseError(error, `loading images for sections "${sections.join(", ")}"`)
     }
 
-    // Organize data by section
+    // Initialize result object with null for all requested sections
     const imagesBySection = sections.reduce(
-      (acc, section) => {
-        acc[section] = null // Default to null
-        return acc
-      },
-      {} as Record<string, SiteImageData | null>
-    )
-
-    if (data) {
-      data.forEach((image) => {
-        // Type assertion, ensure your DB columns match SiteImageData
-        if (image && image.section) {
-          // Basic check before assignment
-          imagesBySection[image.section] = image as SiteImageData
-        } else {
-          console.warn("[getSectionImages] Skipping invalid image data from DB:", image) // <<< ADDED LOG
-        }
-      })
-    }
-
-    console.log("[getSectionImages] Final processed data:", imagesBySection) // <<< ADDED LOG
-    return imagesBySection
-  } catch (error) {
-    console.error(`[getSectionImages] CATCH BLOCK Error loading images for sections "${sections.join(", ")}":`, error)
-    const catchErrorResult = sections.reduce(
       (acc, section) => {
         acc[section] = null
         return acc
       },
       {} as Record<string, SiteImageData | null>
     )
-    console.log("[getSectionImages] Returning catch block error result:", catchErrorResult) // <<< ADDED LOG
-    return catchErrorResult
+
+    // Populate the result object with fetched data
+    if (data) {
+      data.forEach((image) => {
+        // The select guarantees the shape matches SiteImageData (or is null)
+        if (image && image.section && sections.includes(image.section)) {
+          imagesBySection[image.section] = image as SiteImageData // Type assertion is safe here due to explicit select
+        } else {
+          // This case should ideally not happen with the .in() filter, but good for robustness
+          console.warn("[getSectionImages] Skipping image data not matching requested sections:", image)
+        }
+      })
+    }
+
+    return imagesBySection
+  } catch (error) {
+    console.error(`Unexpected error loading images for sections "${sections.join(", ")}":`, error)
+    // Rethrow to allow React Query or other callers to handle the error state
+    throw error
   }
 }
 
-// Fetches ALL images (for the admin panel)
+/**
+ * Fetches all images from the 'site_images' table, ordered by section.
+ * Primarily used for administrative purposes (e.g., admin panel).
+ * @returns An array of SiteImageData objects.
+ * @throws If there's an error fetching the data.
+ */
 export async function getAllSiteImages(): Promise<SiteImageData[]> {
+  // Explicitly list columns based on SiteImageData interface
+  const columnsToSelect = "id, created_at, image_url, alt_text, width, height, section, blur_hash, size, updated_at"
+
   try {
-    const { data, error } = await supabase.from("site_images").select("*").order("section", { ascending: true }) // Order for easier viewing
+    const { data, error } = await supabase
+      .from("site_images")
+      .select(columnsToSelect)
+      .order("section", { ascending: true })
+      .order("created_at", { ascending: true }) // Add secondary sort for consistency within sections
 
     if (error) {
-      console.error("Error loading all site images:", error.message)
-      return []
+      handleSupabaseError(error, "loading all site images")
     }
+
+    // Ensure data is treated as an array, return empty array if null/undefined
     return (data as SiteImageData[]) || []
   } catch (error) {
-    console.error("Error loading all site images:", error)
-    return []
+    console.error("Unexpected error loading all site images:", error)
+    throw error // Re-throw
   }
 }
 
-// Function to update alt text (example of an update operation)
+/**
+ * Updates the alt text for a specific image in the 'site_images' table.
+ * Also updates the 'updated_at' timestamp.
+ * @param id - The ID of the image to update.
+ * @param altText - The new alt text.
+ * @returns True if the update was successful, false otherwise.
+ * @throws If there's an error during the update process.
+ */
 export async function updateImageAltText(id: number, altText: string): Promise<boolean> {
   try {
-    // Ensure you have an 'updated_at' column handled by Supabase triggers or manually update it
     const { error } = await supabase
       .from("site_images")
-      .update({ alt_text: altText, updated_at: new Date().toISOString() }) // Update timestamp
+      .update({ alt_text: altText, updated_at: new Date().toISOString() })
       .eq("id", id)
 
     if (error) {
-      console.error(`Error updating alt text for image ID ${id}:`, error.message)
-      return false
+      handleSupabaseError(error, `updating alt text for image ID ${id}`)
     }
     return true
   } catch (error) {
-    console.error(`Error updating alt text for image ID ${id}:`, error)
+    console.error(`Unexpected error updating alt text for image ID ${id}:`, error)
+    // Don't re-throw here if the desired return type is boolean for simple success/failure check
+    // If the caller needs to know *why* it failed, re-throwing might be better.
+    // Sticking to the original return type for minimal behavioral change.
     return false
   }
 }
-
-// --- END: Added Code for Site Images ---
