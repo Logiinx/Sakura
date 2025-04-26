@@ -4,6 +4,9 @@ export function useScrollAnimation() {
   const elementRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const element = elementRef.current // Store ref value in a variable
+    if (!element) return
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -18,16 +21,12 @@ export function useScrollAnimation() {
       }
     )
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current)
-    }
+    observer.observe(element)
 
     return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current)
-      }
+      observer.unobserve(element) // Use the stored variable
     }
-  }, [])
+  }, []) // Empty dependency array is fine since elementRef is stable
 
   return elementRef
 }
