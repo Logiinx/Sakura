@@ -10,7 +10,7 @@
     "lint": "eslint --fix .",
     "format": "prettier --write .",
     "lint:format": "eslint --fix . && prettier --write .",
-    "cleanpackages": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
+    "cleandep": "powershell -Command \"Remove-Item -Recurse -Force node_modules\" && bun install",
     "buildpropre": "bun run lint:format && bun run build",
     "preview": "vite preview",
     "list": "node scripts/dev.js list",
