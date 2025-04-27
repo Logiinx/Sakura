@@ -72,7 +72,6 @@ export const BlurImage: React.FC<BlurImageProps> = ({
         <img
           src={src}
           alt={alt}
-          loading="lazy" // Keep lazy loading
           onLoad={() => setImageLoaded(true)}
           className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
             imageLoaded ? "opacity-100" : "opacity-0" // Fade in when image loaded
