@@ -194,6 +194,7 @@ const Index: React.FC = () => {
               className="h-full w-full" // Ensure it fills the container
               objectFit="cover" // Ensure the image covers the area
               fetchPriority="high"
+              loading="eager"
               overlayClassName="absolute inset-0 bg-black bg-opacity-30" // Pass overlay style here
             />
           )}
