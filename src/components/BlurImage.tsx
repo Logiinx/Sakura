@@ -10,6 +10,7 @@ interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   alt: string
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down" // Add objectFit prop
   overlayClassName?: string // Optional class for an overlay div
+  crossorigin?: "" | "anonymous" | "use-credentials"
 }
 
 export const BlurImage: React.FC<BlurImageProps> = ({
@@ -22,6 +23,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
   className, // Pass through className
   objectFit = "cover", // Default to 'cover'
   overlayClassName, // Destructure the new prop
+  crossorigin, // Destructure crossorigin
   ...rest // Pass through other img attributes like width, height
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -77,6 +79,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
             imageLoaded ? "opacity-100" : "opacity-0" // Fade in when image loaded
           }`}
           style={{ objectFit: objectFit }}
+          crossOrigin={crossorigin} // Apply crossorigin
           {...imgRest} // Apply remaining props like style, etc.
           // Apply explicit width/height if passed
           width={width}

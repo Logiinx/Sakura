@@ -363,10 +363,10 @@ const Layout: React.FC = () => {
           <div className="flex flex-col items-center justify-between text-center md:flex-row md:text-left">
             {/* Footer Logo and Tagline */}
             <div className="mb-6 md:mb-0">
-              <Link to="/" className="font-bad-script text-xl font-bold text-sakura-dark-text">
+              <Link to="/" className="font-bad-script text-xl font-bold tracking-wider text-sakura-dark-text">
                 MOM.B
               </Link>
-              <p className="mt-2 font-bad-script text-sm tracking-widest text-gray-500">
+              <p className="mt-2 font-bad-script text-base tracking-wider text-gray-500">
                 Barbara - Photographe famille, mariage, grossesse, bébé
               </p>
             </div>

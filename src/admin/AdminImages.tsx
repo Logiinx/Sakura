@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase" // Changed path
 import type { SiteImageData } from "@/lib/supabasedb" // Adjust path if needed
 import { getAllSiteImages, updateImageAltText } from "@/lib/supabasedb" // Adjust path if needed
 import { encode } from "blurhash" // <-- Import blurhash
-import { toast } from "sonner" // Assuming you use sonner for toasts
+import { toast } from "sonner"
 
 // Define the sections you want to manage
 const VALID_SECTIONS = [
@@ -30,8 +30,7 @@ const VALID_SECTIONS = [
   "bebe-3",
   "complices-1",
   "complices-2",
-  "complices-3",
-  "about", // Example
+  "complices-3", // Example
 ]
 
 // --- Helper Functions for Client-Side BlurHash ---
@@ -130,16 +129,16 @@ const AdminImages: React.FC = () => {
       setSelectedFile(file)
       setIsHashing(true)
       setError(null) // Clear previous errors
-      console.log("Starting BlurHash encoding...")
+      // console.log("Starting BlurHash encoding...") // Removed log
       try {
         const { hash, width, height } = await encodeImageToBlurhash(file)
         setGeneratedBlurhash(hash)
         setImageWidth(width)
         setImageHeight(height)
-        console.log("BlurHash encoding successful:", { hash, width, height })
+        // console.log("BlurHash encoding successful:", { hash, width, height }) // Removed log
       } catch (hashError) {
         const msg = hashError instanceof Error ? hashError.message : "Erreur inconnue lors du hashage."
-        console.error("BlurHash encoding failed:", hashError)
+        console.error("BlurHash encoding failed:", hashError) // Keep console.error
         toast.error(`Erreur BlurHash: ${msg}`)
         setError(`Erreur BlurHash: ${msg}`) // Show error to user
         setSelectedFile(null) // Prevent upload if hashing fails
@@ -180,9 +179,9 @@ const AdminImages: React.FC = () => {
 
     try {
       // --- Add Logging --- START
-      console.log(`Attempting direct upload to Storage. Bucket: assets, Path: ${filePath}`)
-      console.log(`File selected: ${selectedFile?.name}, Size: ${selectedFile?.size}, Type: ${selectedFile?.type}`)
-      console.log(`Current Auth Session:`, await supabase.auth.getSession()) // Log session info
+      // console.log(`Attempting direct upload to Storage. Bucket: assets, Path: ${filePath}`) // Removed log
+      // console.log(`File selected: ${selectedFile?.name}, Size: ${selectedFile?.size}, Type: ${selectedFile?.type}`) // Removed log
+      // console.log(`Current Auth Session:`, await supabase.auth.getSession()) // Removed log - Potential info leak
       // --- Add Logging --- END
 
       const { data: storageData, error: storageError } = await supabase.storage
@@ -194,28 +193,28 @@ const AdminImages: React.FC = () => {
 
       // --- Add Logging --- START
       if (storageError) {
-        console.error("STORAGE UPLOAD FAILED:", storageError)
+        console.error("STORAGE UPLOAD FAILED:", storageError) // Keep console.error
         // Throw error to be caught below
         throw new Error(`Erreur Storage: ${storageError.message}`)
       } else {
-        console.log("STORAGE UPLOAD SUCCEEDED:", storageData)
+        // console.log("STORAGE UPLOAD SUCCEEDED:", storageData) // Removed log
       }
       // --- Add Logging --- END
 
       // Only proceed if storage upload was successful
       if (!storageData?.path) {
-        console.error("Storage upload succeeded but no path was returned:", storageData)
+        console.error("Storage upload succeeded but no path was returned:", storageData) // Keep console.error
         throw new Error("Le chemin du fichier uploadé n'a pas été retourné par Storage.")
       }
 
       setUploadProgress(50) // Indicate storage part done
 
       const uploadedPath = storageData.path
-      console.log(`Direct upload successful. Path: ${uploadedPath}`)
+      // console.log(`Direct upload successful. Path: ${uploadedPath}`) // Removed log
       setUploadProgress(100)
 
       setIsInvokingFunction(true)
-      console.log(`Invoking Edge Function with path: ${uploadedPath}`)
+      // console.log(`Invoking Edge Function with path: ${uploadedPath}`) // Removed log
 
       // Prepare the payload as an object
       const payloadObject = {
@@ -228,7 +227,7 @@ const AdminImages: React.FC = () => {
         width: imageWidth, // Send the width
         height: imageHeight, // Send the height
       }
-      console.log("Invoking Edge Function with payload object:", payloadObject) // Log the object being sent
+      // console.log("Invoking Edge Function with payload object:", payloadObject) // Removed log
 
       // Invoke the function, passing the object directly
       const { data: functionData, error: functionError } = await supabase.functions.invoke(
@@ -245,14 +244,14 @@ const AdminImages: React.FC = () => {
         console.error("Supabase function invocation failed:", functionError)
         if (functionError.context) {
           // Log context if available (might contain status code or response details)
-          console.error("Function error context:", functionError.context)
+          console.error("Function error context:", functionError.context) // Keep console.error
         }
         // --- Add More Detailed Logging --- END
         throw new Error(`Erreur Fonction (Invoke): ${functionError.message}`)
       }
 
       // --- Add Logging for Function Response --- START
-      console.log("Supabase function invocation successful. Raw data:", functionData)
+      // console.log("Supabase function invocation successful. Raw data:", functionData) // Removed log
       // --- Add Logging for Function Response --- END
 
       type FunctionResponse = { success: boolean } | { error: string }
@@ -266,7 +265,7 @@ const AdminImages: React.FC = () => {
       // Also check if the response indicates success explicitly if applicable
       if (!(response && typeof response === "object" && "success" in response && response.success)) {
         // Handle cases where the function completed (2xx) but didn't return the expected success structure
-        console.warn("Function completed but response structure might not indicate success:", response)
+        console.warn("Function completed but response structure might not indicate success:", response) // Keep console.warn
         // Depending on function logic, you might still consider this a success or throw an error
         // For now, let's assume a 2xx without a specific {success: true} is okay, but log it.
         // If your function *must* return {success: true}, uncomment the throw below:
@@ -282,7 +281,7 @@ const AdminImages: React.FC = () => {
       } else if (typeof err === "string") {
         errorMessage = err
       }
-      console.error("Upload or Function process failed:", err)
+      console.error("Upload or Function process failed:", err) // Keep console.error
       setError(`Échec: ${errorMessage}`)
       toast.error(`Échec: ${errorMessage}`)
     } finally {
@@ -331,7 +330,7 @@ const AdminImages: React.FC = () => {
       // The ProtectedRoute component will automatically detect the session change
       // and redirect to the Login component.
     } catch (err) {
-      console.error("Logout failed:", err)
+      console.error("Logout failed:", err) // Keep console.error
       let errorMessage = "Échec de la déconnexion."
       if (err instanceof Error) {
         errorMessage = err.message
@@ -343,165 +342,174 @@ const AdminImages: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-800">Gestion des Images du Site</h1>
-        <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
-          {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
-        </Button>
-      </div>
-
-      <Card className="mb-12 shadow-md">
-        <CardHeader>
-          <CardTitle className="text-xl">Uploader/Remplacer une Image</CardTitle>
-          <CardDescription>Sélectionnez une image et la section où elle doit apparaître.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid w-full max-w-md items-center gap-2">
-            <Label htmlFor="file-input" className="font-medium">
-              Image
-            </Label>
-            <Input
-              id="file-input"
-              type="file"
-              accept="image/png, image/jpeg, image/webp, image/gif"
-              onChange={handleFileChange}
-              disabled={uploading || isInvokingFunction}
-              className="file:mr-4 file:rounded-full file:border-0 file:bg-violet-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-violet-700 hover:file:bg-violet-100"
-            />
-          </div>
-          <div className="grid w-full max-w-md items-center gap-2">
-            <Label htmlFor="section-select" className="font-medium">
-              Section
-            </Label>
-            <Select value={uploadSection} onValueChange={setUploadSection} disabled={uploading || isInvokingFunction}>
-              <SelectTrigger id="section-select" className="w-full">
-                <SelectValue placeholder="Choisir une section..." />
-              </SelectTrigger>
-              <SelectContent>
-                {VALID_SECTIONS.map((sec) => (
-                  <SelectItem key={sec} value={sec}>
-                    {sec}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid w-full max-w-md items-center gap-2">
-            <Label htmlFor="alt-text-input" className="font-medium">
-              Texte Alternatif (pour SEO)
-            </Label>
-            <Textarea
-              id="alt-text-input"
-              placeholder="Description brève et utile de l'image..."
-              value={uploadAltText}
-              onChange={(e) => setUploadAltText(e.target.value)}
-              disabled={uploading || isInvokingFunction}
-              rows={3}
-            />
-          </div>
-          {(uploading || isInvokingFunction) && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-600">
-                {isInvokingFunction ? "Traitement des données..." : "Progression de l'upload..."}
-              </Label>
-              <Progress value={uploading ? uploadProgress : 100} className="w-full" />
-            </div>
-          )}
-          {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
-        </CardContent>
-        <CardFooter>
-          <Button
-            onClick={handleUpload}
-            disabled={
-              uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
-            }>
-            {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
+    <div className="min-h-screen w-full bg-[url('https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/camera404.webp')] bg-cover bg-center">
+      {/* New inner container for content */}
+      <div className="sakura-container mx-auto px-4 py-12 pt-32">
+        <div className="mb-6 flex items-center justify-end">
+          <h1 className="mr-auto font-bad-script text-3xl font-bold -tracking-tighter text-white">
+            Gestion des Images du Site
+          </h1>
+          <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
+            {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
           </Button>
-        </CardFooter>
-      </Card>
+        </div>
 
-      <h2 className="mb-6 text-2xl font-semibold text-gray-700">Images Actuelles</h2>
-      {loading && <p className="text-center text-gray-500">Chargement des images...</p>}
-      {!loading && images.length === 0 && <p className="py-4 text-center text-gray-500">Aucune image trouvée.</p>}
-      {!loading && images.length > 0 && (
-        <Card className="overflow-hidden shadow-md">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[80px] sm:w-[100px]">Aperçu</TableHead>
-                    <TableHead>Section</TableHead>
-                    <TableHead>Texte Alt</TableHead>
-                    <TableHead className="hidden md:table-cell">Dimensions</TableHead>
-                    <TableHead>URL</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {images.map((image) => (
-                    <TableRow key={image.id} className="hover:bg-gray-50">
-                      <TableCell>
-                        <img
-                          src={image.image_url}
-                          alt={image.alt_text || `Image ${image.section}`}
-                          className="h-12 w-12 rounded border object-cover sm:h-16 sm:w-16"
-                          loading="lazy"
-                        />
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap font-medium text-gray-700">{image.section}</TableCell>
-                      <TableCell className="min-w-[200px]">
-                        {editingImageId === image.id ? (
-                          <Textarea
-                            value={editingAltText}
-                            onChange={(e) => setEditingAltText(e.target.value)}
-                            placeholder="Description..."
-                            className="min-h-[60px] text-sm"
-                            disabled={isSavingAlt}
-                          />
-                        ) : (
-                          <span className="text-sm text-gray-600">
-                            {image.alt_text || <span className="italic text-gray-400">Non défini</span>}
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell className="hidden text-sm text-gray-500 md:table-cell">
-                        {image.width && image.height ? `${image.width}x${image.height}` : "-"}
-                      </TableCell>
-                      <TableCell>
-                        <a
-                          href={image.image_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="whitespace-nowrap text-sm text-blue-600 underline hover:text-blue-800">
-                          Voir Fichier
-                        </a>
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap text-right">
-                        {editingImageId === image.id ? (
-                          <div className="flex justify-end gap-2">
-                            <Button size="sm" variant="outline" onClick={handleCancelEdit} disabled={isSavingAlt}>
-                              Annuler
-                            </Button>
-                            <Button size="sm" onClick={() => handleSaveAltText(image.id)} disabled={isSavingAlt}>
-                              {isSavingAlt ? "Sauv..." : "Sauver"}
-                            </Button>
-                          </div>
-                        ) : (
-                          <Button size="sm" variant="outline" onClick={() => handleEditClick(image)}>
-                            Modifier Alt
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+        <Card className="mb-12 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-xl">Uploader/Remplacer une Image</CardTitle>
+            <CardDescription>Sélectionnez une image et la section où elle doit apparaître.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid w-full max-w-md items-center gap-2">
+              <Label htmlFor="file-input" className="font-medium">
+                Image
+              </Label>
+              <Input
+                id="file-input"
+                type="file"
+                accept="image/png, image/jpeg, image/webp, image/gif"
+                onChange={handleFileChange}
+                disabled={uploading || isInvokingFunction}
+                className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:bg-opacity-80 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sakura-pink hover:file:bg-opacity-100"
+              />
             </div>
+            <div className="grid w-full max-w-md items-center gap-2">
+              <Label htmlFor="section-select" className="font-medium">
+                Section
+              </Label>
+              <Select value={uploadSection} onValueChange={setUploadSection} disabled={uploading || isInvokingFunction}>
+                <SelectTrigger id="section-select" className="w-full">
+                  <SelectValue placeholder="Choisir une section..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {VALID_SECTIONS.map((sec) => (
+                    <SelectItem key={sec} value={sec}>
+                      {sec}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid w-full max-w-md items-center gap-2">
+              <Label htmlFor="alt-text-input" className="font-medium">
+                Texte Alternatif (pour SEO)
+              </Label>
+              <Textarea
+                id="alt-text-input"
+                placeholder="Description brève et utile de l'image..."
+                value={uploadAltText}
+                onChange={(e) => setUploadAltText(e.target.value)}
+                disabled={uploading || isInvokingFunction}
+                rows={3}
+              />
+            </div>
+            {(uploading || isInvokingFunction) && (
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-600">
+                  {isInvokingFunction ? "Traitement des données..." : "Progression de l'upload..."}
+                </Label>
+                <Progress value={uploading ? uploadProgress : 100} className="w-full" />
+              </div>
+            )}
+            {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
           </CardContent>
+          <CardFooter>
+            <Button
+              className="bg-sakura-pink bg-opacity-80 hover:bg-opacity-100"
+              onClick={handleUpload}
+              disabled={
+                uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
+              }>
+              {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
+            </Button>
+          </CardFooter>
         </Card>
-      )}
+
+        <h2 className="mb-6 mr-auto font-bad-script text-3xl font-bold -tracking-tighter text-white">
+          Images Actuelles
+        </h2>
+        {loading && <p className="text-center text-gray-500">Chargement des images...</p>}
+        {!loading && images.length === 0 && <p className="py-4 text-center text-gray-500">Aucune image trouvée.</p>}
+        {!loading && images.length > 0 && (
+          <Card className="overflow-hidden shadow-md">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[80px] sm:w-[100px]">Aperçu</TableHead>
+                      <TableHead>Section</TableHead>
+                      <TableHead>Texte Alt</TableHead>
+                      <TableHead className="hidden md:table-cell">Dimensions</TableHead>
+                      <TableHead>URL</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {images.map((image) => (
+                      <TableRow key={image.id} className="hover:bg-gray-50">
+                        <TableCell>
+                          <img
+                            src={image.image_url}
+                            alt={image.alt_text || `Image ${image.section}`}
+                            className="h-12 w-12 rounded border object-cover sm:h-16 sm:w-16"
+                            loading="lazy"
+                          />
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap font-medium text-gray-700">{image.section}</TableCell>
+                        <TableCell className="min-w-[200px]">
+                          {editingImageId === image.id ? (
+                            <Textarea
+                              value={editingAltText}
+                              onChange={(e) => setEditingAltText(e.target.value)}
+                              placeholder="Description..."
+                              className="min-h-[60px] text-sm"
+                              disabled={isSavingAlt}
+                            />
+                          ) : (
+                            <span className="text-sm text-gray-600">
+                              {image.alt_text || <span className="italic text-gray-400">Non défini</span>}
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden text-sm text-gray-500 md:table-cell">
+                          {image.width && image.height ? `${image.width}x${image.height}` : "-"}
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={image.image_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="whitespace-nowrap text-sm text-blue-600 underline hover:text-blue-800">
+                            Voir Fichier
+                          </a>
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right">
+                          {editingImageId === image.id ? (
+                            <div className="flex justify-end gap-2">
+                              <Button size="sm" variant="outline" onClick={handleCancelEdit} disabled={isSavingAlt}>
+                                Annuler
+                              </Button>
+                              <Button size="sm" onClick={() => handleSaveAltText(image.id)} disabled={isSavingAlt}>
+                                {isSavingAlt ? "Sauv..." : "Sauver"}
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button size="sm" variant="outline" onClick={() => handleEditClick(image)}>
+                              Modifier Alt
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+      {/* Close inner container */}
     </div>
   )
 }
