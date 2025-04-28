@@ -54,12 +54,12 @@
 
 ## 📈 Optimization & Deployment
 
-| ID  | Task Title                     | Stat       | Prio      | Deps | Order | Desc                                               | Info                                                              |
-| --- | ------------------------------ | ---------- | --------- | ---- | ----- | -------------------------------------------------- | ----------------------------------------------------------------- |
-| 16  | Advanced SEO (Sitemap/Robots)  | ⭕ Pending | 🔶 Medium | 4    | 18    | Generate and configure sitemap.xml and robots.txt. | Improve search engine crawlability and indexing.                  |
-| 18  | Responsive Design Optimization | ⭕ Pending | 🔹 Low    | 3    | 19    | Fine-tune and polish responsive layouts.           | Address any layout issues or awkward scaling on specific devices. |
-| 17  | Google Analytics Integration   | ⭕ Pending | 🔹 Low    | 1    | 20    | Add Google Analytics tracking code.                | Monitor website traffic and user behavior.                        |
-| 19  | Deployment (Vercel)            | ✅ Done    | 🔹 Low    | 1    | 23    | Project hosted and deployed on Vercel.             | CI/CD pipeline might need configuration if not already done.      |
+| ID  | Task Title                     | Stat           | Prio      | Deps | Order | Desc                                               | Info                                                                               |
+| --- | ------------------------------ | -------------- | --------- | ---- | ----- | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 16  | Advanced SEO (Sitemap/Robots)  | 🟡 In Progress | 🔶 Medium | 4    | 18    | Generate and configure sitemap.xml and robots.txt. | Improve search engine crawlability and indexing. Sitemap created, robots reviewed. |
+| 18  | Responsive Design Optimization | ⭕ Pending     | 🔹 Low    | 3    | 19    | Fine-tune and polish responsive layouts.           | Address any layout issues or awkward scaling on specific devices.                  |
+| 17  | Google Analytics Integration   | ⭕ Pending     | 🔹 Low    | 1    | 20    | Add Google Analytics tracking code.                | Monitor website traffic and user behavior.                                         |
+| 19  | Deployment (Vercel)            | ✅ Done        | 🔹 Low    | 1    | 23    | Project hosted and deployed on Vercel.             | CI/CD pipeline might need configuration if not already done.                       |
 
 ---
 
