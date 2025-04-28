@@ -10,7 +10,7 @@ import { corsHeaders } from "../_shared/cors.ts"
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 
-console.log('Function "upload-site-image" starting up (v6 - Client-side blurhash)...')
+// console.log('Function "upload-site-image" starting up (v6 - Client-side blurhash)...') // Removed log
 
 interface RequestBody {
   filePath: string // Path in Storage bucket from client upload
@@ -30,24 +30,24 @@ serve(async (req: Request) => {
   try {
     // Log Content-Type immediately
     const contentTypeHeader = req.headers.get("Content-Type")
-    console.log(`Content-Type header received: ${contentTypeHeader}`)
+    // console.log(`Content-Type header received: ${contentTypeHeader}`) // Removed log
 
     // 1. Attempt to Parse Incoming JSON Body Directly
     let body: RequestBody
     let rawBodyForError = "<Body not read>"
     try {
-      console.log("Attempting req.json()...")
+      // console.log("Attempting req.json()...") // Removed log
       body = await req.json()
-      console.log("Successfully parsed JSON body:", body)
+      // console.log("Successfully parsed JSON body:", body) // Removed log
     } catch (jsonError) {
-      console.error("req.json() failed:", jsonError)
+      console.error("req.json() failed:", jsonError) // Keep console.error
       // If JSON parsing fails, TRY reading as text for debugging
       try {
-        console.log("Attempting req.text() as fallback...")
+        // console.log("Attempting req.text() as fallback...") // Removed log
         rawBodyForError = await req.text() // Use original req object
-        console.log(`Fallback req.text() content: [${rawBodyForError}]`)
+        // console.log(`Fallback req.text() content: [${rawBodyForError}]`) // Removed log
       } catch (textError) {
-        console.error("Fallback req.text() also failed:", textError)
+        console.error("Fallback req.text() also failed:", textError) // Keep console.error
         rawBodyForError = `<Failed to read body as text: ${textError.message}>`
       }
       // Throw the original JSON error but include the text attempt info
@@ -65,9 +65,9 @@ serve(async (req: Request) => {
       throw new Error("Missing required fields in parsed JSON body: filePath and section are required.")
     }
 
-    console.log(
-      `Processing parsed data - Path: ${filePath}, Section: ${section}, Alt: ${altText}, W: ${width}, H: ${height}, Hash: ${blurHash}`
-    )
+    // console.log( // Removed log
+    //   `Processing parsed data - Path: ${filePath}, Section: ${section}, Alt: ${altText}, W: ${width}, H: ${height}, Hash: ${blurHash}`
+    // )
 
     // 2. Create Supabase Admin Client
     const supabaseAdmin = createClient(
@@ -76,7 +76,7 @@ serve(async (req: Request) => {
     )
 
     // 3. Get Public URL for the already uploaded file
-    console.log(`Getting public URL for path: ${filePath}`)
+    // console.log(`Getting public URL for path: ${filePath}`) // Removed log
     const { data: urlData } = supabaseAdmin.storage
       .from("assets") // <<< Your Bucket Name
       .getPublicUrl(filePath) // Use the path received from the client
@@ -88,13 +88,13 @@ serve(async (req: Request) => {
       throw new Error("Failed to get public URL for the uploaded image.")
     }
     const publicUrl = urlData.publicUrl
-    console.log("Public URL obtained:", publicUrl)
+    // console.log("Public URL obtained:", publicUrl) // Removed log
 
     // ---- Image processing (size, width, height, blurhash) is now done on the client ----
     // We will get size from Storage directly if needed later, or assume client handles it.
 
     // 4. Upsert data into the 'site_images' table
-    console.log(`Checking existing entry for section: ${section}`)
+    // console.log(`Checking existing entry for section: ${section}`) // Removed log
     const { data: existingEntry, error: selectError } = await supabaseAdmin
       .from("site_images")
       .select("id")
@@ -102,7 +102,7 @@ serve(async (req: Request) => {
       .maybeSingle()
 
     if (selectError) {
-      console.error("Select Error:", selectError)
+      console.error("Select Error:", selectError) // Keep console.error
       throw new Error(`Database Select Error: ${selectError.message}`)
     }
 
@@ -118,7 +118,7 @@ serve(async (req: Request) => {
     let dbError: Error | null = null
     if (existingEntry) {
       // Update existing entry
-      console.log(`Updating existing entry for section: ${section} (ID: ${existingEntry.id})`)
+      // console.log(`Updating existing entry for section: ${section} (ID: ${existingEntry.id})`) // Removed log
       const { error: updateError } = await supabaseAdmin
         .from("site_images")
         .update({ ...imageDataToSave, updated_at: new Date().toISOString() })
@@ -128,20 +128,20 @@ serve(async (req: Request) => {
       // (Requires passing old path or querying DB for old URL first)
     } else {
       // Insert new entry
-      console.log(`Inserting new entry for section: ${section}`)
+      // console.log(`Inserting new entry for section: ${section}`) // Removed log
       const dataToInsert = { ...imageDataToSave, created_at: new Date().toISOString() }
       const { error: insertError } = await supabaseAdmin.from("site_images").insert(dataToInsert)
       dbError = insertError as Error | null
     }
 
     if (dbError) {
-      console.error("Database Upsert Error:", dbError)
+      console.error("Database Upsert Error:", dbError) // Keep console.error
       const errorMessage = dbError instanceof Error ? dbError.message : "Unknown database error"
       // Note: File is already in storage. Consider if manual cleanup needed on DB error.
       throw new Error(`Database Upsert Error: ${errorMessage}`)
     }
 
-    console.log(`Database record upserted successfully for section: ${section}`)
+    // console.log(`Database record upserted successfully for section: ${section}`) // Removed log
 
     // 5. Return success response (include the received/saved data)
     return new Response(
@@ -158,7 +158,7 @@ serve(async (req: Request) => {
       }
     )
   } catch (error) {
-    console.error("Function Error:", error)
+    console.error("Function Error:", error) // Keep console.error
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -35,7 +35,7 @@ function useSectionTextQuery(section: string) {
     queryFn: () => getSectionText(section),
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
-  if (error) console.error(`Error fetching text for ${section}:`, error)
+  // if (error) console.error(`Error fetching text for ${section}:`, error) // Keep error logging commented/removed if desired
   return { text: data, isLoading, error }
 }
 
@@ -47,7 +47,7 @@ function useSectionImagesQuery(sections: string[]) {
     enabled: sections.length > 0,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })
-  if (error) console.error(`Error fetching images for ${sections.join(", ")}:`, error)
+  // if (error) console.error(`Error fetching images for ${sections.join(", ")}:`, error) // Keep error logging commented/removed if desired
   return { images: data, isLoading, error }
 }
 // --- END: Modified Hooks ---
@@ -167,9 +167,9 @@ const Index: React.FC = () => {
   // --- END: Get Carousel API instances and manage autoplay ---
 
   const heroImageData = getImageData("hero")
-  console.log("Hero Image Data:", heroImageData)
-  console.log("Images Loading:", imagesLoading)
-  console.log("Images Error:", imagesError)
+  // console.log("Hero Image Data:", heroImageData) // Removed log
+  // console.log("Images Loading:", imagesLoading) // Removed log
+  // console.log("Images Error:", imagesError) // Removed log - potentially logged via hook
   return (
     // Apply a fade-in animation to the entire page content.
     <div className="animate-fade-in">
@@ -196,6 +196,7 @@ const Index: React.FC = () => {
               fetchPriority="high"
               loading="eager"
               overlayClassName="absolute inset-0 bg-black bg-opacity-30" // Pass overlay style here
+              crossOrigin="anonymous"
             />
           )}
 
@@ -221,6 +222,7 @@ const Index: React.FC = () => {
               alt="Mom.B Logo"
               className="mx-auto"
               loading="eager"
+              crossOrigin="anonymous"
             />
           </h1>
           {/* Subheading/Tagline: Lighter font weight. */}
@@ -243,7 +245,7 @@ const Index: React.FC = () => {
           <div className="sakura-container">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
               <div ref={maternityTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
-                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
+                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-wider md:text-5xl">
                   La beauté de la grossesse
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
@@ -383,7 +385,7 @@ const Index: React.FC = () => {
                 </Carousel>
               </div>
               <div ref={familyTextRef} className="slide-hidden slide-from-right w-full lg:w-1/2 lg:pl-16">
-                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
+                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-wider md:text-5xl">
                   Moments en Famille
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
@@ -402,7 +404,7 @@ const Index: React.FC = () => {
           <div className="sakura-container">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
               <div ref={babyTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
-                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
+                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-wider md:text-5xl">
                   Bébé & nous
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
@@ -514,14 +516,14 @@ const Index: React.FC = () => {
                       }
 
                       // DEBUG LOG for complices-1
-                      if (sectionKey === "complices-1") {
-                        console.log("DEBUG complices-1:", {
-                          imgData,
-                          aspectRatio: imgData?.width && imgData?.height ? imgData.width / imgData.height : "N/A",
-                          objectFitClass,
-                          transformedSrc,
-                        })
-                      }
+                      // if (sectionKey === "complices-1") { // Keep debug log commented out
+                      //   console.log("DEBUG complices-1:", {
+                      //     imgData,
+                      //     aspectRatio: imgData?.width && imgData?.height ? imgData.width / imgData.height : "N/A",
+                      //     objectFitClass,
+                      //     transformedSrc,
+                      //   })
+                      // }
 
                       return (
                         <CarouselItem key={sectionKey}>
@@ -551,7 +553,7 @@ const Index: React.FC = () => {
                 </Carousel>
               </div>
               <div ref={complicesTextRef} className="slide-hidden slide-from-right w-full lg:w-1/2 lg:pl-16">
-                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-widest md:text-5xl">
+                <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-wider md:text-5xl">
                   Complices à deux
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">

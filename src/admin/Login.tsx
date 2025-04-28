@@ -33,11 +33,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         throw signInError
       }
 
-      console.log("Login successful!")
+      // console.log("Login successful!") // Commented out log
       toast.success("Connexion réussie!")
       onLoginSuccess() // Call the callback function provided by the parent
     } catch (err) {
-      console.error("Login failed:", err)
+      console.error("Login failed:", err) // Keep console.error
       let errorMessage = "Échec de la connexion."
       if (err instanceof Error) {
         // Provide more specific feedback if possible

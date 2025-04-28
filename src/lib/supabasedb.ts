@@ -1,4 +1,5 @@
 import type { PostgrestError } from "@supabase/supabase-js"
+import { toast } from "sonner"
 
 import { supabase } from "./supabase"
 
@@ -146,20 +147,42 @@ export async function getAllSiteImages(): Promise<SiteImageData[]> {
  */
 export async function updateImageAltText(id: number, altText: string): Promise<boolean> {
   try {
-    const { error } = await supabase
+    console.log(`[updateImageAltText] Attempting update for ID: ${id} with Alt Text: "${altText}"`)
+    const { data, error } = await supabase
       .from("site_images")
       .update({ alt_text: altText, updated_at: new Date().toISOString() })
       .eq("id", id)
+      .select("id, alt_text") // Chain select to get the updated row back
+      .maybeSingle() // Use maybeSingle as we expect one row or null
+
+    console.log("[updateImageAltText] Update result:", { data, error })
 
     if (error) {
-      handleSupabaseError(error, `updating alt text for image ID ${id}`)
+      // Log the error before throwing
+      console.error(`[updateImageAltText] Supabase error during update for ID ${id}:`, error)
+      handleSupabaseError(error, `updating alt text for image ID ${id}`) // This will throw
     }
-    return true
+
+    // Check if data was returned and if the alt_text matches what we sent
+    if (data && data.alt_text === altText) {
+      console.log(`[updateImageAltText] Update successful and verified for ID: ${id}`)
+      return true
+    } else {
+      // This case means the update reported no error, but we didn't get the expected data back.
+      // Could be RLS preventing reading the updated row, or the update didn't 'stick'.
+      console.warn(
+        `[updateImageAltText] Update reported success for ID: ${id}, but verification failed. Returned data:`,
+        data
+      )
+      toast.error(
+        "L'opération a semblé réussir, mais la vérification a échoué. Vérifiez les politiques RLS ou les triggers."
+      )
+      return false
+    }
   } catch (error) {
-    console.error(`Unexpected error updating alt text for image ID ${id}:`, error)
-    // Don't re-throw here if the desired return type is boolean for simple success/failure check
-    // If the caller needs to know *why* it failed, re-throwing might be better.
-    // Sticking to the original return type for minimal behavioral change.
+    // Catch errors from handleSupabaseError or other unexpected issues
+    console.error(`[updateImageAltText] Unexpected error updating alt text for image ID ${id}:`, error)
+    // Don't re-throw here if the desired return type is boolean
     return false
   }
 }
