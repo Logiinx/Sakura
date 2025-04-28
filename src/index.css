@@ -188,13 +188,13 @@
 }
 
 .petal-2 {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 0C10 5 5 15 10 20C5 25 10 30 15 30C20 30 25 25 20 20C25 15 20 5 15 0Z' fill='%23FFD1DC' fill-opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 0C11 5 8 10 9 15C8 20 11 25 15 30C19 25 22 20 21 15C22 10 19 5 15 0Z' fill='%23FFC1CC' fill-opacity='0.7'/%3E%3C/svg%3E");
   width: 15px;
   height: 15px;
 }
 
 .petal-3 {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 0C8 8 8 15 10 20C5 25 10 30 15 30C20 30 25 25 20 20C22 15 22 8 15 0Z' fill='%23FFDBE5' fill-opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 0C11 5 8 10 9 15C8 20 11 25 15 30C19 25 22 20 21 15C22 10 19 5 15 0Z' fill='%23FFC1CC' fill-opacity='0.7'/%3E%3C/svg%3E");
   width: 25px;
   height: 25px;
 }

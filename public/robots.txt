@@ -1,14 +1,24 @@
-User-agent: Googlebot
-Allow: /
+# robots.txt for MOM.B Photographie
+# https://www.momb-photographie.fr/
 
+# Sitemap location
+Sitemap: https://www.momb-photographie.fr/sitemap.xml
+
+# Major search engines
+User-agent: Googlebot
 User-agent: Bingbot
 Allow: /
 
+# Social media bots
 User-agent: Twitterbot
-Allow: /
-
 User-agent: facebookexternalhit
 Allow: /
 
+# All other bots
 User-agent: *
 Allow: /
+
+# Private areas
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
