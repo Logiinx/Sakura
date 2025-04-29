@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import type { ChangeEvent } from "react"
 
 // import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -7,12 +7,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/lib/supabase" // Changed path
-import type { SiteImageData } from "@/lib/supabasedb" // Adjust path if needed
-import { getAllSiteImages, updateImageAltText } from "@/lib/supabasedb" // Adjust path if needed
+import type { SiteImageData, SectionTextData } from "@/lib/supabasedb" // Adjust path if needed, ADD SectionTextData
+import { getAllSiteImages, updateImageAltText, getAllSectionTexts, updateSectionText } from "@/lib/supabasedb" // Adjust path if needed, ADD text functions
 import { encode } from "blurhash" // <-- Import blurhash
 import { toast } from "sonner"
 
@@ -80,6 +88,14 @@ const AdminImages: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Text Sections State
+  const [textSections, setTextSections] = useState<SectionTextData[]>([])
+  const [loadingText, setLoadingText] = useState(true)
+  const [errorText, setErrorText] = useState<string | null>(null)
+  const [editingTextId, setEditingTextId] = useState<number | null>(null)
+  const [editingContent, setEditingContent] = useState("")
+  const [isSavingText, setIsSavingText] = useState(false)
+
   // Upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isHashing, setIsHashing] = useState(false)
@@ -99,6 +115,9 @@ const AdminImages: React.FC = () => {
 
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
+  // State for the selected text section in the dropdown
+  const [selectedTextSectionId, setSelectedTextSectionId] = useState<string>("") // Store ID as string for Select component
+
   const fetchImages = useCallback(async () => {
     setLoading(true)
     setError(null)
@@ -114,9 +133,46 @@ const AdminImages: React.FC = () => {
     }
   }, [])
 
+  // Fetch Text Sections
+  const fetchTextSections = useCallback(async () => {
+    setLoadingText(true)
+    setErrorText(null)
+    try {
+      const data = await getAllSectionTexts()
+      setTextSections(data)
+    } catch (err) {
+      console.error("Failed to fetch text sections:", err)
+      setErrorText("Erreur lors du chargement des sections de texte.")
+      toast.error("Erreur lors du chargement des sections de texte.")
+    } finally {
+      setLoadingText(false)
+    }
+  }, [])
+
+  // Find the currently selected text section object based on ID
+  const selectedTextSection = useMemo(() => {
+    return textSections.find((sec) => sec.id.toString() === selectedTextSectionId)
+  }, [textSections, selectedTextSectionId])
+
+  // Group text sections by page for the dropdown
+  const groupedTextSections = useMemo(() => {
+    const groups: Record<string, SectionTextData[]> = {}
+    textSections.forEach((section) => {
+      const pageName = section.page || "Autres" // Group sections without a page under "Autres"
+      if (!groups[pageName]) {
+        groups[pageName] = []
+      }
+      groups[pageName].push(section)
+    })
+    // Optional: Sort groups if needed (e.g., alphabetically, or by a predefined order)
+    // For now, it uses insertion order.
+    return groups
+  }, [textSections])
+
   useEffect(() => {
     fetchImages()
-  }, [fetchImages])
+    fetchTextSections() // Fetch texts as well
+  }, [fetchImages, fetchTextSections]) // Add fetchTextSections dependency
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedFile(null) // Reset previous file
@@ -306,6 +362,34 @@ const AdminImages: React.FC = () => {
     setEditingAltText("")
   }
 
+  // Handle Text Edit Click
+  const handleTextEditClick = (textSection: SectionTextData) => {
+    setEditingTextId(textSection.id)
+    setEditingContent(textSection.content || "")
+  }
+
+  // Handle Text Cancel Edit
+  const handleTextCancelEdit = () => {
+    setEditingTextId(null)
+    setEditingContent("")
+  }
+
+  // Handle Text Save
+  const handleSaveText = async (id: number) => {
+    setIsSavingText(true)
+    const success = await updateSectionText(id, editingContent)
+    setIsSavingText(false)
+    if (success) {
+      toast.success("Texte de la section mis à jour.")
+      setEditingTextId(null)
+      setTextSections((prevSections) =>
+        prevSections.map((sec) => (sec.id === id ? { ...sec, content: editingContent } : sec))
+      )
+    } else {
+      toast.error("Erreur lors de la mise à jour du texte de la section.")
+    }
+  }
+
   const handleSaveAltText = async (id: number) => {
     setIsSavingAlt(true)
     const success = await updateImageAltText(id, editingAltText)
@@ -354,78 +438,180 @@ const AdminImages: React.FC = () => {
           </Button>
         </div>
 
-        <Card className="mb-12 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl">Uploader/Remplacer une Image</CardTitle>
-            <CardDescription>Sélectionnez une image et la section où elle doit apparaître.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid w-full max-w-md items-center gap-2">
-              <Label htmlFor="file-input" className="font-medium">
-                Image
-              </Label>
-              <Input
-                id="file-input"
-                type="file"
-                accept="image/png, image/jpeg, image/webp, image/gif"
-                onChange={handleFileChange}
-                disabled={uploading || isInvokingFunction}
-                className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:bg-opacity-80 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sakura-pink hover:file:bg-opacity-100"
-              />
-            </div>
-            <div className="grid w-full max-w-md items-center gap-2">
-              <Label htmlFor="section-select" className="font-medium">
-                Section
-              </Label>
-              <Select value={uploadSection} onValueChange={setUploadSection} disabled={uploading || isInvokingFunction}>
-                <SelectTrigger id="section-select" className="w-full">
-                  <SelectValue placeholder="Choisir une section..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {VALID_SECTIONS.map((sec) => (
-                    <SelectItem key={sec} value={sec}>
-                      {sec}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid w-full max-w-md items-center gap-2">
-              <Label htmlFor="alt-text-input" className="font-medium">
-                Texte Alternatif (pour SEO)
-              </Label>
-              <Textarea
-                id="alt-text-input"
-                placeholder="Description brève et utile de l'image..."
-                value={uploadAltText}
-                onChange={(e) => setUploadAltText(e.target.value)}
-                disabled={uploading || isInvokingFunction}
-                rows={3}
-              />
-            </div>
-            {(uploading || isInvokingFunction) && (
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-600">
-                  {isInvokingFunction ? "Traitement des données..." : "Progression de l'upload..."}
+        {/* Grid Layout for Cards */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          {/* Image Upload Card */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl">Uploader/Remplacer une Image</CardTitle>
+              <CardDescription>Sélectionnez une image et la section où elle doit apparaître.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid w-full max-w-md items-center gap-2">
+                <Label htmlFor="file-input" className="font-medium">
+                  Image
                 </Label>
-                <Progress value={uploading ? uploadProgress : 100} className="w-full" />
+                <Input
+                  id="file-input"
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp, image/gif"
+                  onChange={handleFileChange}
+                  disabled={uploading || isInvokingFunction}
+                  className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:bg-opacity-80 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sakura-pink hover:file:bg-opacity-100"
+                />
               </div>
-            )}
-            {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
-          </CardContent>
-          <CardFooter>
-            <Button
-              className="bg-sakura-pink bg-opacity-80 hover:bg-opacity-100"
-              onClick={handleUpload}
-              disabled={
-                uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
-              }>
-              {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
-            </Button>
-          </CardFooter>
-        </Card>
+              <div className="grid w-full max-w-md items-center gap-2">
+                <Label htmlFor="section-select" className="font-medium">
+                  Section
+                </Label>
+                <Select
+                  value={uploadSection}
+                  onValueChange={setUploadSection}
+                  disabled={uploading || isInvokingFunction}>
+                  <SelectTrigger id="section-select" className="w-full">
+                    <SelectValue placeholder="Choisir une section..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {VALID_SECTIONS.map((sec) => (
+                      <SelectItem key={sec} value={sec}>
+                        {sec}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid w-full max-w-md items-center gap-2">
+                <Label htmlFor="alt-text-input" className="font-medium">
+                  Texte Alternatif (pour SEO)
+                </Label>
+                <Textarea
+                  id="alt-text-input"
+                  placeholder="Description brève et utile de l'image..."
+                  value={uploadAltText}
+                  onChange={(e) => setUploadAltText(e.target.value)}
+                  disabled={uploading || isInvokingFunction}
+                  rows={3}
+                />
+              </div>
+              {(uploading || isInvokingFunction) && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-600">
+                    {isInvokingFunction ? "Traitement des données..." : "Progression de l'upload..."}
+                  </Label>
+                  <Progress value={uploading ? uploadProgress : 100} className="w-full" />
+                </div>
+              )}
+              {error && <p className="pt-2 text-sm text-red-600">{error}</p>}
+            </CardContent>
+            <CardFooter>
+              <Button
+                className="bg-sakura-pink bg-opacity-80 hover:bg-opacity-100"
+                onClick={handleUpload}
+                disabled={
+                  uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
+                }>
+                {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
+              </Button>
+            </CardFooter>
+          </Card>
 
-        <h2 className="mb-6 mr-auto font-bad-script text-3xl font-bold -tracking-tighter text-white">
+          {/* Text Editing Card */}
+          <Card className="shadow-md">
+            <CardHeader>
+              <CardTitle className="text-xl">Modifier les Textes des Sections</CardTitle>
+              <CardDescription>Mettez à jour le contenu des différentes sections du site.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {loadingText && <p className="text-center text-gray-500">Chargement des textes...</p>}
+              {errorText && <p className="text-center text-sm text-red-600">{errorText}</p>}
+              {!loadingText && textSections.length === 0 && (
+                <p className="py-4 text-center text-gray-500">Aucune section de texte trouvée.</p>
+              )}
+
+              {/* Select Dropdown for Text Sections */}
+              {!loadingText && textSections.length > 0 && (
+                <div className="space-y-4">
+                  <Label htmlFor="text-section-select" className="font-medium">
+                    Sélectionner une section
+                  </Label>
+                  <Select value={selectedTextSectionId} onValueChange={setSelectedTextSectionId}>
+                    <SelectTrigger id="text-section-select" className="w-full">
+                      <SelectValue placeholder="Choisir une section..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* Map over grouped sections */}
+                      {Object.entries(groupedTextSections).map(([pageName, sectionsInGroup]) => (
+                        <SelectGroup key={pageName}>
+                          <SelectLabel className="font-semibold text-sakura-dark-text">{pageName}</SelectLabel>
+                          {sectionsInGroup.map((section) => (
+                            <SelectItem key={section.id} value={section.id.toString()} className="pl-8 capitalize">
+                              {" "}
+                              {/* Indent items slightly */}
+                              {section.section} (ID: {section.id})
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Display Area for Selected Section */}
+                  {selectedTextSection && (
+                    <div className="mt-4 rounded-md border p-4">
+                      {editingTextId === selectedTextSection.id ? (
+                        <div className="space-y-3">
+                          <Label htmlFor={`textarea-${selectedTextSection.id}`} className="font-semibold capitalize">
+                            Contenu pour &quot;{selectedTextSection.section}&quot;
+                          </Label>
+                          <Textarea
+                            id={`textarea-${selectedTextSection.id}`}
+                            value={editingContent}
+                            onChange={(e) => setEditingContent(e.target.value)}
+                            placeholder="Contenu de la section..."
+                            className="min-h-[200px] text-sm" // Increased min height for better editing
+                            disabled={isSavingText}
+                          />
+                          <div className="flex justify-end gap-2 pt-2">
+                            <Button size="sm" variant="outline" onClick={handleTextCancelEdit} disabled={isSavingText}>
+                              Annuler
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleSaveText(selectedTextSection.id)}
+                              disabled={isSavingText}>
+                              {isSavingText ? "Sauv..." : "Sauver"}
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <Label className="font-semibold capitalize">
+                            Contenu actuel pour &quot;{selectedTextSection.section}&quot;
+                          </Label>
+                          <p className="min-h-[60px] whitespace-pre-line rounded-md bg-gray-50 p-3 text-sm text-gray-600">
+                            {selectedTextSection.content || <span className="italic text-gray-400">Vide</span>}
+                          </p>
+                          <div className="flex justify-end pt-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleTextEditClick(selectedTextSection)}>
+                              Modifier
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+            {/* Optional CardFooter if needed */}
+          </Card>
+        </div>
+
+        {/* Image Table - Now below the grid */}
+        <h2 className="mb-6 mr-auto mt-12 font-bad-script text-3xl font-bold -tracking-tighter text-white">
           Images Actuelles
         </h2>
         {loading && <p className="text-center text-gray-500">Chargement des images...</p>}

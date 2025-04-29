@@ -62,17 +62,17 @@ const Layout: React.FC = () => {
     setIsDropdownOpen(false)
   }, [location.pathname]) // Remove isMenuOpen from dependencies
 
-  // Effect to handle body scroll when menu is open
+  // Effect to handle body scroll behavior
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "unset"
-    }
+    const originalOverflow = document.body.style.overflow
+    // Always show scrollbar to prevent layout shift
+    document.body.style.overflowY = "scroll"
+
+    // Cleanup function to restore original overflow style
     return () => {
-      document.body.style.overflow = "unset"
+      document.body.style.overflowY = originalOverflow // Restore original Y overflow
     }
-  }, [isMenuOpen])
+  }, []) // Run once on mount, cleanup on unmount
 
   // Effect to detect scroll position and update the `isScrolled` state.
   useEffect(() => {

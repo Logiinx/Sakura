@@ -20,6 +20,18 @@ export interface SiteImageData {
 }
 
 /**
+ * Represents the structure of text data stored in the 'sections_texts' table.
+ */
+export interface SectionTextData {
+  id: number
+  created_at: string
+  updated_at?: string // Use a consistent name if possible (e.g., updated_at)
+  section: string
+  content: string
+  page?: string // Add the new page column (make optional if it might be null)
+}
+
+/**
  * Centralized error handler for Supabase queries.
  * @param error - The PostgrestError from Supabase.
  * @param context - A description of the operation being performed (e.g., "loading section text").
@@ -134,6 +146,84 @@ export async function getAllSiteImages(): Promise<SiteImageData[]> {
   } catch (error) {
     console.error("Unexpected error loading all site images:", error)
     throw error // Re-throw
+  }
+}
+
+/**
+ * Fetches all text sections from the 'sections_texts' table, ordered by section.
+ * @returns An array of SectionTextData objects.
+ * @throws If there's an error fetching the data.
+ */
+export async function getAllSectionTexts(): Promise<SectionTextData[]> {
+  // Add 'page' to the selection
+  const columnsToSelect = "id, created_at, updated_at, section, content, page"
+  try {
+    const { data, error } = await supabase
+      .from("sections_texts")
+      .select(columnsToSelect)
+      .order("id", { ascending: true })
+
+    if (error) {
+      handleSupabaseError(error, "loading all section texts")
+    }
+
+    return (data as SectionTextData[]) || []
+  } catch (error) {
+    console.error("Unexpected error loading all section texts:", error)
+    throw error // Re-throw
+  }
+}
+
+/**
+ * Updates the content for a specific section in the 'sections_texts' table.
+ * Optionally updates the 'updated_at' timestamp.
+ * @param id - The ID of the text section to update.
+ * @param content - The new content.
+ * @returns True if the update was successful, false otherwise.
+ * @throws If there's an error during the update process.
+ */
+export async function updateSectionText(id: number, content: string): Promise<boolean> {
+  try {
+    console.log(`[updateSectionText] Attempting update for ID: ${id}`)
+    const { data, error, status } = await supabase
+      .from("sections_texts")
+      .update({ content: content, updated_at: new Date().toISOString() }) // Update content and timestamp
+      .eq("id", id)
+      .select("id, content") // Select to verify
+      .maybeSingle()
+
+    console.log("[updateSectionText] Update result:", { data, error, status })
+
+    if (error) {
+      console.error(`[updateSectionText] Supabase error during update for ID ${id}:`, error)
+      handleSupabaseError(error, `updating content for section text ID ${id}`)
+    }
+
+    // Check status code (200 OK or 204 No Content if select wasn't used/matched)
+    // And verify returned data if select was used
+    if ((status === 200 || status === 204) && data?.content === content) {
+      console.log(`[updateSectionText] Update successful and verified for ID: ${id}`)
+      return true
+    } else if (status === 200 || status === 204) {
+      // Update happened but verification failed (maybe RLS or select issue)
+      console.warn(
+        `[updateSectionText] Update status ${status} for ID ${id}, but verification failed. Returned data:`,
+        data
+      )
+      toast.info("Mise à jour effectuée, mais la vérification post-opération a échoué.")
+      return true // Still treat as success if status code is okay
+    } else {
+      console.warn(
+        `[updateSectionText] Update failed or verification failed for ID: ${id}. Status: ${status}, Data:`,
+        data
+      )
+      toast.error("Échec de la mise à jour du texte de la section.")
+      return false
+    }
+  } catch (error) {
+    console.error(`[updateSectionText] Unexpected error updating content for ID ${id}:`, error)
+    toast.error("Une erreur inattendue est survenue lors de la mise à jour.")
+    return false
   }
 }
 
