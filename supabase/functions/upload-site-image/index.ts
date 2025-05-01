@@ -29,7 +29,7 @@ serve(async (req: Request) => {
 
   try {
     // Log Content-Type immediately
-    const contentTypeHeader = req.headers.get("Content-Type")
+    const _contentTypeHeader = req.headers.get("Content-Type")
     // console.log(`Content-Type header received: ${contentTypeHeader}`) // Removed log
 
     // 1. Attempt to Parse Incoming JSON Body Directly
