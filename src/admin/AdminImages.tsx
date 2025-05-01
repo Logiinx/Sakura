@@ -38,7 +38,11 @@ const VALID_SECTIONS = [
   "bebe-3",
   "complices-1",
   "complices-2",
-  "complices-3", // Example
+  "complices-3",
+  "grossesse-package",
+  "famille-package",
+  "bebe-package",
+  "complices-package", // Example
 ]
 
 // --- Helper Functions for Client-Side BlurHash ---
