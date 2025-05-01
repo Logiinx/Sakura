@@ -50,7 +50,9 @@ export const BlurImage: React.FC<BlurImageProps> = ({
 
   return (
     <div
-      className={`relative overflow-hidden bg-transparent ${className || ""}`}
+      // Remove the dark background added previously
+      // Remove bg-transparent as it might cause white flash
+      className={`relative overflow-hidden ${className || ""}`}
       style={{ width: width, height: height }}>
       {/* Container for image and blurhash */}
       <div className="absolute inset-0">
@@ -85,10 +87,13 @@ export const BlurImage: React.FC<BlurImageProps> = ({
           width={width}
           height={height}
         />
+
+        {/* Overlay Div - REMOVED from inside the image container */}
+        {/* {overlayClassName && <div className={`absolute inset-0 ${overlayClassName}`}></div>} */}
       </div>
 
-      {/* Overlay Div - Rendered on top if class provided */}
-      {overlayClassName && <div className={overlayClassName}></div>}
+      {/* Overlay Div - Moved back outside */}
+      {overlayClassName && <div className={`absolute inset-0 ${overlayClassName}`}></div>}
 
       {/* Fallback - Shows if NO blurhash AND image not loaded */}
       {!hasBlurhash && !imageLoaded && (
