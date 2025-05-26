@@ -166,6 +166,21 @@ const Index: React.FC = () => {
   }, [isComplicesCarouselVisible, complicesApi])
   // --- END: Get Carousel API instances and manage autoplay ---
 
+  // --- START: Scroll to section based on URL hash ---
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash) {
+      const element = document.querySelector(hash)
+      if (element) {
+        // Timeout to ensure the element is rendered and layout is stable
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" })
+        }, 100) // Adjust delay if needed
+      }
+    }
+  }, []) // Run once on component mount
+  // --- END: Scroll to section based on URL hash ---
+
   const heroImageData = getImageData("hero")
   // console.log("Hero Image Data:", heroImageData) // Removed log
   // console.log("Images Loading:", imagesLoading) // Removed log
@@ -405,7 +420,7 @@ const Index: React.FC = () => {
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
               <div ref={babyTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
                 <h2 className="text-warm-gray-800 mb-4 font-bad-script text-4xl font-bold leading-relaxed tracking-wider md:text-5xl">
-                  Bébé & nous
+                  Bébé et nous
                 </h2>
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   {bebeText ?? "Chargement du texte..."}
@@ -569,7 +584,8 @@ const Index: React.FC = () => {
       </div>
       <div className="section-divider"></div>
       {/* --- About Me Section --- */}
-      <section className="bg-sakura-pink bg-opacity-30 py-20 md:py-20">
+      {/* Add id for scrolling */}
+      <section id="about-me-section" className="bg-sakura-pink bg-opacity-30 py-20 md:py-20">
         <div className="sakura-container">
           {/* Section Heading Area */}
           <div className="mb-16 text-center">
