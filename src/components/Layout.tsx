@@ -22,6 +22,8 @@ const Layout: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // State to track if the page has been scrolled down.
   const [isScrolled, setIsScrolled] = useState(false)
+  // State to force header opaque for specific pages
+  const [forceHeaderOpaque, setForceHeaderOpaque] = useState(false)
   // State for the Tarifs dropdown visibility
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [dropdownTimeoutId, setDropdownTimeoutId] = useState<NodeJS.Timeout | null>(null) // State for the timeout ID
@@ -93,6 +95,25 @@ const Layout: React.FC = () => {
     // Empty dependency array `[]` means this effect runs only once on mount and cleanup on unmount.
   }, [])
 
+  // Effect to determine if the header should be forced opaque based on the current path.
+  useEffect(() => {
+    const pathsForOpaqueHeader = [
+      "/grossesse",
+      "/famille",
+      "/bebe",
+      "/complices",
+      "/gallery",
+      "/contact",
+      "/book-now",
+      // Add other paths that need an initially opaque header
+    ]
+    if (pathsForOpaqueHeader.some((path) => location.pathname.startsWith(path))) {
+      setForceHeaderOpaque(true)
+    } else {
+      setForceHeaderOpaque(false)
+    }
+  }, [location.pathname])
+
   // Effect to clear timeout on unmount
   useEffect(() => {
     // Cleanup function to clear the timeout if the component unmounts
@@ -132,7 +153,7 @@ const Layout: React.FC = () => {
     // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
     const baseClasses =
       "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:bg-opacity-90 transition-colors flex items-center gap-1" // Added flex, items-center, gap-1
-    const textClass = isScrolled ? "text-sakura-dark-text" : "text-white"
+    const textClass = isScrolled || forceHeaderOpaque ? "text-sakura-dark-text" : "text-white"
     // Standard active class logic
     const activeClass = isActive ? "font-medium text-sakura-pink border-sakura-pink" : ""
 
@@ -166,8 +187,8 @@ const Layout: React.FC = () => {
       {/* Conditional background/styling based on `isScrolled` state. */}
       <header
         className={`fixed left-0 right-0 top-0 z-[90] py-5 transition-all duration-300 ${
-          isScrolled
-            ? "bg-white bg-opacity-90 shadow-sm backdrop-blur-sm" // Scrolled: White, blurred background, shadow
+          isScrolled || forceHeaderOpaque
+            ? "bg-white bg-opacity-90 shadow-sm backdrop-blur-sm" // Scrolled or forced: White, blurred background, shadow
             : "bg-transparent" // Top: Transparent background
         }`}>
         {/* Use the custom container class for consistent padding and max-width. */}
@@ -176,13 +197,13 @@ const Layout: React.FC = () => {
           <Link
             to="/"
             className={`font-playfair text-2xl font-bold transition-colors ${
-              isScrolled ? "text-sakura-dark-text" : "text-white" // Text color changes on scroll
+              isScrolled || forceHeaderOpaque ? "text-sakura-dark-text" : "text-white" // Text color changes on scroll or forced
             }`}>
             <img
               src={"https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/logomompink-300x150.webp"}
               alt="MOM.B Logo Header"
               className={`transition-all duration-300 ${
-                isScrolled ? "h-10 w-auto" : "h-16 w-auto" // Larger when not scrolled, smaller when scrolled
+                isScrolled || forceHeaderOpaque ? "h-10 w-auto" : "h-16 w-auto" // Larger when not scrolled/forced, smaller when scrolled/forced
               }`}
               loading="eager"
             />
@@ -191,7 +212,9 @@ const Layout: React.FC = () => {
           {/* --- Mobile Menu Button --- */}
           <button
             className={`flex items-center justify-center rounded-md p-2 transition-colors md:hidden ${
-              isScrolled ? "text-sakura-dark-text hover:bg-gray-100" : "text-white hover:bg-white/20"
+              isScrolled || forceHeaderOpaque
+                ? "text-sakura-dark-text hover:bg-gray-100"
+                : "text-white hover:bg-white/20"
             }`}
             onClick={toggleMenu}
             aria-label="Toggle mobile menu"
@@ -219,7 +242,7 @@ const Layout: React.FC = () => {
               ref={dropdownRef} // Attach ref here
             >
               <NavLink
-                to="/pricing"
+                to="/grossesse"
                 className={({ isActive }) => getNavLinkClass(isActive)}
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true">
@@ -238,28 +261,22 @@ const Layout: React.FC = () => {
                   onMouseLeave={handleMouseLeave}>
                   <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                     <NavLink
-                      to="/package-one"
+                      to="/grossesse"
                       className={({ isActive }) => getDropdownLinkClass(isActive)}
                       role="menuitem">
-                      Package 1
+                      La beauté de la grossesse
+                    </NavLink>
+                    <NavLink to="/famille" className={({ isActive }) => getDropdownLinkClass(isActive)} role="menuitem">
+                      Moments en famille
+                    </NavLink>
+                    <NavLink to="/bebe" className={({ isActive }) => getDropdownLinkClass(isActive)} role="menuitem">
+                      Bébé et nous
                     </NavLink>
                     <NavLink
-                      to="/package-two"
+                      to="/complices"
                       className={({ isActive }) => getDropdownLinkClass(isActive)}
                       role="menuitem">
-                      Package 2
-                    </NavLink>
-                    <NavLink
-                      to="/package-three"
-                      className={({ isActive }) => getDropdownLinkClass(isActive)}
-                      role="menuitem">
-                      Package 3
-                    </NavLink>
-                    <NavLink
-                      to="/package-four"
-                      className={({ isActive }) => getDropdownLinkClass(isActive)}
-                      role="menuitem">
-                      Package 4
+                      Complices à deux
                     </NavLink>
                   </div>
                 </div>
@@ -298,34 +315,34 @@ const Layout: React.FC = () => {
                 </NavLink>
                 <div className="flex flex-col items-center space-y-4">
                   <NavLink
-                    to="/pricing"
+                    to="/grossesse"
                     className={({ isActive }) => getMobileNavLinkClass(isActive)}
                     onClick={toggleMenu}>
                     Tarifs
                   </NavLink>
                   <NavLink
-                    to="/package-one"
+                    to="/grossesse"
                     className={({ isActive }) => getMobileNavLinkClass(isActive)}
                     onClick={toggleMenu}>
-                    Package 1
+                    La beauté de la grossesse
                   </NavLink>
                   <NavLink
-                    to="/package-two"
+                    to="/famille"
                     className={({ isActive }) => getMobileNavLinkClass(isActive)}
                     onClick={toggleMenu}>
-                    Package 2
+                    Moments en famille
                   </NavLink>
                   <NavLink
-                    to="/package-three"
+                    to="/bebe"
                     className={({ isActive }) => getMobileNavLinkClass(isActive)}
                     onClick={toggleMenu}>
-                    Package 3
+                    Bébé et nous
                   </NavLink>
                   <NavLink
-                    to="/package-four"
+                    to="/complices"
                     className={({ isActive }) => getMobileNavLinkClass(isActive)}
                     onClick={toggleMenu}>
-                    Package 4
+                    Complices à deux
                   </NavLink>
                 </div>
                 <NavLink
@@ -366,9 +383,11 @@ const Layout: React.FC = () => {
               <Link to="/" className="font-bad-script text-xl font-bold tracking-wider text-sakura-dark-text">
                 MOM.B
               </Link>
-              <p className="mt-2 font-bad-script text-base tracking-wider text-gray-500">
+              <Link
+                to="/#about-me-section"
+                className="mt-2 block font-bad-script text-base tracking-wider text-gray-500 transition-colors hover:text-sakura-pink">
                 Barbara - Photographe famille, mariage, grossesse, bébé
-              </p>
+              </Link>
             </div>
 
             {/* Social Media Links */}

@@ -44,7 +44,6 @@ import PackageFourPage from "./pages/PackageFourPage"
 import PackageOnePage from "./pages/PackageOnePage"
 import PackageThreePage from "./pages/PackageThreePage"
 import PackageTwoPage from "./pages/PackageTwoPage"
-import Pricing from "./pages/Pricing"
 
 // --- React Query Client Setup --- //
 
@@ -90,14 +89,13 @@ const App = () => {
               {/* Index Route: Rendered when the path is exactly "/". Uses the Index page component. */}
               <Route index element={<Index />} />
               {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
-              <Route path="/pricing" element={<Pricing />} />
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/book-now" element={<BookNow />} />
-              <Route path="/package-one" element={<PackageOnePage />} />
-              <Route path="/package-two" element={<PackageTwoPage />} />
-              <Route path="/package-three" element={<PackageThreePage />} />
-              <Route path="/package-four" element={<PackageFourPage />} />
+              <Route path="/grossesse" element={<PackageOnePage />} />
+              <Route path="/famille" element={<PackageTwoPage />} />
+              <Route path="/bebe" element={<PackageThreePage />} />
+              <Route path="/complices" element={<PackageFourPage />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route
                 path="/admin"

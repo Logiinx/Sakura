@@ -99,7 +99,7 @@ const PackageOnePage: React.FC = () => {
   // Define static data
   const packageStaticData = useMemo(
     () => ({
-      title: "Grossesse",
+      title: "La beauté de la grossesse",
     }),
     []
   )
@@ -143,7 +143,9 @@ const PackageOnePage: React.FC = () => {
       {/* Title Section */}
       <section className="py-16">
         <div className="sakura-container text-center">
-          <h1 className="mb-4 font-playfair text-4xl font-bold text-gray-900 md:text-5xl">{packageStaticData.title}</h1>
+          <h1 className="mb-4 mt-12 font-bad-script text-4xl font-bold tracking-widest text-gray-900 md:text-5xl">
+            {packageStaticData.title}
+          </h1>
           <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
         </div>
       </section>
@@ -211,7 +213,7 @@ const PackageOnePage: React.FC = () => {
               <div className="space-y-8">
                 {/* Text Area 1 */}
                 <div>
-                  <p className="text-lg italic leading-relaxed text-[#623E2A] md:text-xl">
+                  <p className="text-lg italic leading-relaxed text-sakura-pink md:text-xl">
                     {grossesseText1 ?? "Chargement du texte..."}
                   </p>
                 </div>
@@ -239,7 +241,9 @@ const PackageOnePage: React.FC = () => {
       <section className="bg-gray-50 py-16">
         <div className="sakura-container">
           <div className="mx-auto max-w-4xl rounded-lg border border-gray-200 bg-white p-8 shadow-lg">
-            <h2 className="mb-6 text-center font-playfair text-3xl font-bold text-gray-900">Ce qui est inclus</h2>
+            <h2 className="mb-6 text-center font-bad-script text-4xl font-bold tracking-widest text-gray-900 underline">
+              Ce qui est inclus
+            </h2>
             <ul className="mb-8 grid grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
               {(grossesseInclusionsText ?? "Chargement des inclusions...").split(";").map((item, index) => (
                 <li key={index} className="flex items-start">
@@ -253,14 +257,18 @@ const PackageOnePage: React.FC = () => {
               <div className="flex flex-col gap-8 md:flex-row md:justify-around">
                 {/* Tarif Section */}
                 <div className="text-center md:w-1/2">
-                  <h3 className="mb-4 font-playfair text-2xl font-bold text-gray-900">Tarif</h3>
+                  <h3 className="mb-4 font-bad-script text-3xl font-bold tracking-wider text-gray-900 underline">
+                    Tarif
+                  </h3>
                   <p className="text-4xl font-bold text-gray-900">{grossessePrice1Text ?? "Chargement..."}</p>
                   <p className="mt-1 text-gray-600">{grossessePrice1DetailsText ?? "Chargement..."}</p>
                 </div>
 
                 {/* Pack grossesse + bébé Section */}
                 <div className="text-center md:w-1/2">
-                  <h3 className="mb-4 font-playfair text-2xl font-bold text-gray-900">Pack grossesse + bébé</h3>
+                  <h3 className="mb-4 font-bad-script text-3xl font-bold tracking-wider text-gray-900 underline">
+                    Pack grossesse + bébé
+                  </h3>
                   {grossessePrice2Text ? (
                     <p className="text-4xl font-bold text-gray-900">
                       {grossessePrice2Text.includes("(")
