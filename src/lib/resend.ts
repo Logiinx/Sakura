@@ -1,3 +1,9 @@
 import { Resend } from "resend"
 
-export const resend = new Resend(process.env.RESEND_API_KEY)
+const resendKey = import.meta.env.VITE_RESEND_API_KEY
+
+if (!resendKey) {
+  console.error("Missing Resend API key")
+}
+
+export const resend = new Resend(resendKey!)
