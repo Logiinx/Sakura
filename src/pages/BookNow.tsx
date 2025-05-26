@@ -148,7 +148,9 @@ const BookNow = () => {
       <section className="py-16 md:py-24">
         <div className="sakura-container">
           <div className="mb-16 text-center">
-            <h1 className="mb-4 text-4xl font-bold md:text-5xl">Book Your Session</h1>
+            <h1 className="mb-4 mt-12 font-bad-script text-4xl font-bold tracking-widest md:text-5xl">
+              Book Your Session
+            </h1>
             <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
             <p className="mx-auto mt-6 max-w-2xl text-gray-600">
               Choose a date and time that works for you, and we&apos;ll help you capture beautiful memories.
