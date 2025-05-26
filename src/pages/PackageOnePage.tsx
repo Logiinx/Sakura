@@ -27,7 +27,7 @@ function useSectionTextQuery(section: string) {
 // Hook for fetching image sections
 function useSectionImagesQuery(sections: string[]) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["sectionImages", sections.sort().join(",")], // Stable query key
+    queryKey: ["sectionImages", sections.join(",")], // Stable query key
     queryFn: () => getSectionImages(sections),
     enabled: sections.length > 0,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
@@ -43,7 +43,7 @@ function useSectionImagesQuery(sections: string[]) {
  */
 const PackageOnePage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["grossesse-1", "grossesse-2", "grossesse-3"], [])
+  const imageSections = useMemo(() => ["grossesse-package", "grossesse-1", "grossesse-2", "grossesse-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 
@@ -92,6 +92,7 @@ const PackageOnePage: React.FC = () => {
   // Start autoplay when component mounts
   useEffect(() => {
     if (carouselApi) {
+      carouselApi.scrollTo(0) // Ensure it starts at the first slide
       carouselApi.plugins().autoplay?.play()
     }
   }, [carouselApi])
@@ -158,12 +159,13 @@ const PackageOnePage: React.FC = () => {
             <div className="w-full lg:w-1/2">
               <Carousel className="w-full" plugins={[autoplayPlugin]} opts={{ loop: true }} setApi={setCarouselApi}>
                 <CarouselContent>
-                  {[1, 2, 3].map((index) => {
-                    const imgData = getImageData(`grossesse-${index}`)
-                    const sectionKey = `grossesse-${index}`
-                    const containerHeight = 384
-                    const landscapeTargetWidth = 600
+                  {imageSections.map((sectionKey, index) => {
+                    const imgData = getImageData(sectionKey)
 
+                    // Dynamic sizing based on image orientation
+                    let containerHeight = 384
+                    let containerClass = "relative h-96 w-full"
+                    const landscapeTargetWidth = 600
                     let transformedSrc: string | undefined = undefined
                     let objectFitClass: "cover" | "contain" = "cover"
 
@@ -171,9 +173,15 @@ const PackageOnePage: React.FC = () => {
                       if (imgData.width && imgData.height && imgData.height > 0) {
                         const aspectRatio = imgData.width / imgData.height
                         if (aspectRatio < 1) {
+                          // Vertical image - use taller container for better display
+                          containerHeight = 550
+                          containerClass = "relative h-[550px] w-full"
                           objectFitClass = "contain"
                           transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
                         } else {
+                          // Horizontal image - use standard container
+                          containerHeight = 384
+                          containerClass = "relative h-96 w-full"
                           objectFitClass = "cover"
                           transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
                         }
@@ -184,12 +192,12 @@ const PackageOnePage: React.FC = () => {
 
                     return (
                       <CarouselItem key={sectionKey} className="basis-full overflow-hidden">
-                        <div className="relative h-96 w-full">
+                        <div className={containerClass}>
                           {imgData && transformedSrc ? (
                             <BlurImage
                               src={transformedSrc}
                               hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `Grossesse ${index}`}
+                              alt={imgData.alt_text || `Image ${index + 1} pour ${sectionKey}`}
                               className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
                               objectFit={objectFitClass}
                             />

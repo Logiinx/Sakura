@@ -27,7 +27,7 @@ function useSectionTextQuery(section: string) {
 // Hook for fetching image sections
 function useSectionImagesQuery(sections: string[]) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["sectionImages", sections.sort().join(",")], // Stable query key
+    queryKey: ["sectionImages", sections.join(",")], // Stable query key
     queryFn: () => getSectionImages(sections),
     enabled: sections.length > 0,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
@@ -38,7 +38,7 @@ function useSectionImagesQuery(sections: string[]) {
 
 const PackageTwoPage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["famille-1", "famille-2", "famille-3"], [])
+  const imageSections = useMemo(() => ["famille-package", "famille-1", "famille-2", "famille-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 
@@ -153,10 +153,10 @@ const PackageTwoPage: React.FC = () => {
             <div className="w-full lg:w-1/2">
               <Carousel className="w-full" plugins={[autoplayPlugin]} opts={{ loop: true }} setApi={setCarouselApi}>
                 <CarouselContent>
-                  {[1, 2, 3].map((index) => {
-                    const imgData = getImageData(`famille-${index}`)
-                    const sectionKey = `famille-${index}`
-                    const containerHeight = 384
+                  {imageSections.map((sectionKey, index) => {
+                    const imgData = getImageData(sectionKey)
+                    let containerHeight = 384
+                    let containerClass = "relative h-96 w-full"
                     const landscapeTargetWidth = 600
 
                     let transformedSrc: string | undefined = undefined
@@ -166,9 +166,15 @@ const PackageTwoPage: React.FC = () => {
                       if (imgData.width && imgData.height && imgData.height > 0) {
                         const aspectRatio = imgData.width / imgData.height
                         if (aspectRatio < 1) {
+                          // Vertical image - use taller container for better display
+                          containerHeight = 550
+                          containerClass = "relative h-[550px] w-full"
                           objectFitClass = "contain"
                           transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
                         } else {
+                          // Horizontal image - use standard container
+                          containerHeight = 384
+                          containerClass = "relative h-96 w-full"
                           objectFitClass = "cover"
                           transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
                         }
@@ -179,7 +185,7 @@ const PackageTwoPage: React.FC = () => {
 
                     return (
                       <CarouselItem key={sectionKey} className="basis-full overflow-hidden">
-                        <div className="relative h-96 w-full">
+                        <div className={containerClass}>
                           {imgData && transformedSrc ? (
                             <BlurImage
                               src={transformedSrc}
