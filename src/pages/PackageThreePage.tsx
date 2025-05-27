@@ -38,7 +38,7 @@ function useSectionImagesQuery(sections: string[]) {
 
 const PackageThreePage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["bebe-package", "bebe-1", "bebe-2", "bebe-3"], [])
+  const imageSections = useMemo(() => ["bebe-0", "bebe-1", "bebe-2", "bebe-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 

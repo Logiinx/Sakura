@@ -39,10 +39,10 @@ const VALID_SECTIONS = [
   "complices-1",
   "complices-2",
   "complices-3",
-  "grossesse-package",
-  "famille-package",
-  "bebe-package",
-  "complices-package", // Example
+  "grossesse-0",
+  "famille-0",
+  "bebe-0",
+  "complices-0", // Example
 ]
 
 // --- Helper Functions for Client-Side BlurHash ---
@@ -116,6 +116,7 @@ const AdminImages: React.FC = () => {
   const [editingImageId, setEditingImageId] = useState<number | null>(null)
   const [editingAltText, setEditingAltText] = useState("")
   const [isSavingAlt, setIsSavingAlt] = useState(false)
+  const [isDeletingImageId, setIsDeletingImageId] = useState<number | null>(null) // New state for delete operation
 
   const [isLoggingOut, setIsLoggingOut] = useState(false)
 
@@ -396,14 +397,91 @@ const AdminImages: React.FC = () => {
 
   const handleSaveAltText = async (id: number) => {
     setIsSavingAlt(true)
-    const success = await updateImageAltText(id, editingAltText)
-    setIsSavingAlt(false)
-    if (success) {
-      toast.success("Texte alternatif mis à jour.")
-      setEditingImageId(null)
+    try {
+      await updateImageAltText(id, editingAltText)
       setImages((prevImages) => prevImages.map((img) => (img.id === id ? { ...img, alt_text: editingAltText } : img)))
-    } else {
+      setEditingImageId(null)
+      toast.success("Texte alternatif mis à jour avec succès !")
+    } catch (err) {
+      console.error("Failed to update alt text:", err)
       toast.error("Erreur lors de la mise à jour du texte alternatif.")
+    } finally {
+      setIsSavingAlt(false)
+    }
+  }
+
+  const handleDeleteImage = async (imageId: number, imageUrl: string) => {
+    // 1. Confirm with user
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette image ? Cette action est irréversible.")) {
+      return
+    }
+
+    setIsDeletingImageId(imageId) // Set loading state for this specific image
+    setError(null) // Clear previous errors
+
+    try {
+      // 2. Extract section from URL (e.g., 'bebe-2' from '.../assets/bebe-2/...')
+      const urlParts = imageUrl.split("/").filter(Boolean)
+      const assetsIndex = urlParts.indexOf("assets")
+      if (assetsIndex === -1 || assetsIndex + 1 >= urlParts.length) {
+        throw new Error("Section introuvable dans l'URL de l'image.")
+      }
+      const section = urlParts[assetsIndex + 1] // e.g., 'bebe-2'
+
+      // 3. Recursively list all files in the section folder
+      const listAllFiles = async (bucket = "assets", section: string): Promise<string[]> => {
+        const { data, error } = await supabase.storage.from(bucket).list(section, { limit: 1000 })
+
+        if (error) {
+          throw new Error(`Erreur lors du listage des fichiers : ${error.message}`)
+        }
+
+        return data.map((file) => `${section}/${file.name}`)
+      }
+
+      // 4. Chunk array for deletion to avoid API limits
+      const chunkArray = (array, size) => {
+        const result = []
+        for (let i = 0; i < array.length; i += size) {
+          result.push(array.slice(i, i + size))
+        }
+        return result
+      }
+
+      // 5. Delete all files in the section folder
+      const filesToDelete = await listAllFiles("assets", section)
+
+      if (filesToDelete.length > 0) {
+        const chunkSize = 100 // Ajusté selon limites API
+        const fileChunks = chunkArray(filesToDelete, chunkSize)
+
+        for (const chunk of fileChunks) {
+          const { error: storageError } = await supabase.storage.from("assets").remove(chunk)
+
+          if (storageError) {
+            throw new Error(`Erreur lors de la suppression des fichiers: ${storageError.message}`)
+          }
+        }
+      }
+
+      // 6. Delete database records for this section
+      const { error: dbError } = await supabase.from("site_images").delete().eq("section", section)
+      if (dbError) {
+        throw new Error(`Erreur lors de la suppression des images de la base de données: ${dbError.message}`)
+      }
+
+      // 7. Refresh images by removing the deleted image from the local state
+      setImages((prevImages) => prevImages.filter((img) => img.id !== imageId))
+
+      // 8. Show toast
+      toast.success("Image supprimée avec succès !")
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Une erreur inconnue est survenue."
+      console.error("Échec de la suppression de l'image:", err)
+      setError(`Échec de la suppression de l'image: ${errorMessage}`)
+      toast.error(`Échec de la suppression de l'image: ${errorMessage}`)
+    } finally {
+      setIsDeletingImageId(null) // Reset loading state
     }
   }
 
@@ -461,7 +539,7 @@ const AdminImages: React.FC = () => {
                   accept="image/png, image/jpeg, image/webp, image/gif"
                   onChange={handleFileChange}
                   disabled={uploading || isInvokingFunction}
-                  className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:bg-opacity-80 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-sakura-pink hover:file:bg-opacity-100"
+                  className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
                 />
               </div>
               <div className="grid w-full max-w-md items-center gap-2">
@@ -509,7 +587,7 @@ const AdminImages: React.FC = () => {
             </CardContent>
             <CardFooter>
               <Button
-                className="bg-sakura-pink bg-opacity-80 hover:bg-opacity-100"
+                className={`bg-sakura-pink ${uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash ? "bg-gray-400" : ""}`}
                 onClick={handleUpload}
                 disabled={
                   uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
@@ -685,9 +763,23 @@ const AdminImages: React.FC = () => {
                               </Button>
                             </div>
                           ) : (
-                            <Button size="sm" variant="outline" onClick={() => handleEditClick(image)}>
-                              Modifier Alt
-                            </Button>
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEditClick(image)}
+                                disabled={isDeletingImageId === image.id}>
+                                Modifier Alt
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive" // Destructive variant for delete button
+                                onClick={() => handleDeleteImage(image.id, image.image_url)}
+                                disabled={editingImageId === image.id || isDeletingImageId === image.id}
+                                className="ml-2">
+                                {isDeletingImageId === image.id ? "Suppr..." : "Supprimer"}
+                              </Button>
+                            </div>
                           )}
                         </TableCell>
                       </TableRow>

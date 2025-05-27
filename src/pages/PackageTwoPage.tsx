@@ -38,7 +38,7 @@ function useSectionImagesQuery(sections: string[]) {
 
 const PackageTwoPage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["famille-package", "famille-1", "famille-2", "famille-3"], [])
+  const imageSections = useMemo(() => ["famille-0", "famille-1", "famille-2", "famille-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 

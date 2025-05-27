@@ -103,7 +103,7 @@ serve(async (req) => {
     },
     // TODO VERIFY DOMAIN MOMBPHOTOGRAPHIE.FR ON RESEND THEN TRY IF EDGEFUNCTION WORKS
     body: JSON.stringify({
-      from: "contact@mombphotographie.fr",
+      from: "MOM.B Photographie <contact@mombphotographie.fr>",
       to: "mombphotographie@gmail.com",
       reply_to: email,
       subject: `🌸 Nouveau message de ${name} – ${subject}`,
