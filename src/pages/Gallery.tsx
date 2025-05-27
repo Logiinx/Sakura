@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react"
 import { BlurImage } from "@/components/BlurImage"
 import { getSectionImages } from "@/lib/supabasedb"
 
-const categories = ["all", "Grossesse", "Famille", "Bébé", "Complices", "Mariage"]
+const categories = ["Tous", "Grossesse", "Famille", "Bébé", "Complices", "Mariage"]
 
 // Define image sections for each category
 const categoryImageSections = {
@@ -27,12 +27,12 @@ function useSectionImagesQuery(sections: string[]) {
 }
 
 const Gallery = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedCategory, setSelectedCategory] = useState("Tous")
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   // Get all image sections for the selected category
   const selectedSections = useMemo(() => {
-    if (selectedCategory === "all") {
+    if (selectedCategory === "Tous") {
       return Object.values(categoryImageSections).flat()
     }
     return categoryImageSections[selectedCategory as keyof typeof categoryImageSections] || []
@@ -111,8 +111,8 @@ const Gallery = () => {
           <div className="mb-16 text-center">
             <h1 className="mb-4 mt-12 font-bad-script text-4xl font-bold tracking-widest md:text-5xl">Galerie</h1>
             <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
-            <p className="mx-auto mt-6 max-w-2xl text-gray-600">
-              Browse our collection of beautiful photographs showcasing our unique style and vision.
+            <p className="mx-auto mt-6 max-w-2xl text-xl text-gray-600">
+              Immortaliser vos plus beaux moments, chaque image raconte une histoire.
             </p>
           </div>
 
