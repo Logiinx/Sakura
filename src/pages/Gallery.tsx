@@ -1,54 +1,67 @@
-import React, { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import React, { useState, useMemo } from "react"
 
-const images = [
-  {
-    id: 1,
-    src: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=800&q=80",
-    alt: "Orange flowers",
-    category: "nature",
-  },
-  {
-    id: 2,
-    src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    alt: "Body of water surrounded by trees",
-    category: "landscape",
-  },
-  {
-    id: 3,
-    src: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
-    alt: "Sun light passing through green leafed tree",
-    category: "nature",
-  },
-  {
-    id: 4,
-    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80",
-    alt: "Landscape photography of mountain hit by sun rays",
-    category: "landscape",
-  },
-  {
-    id: 5,
-    src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
-    alt: "Foggy mountain summit",
-    category: "landscape",
-  },
-  {
-    id: 6,
-    src: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=800&q=80",
-    alt: "Ocean wave at beach",
-    category: "nature",
-  },
-]
+import { BlurImage } from "@/components/BlurImage"
+import { getSectionImages } from "@/lib/supabasedb"
 
-const categories = ["all", "nature", "landscape"]
+const categories = ["all", "Grossesse", "Famille", "Bébé", "Complices", "Mariage"]
+
+// Define image sections for each category
+const categoryImageSections = {
+  Grossesse: Array.from({ length: 10 }, (_, i) => `grossesse-${i + 1}`),
+  Famille: Array.from({ length: 10 }, (_, i) => `famille-${i + 1}`),
+  Bébé: Array.from({ length: 10 }, (_, i) => `bebe-${i + 1}`),
+  Complices: Array.from({ length: 10 }, (_, i) => `complices-${i + 1}`),
+  Mariage: Array.from({ length: 10 }, (_, i) => `mariage-${i + 1}`),
+}
+
+// Hook for fetching image sections
+function useSectionImagesQuery(sections: string[]) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["sectionImages", sections.join(",")],
+    queryFn: () => getSectionImages(sections),
+    enabled: sections.length > 0,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  })
+  return { images: data, isLoading, error }
+}
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedImage, setSelectedImage] = useState<number | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
-  const filteredImages =
-    selectedCategory === "all" ? images : images.filter((image) => image.category === selectedCategory)
+  // Get all image sections for the selected category
+  const selectedSections = useMemo(() => {
+    if (selectedCategory === "all") {
+      return Object.values(categoryImageSections).flat()
+    }
+    return categoryImageSections[selectedCategory as keyof typeof categoryImageSections] || []
+  }, [selectedCategory])
 
-  const openLightbox = (id: number) => {
+  // Fetch images for the selected sections
+  const { images: sectionImages, isLoading, error } = useSectionImagesQuery(selectedSections)
+
+  // Transform the images data into a flat array
+  const filteredImages = useMemo(() => {
+    if (!sectionImages) return []
+    return selectedSections
+      .map((section) => {
+        const imageData = sectionImages[section]
+        return imageData
+          ? {
+              id: section,
+              src: imageData.image_url,
+              alt: imageData.alt_text || section,
+              hash: imageData.blur_hash,
+              width: imageData.width,
+              height: imageData.height,
+            }
+          : null
+      })
+      .filter((img): img is NonNullable<typeof img> => img !== null)
+  }, [sectionImages, selectedSections])
+
+  const openLightbox = (id: string) => {
     setSelectedImage(id)
     document.body.style.overflow = "hidden"
   }
@@ -82,7 +95,7 @@ const Gallery = () => {
       <section className="py-16 md:py-24">
         <div className="sakura-container">
           <div className="mb-16 text-center">
-            <h1 className="mb-4 text-4xl font-bold md:text-5xl">Gallery</h1>
+            <h1 className="mb-4 mt-12 font-bad-script text-4xl font-bold tracking-widest md:text-5xl">Galerie</h1>
             <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
             <p className="mx-auto mt-6 max-w-2xl text-gray-600">
               Browse our collection of beautiful photographs showcasing our unique style and vision.
@@ -105,24 +118,43 @@ const Gallery = () => {
             </div>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="py-12 text-center">
+              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-sakura-pink"></div>
+              <p className="mt-4 text-gray-600">Chargement des images...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="py-12 text-center">
+              <p className="text-red-500">Une erreur est survenue lors du chargement des images.</p>
+            </div>
+          )}
+
           {/* Gallery Grid */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredImages.map((image) => (
-              <div
-                key={image.id}
-                className="cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
-                onClick={() => openLightbox(image.id)}>
-                <div className="relative h-72">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-20"></div>
+          {!isLoading && !error && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredImages.map((image) => (
+                <div
+                  key={image.id}
+                  className="cursor-pointer overflow-hidden rounded-lg shadow-sm transition-all duration-300 hover:shadow-md"
+                  onClick={() => openLightbox(image.id)}>
+                  <div className="relative h-72">
+                    <BlurImage
+                      src={image.src}
+                      hash={image.hash}
+                      alt={image.alt}
+                      className="h-full w-full transition-transform duration-500 hover:scale-105"
+                      objectFit={image.height > image.width ? "contain" : "cover"}
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-20"></div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Lightbox */}
           {selectedImage !== null && getImageIndex() !== -1 && (
@@ -156,10 +188,12 @@ const Gallery = () => {
                 </svg>
               </button>
 
-              <img
+              <BlurImage
                 src={filteredImages[getImageIndex()].src}
+                hash={filteredImages[getImageIndex()].hash}
                 alt={filteredImages[getImageIndex()].alt}
-                className="max-h-[85vh] max-w-[85vw] object-contain"
+                className="max-h-[85vh] max-w-[85vw]"
+                objectFit="contain"
                 onClick={(e) => e.stopPropagation()}
               />
 

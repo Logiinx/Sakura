@@ -1,9 +1,7 @@
 import React, { useState } from "react"
 import { FaMapPin, FaPhone, FaEnvelope } from "react-icons/fa"
 
-import ContactEmailTemplate from "@/components/resendcontacttemplate"
 import { useToast } from "@/hooks/use-toast"
-import { resend } from "@/lib/resend"
 
 const Contact = () => {
   const { toast } = useToast()
@@ -28,52 +26,25 @@ const Contact = () => {
     setIsSubmitting(true)
 
     try {
-      // EmailJS integration would go here
-      // Example:
-      /*
-      await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
-        {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-contact-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
-        'YOUR_PUBLIC_KEY'
-      );
-      */
-
-      // For demo purposes, we'll simulate a successful API call
-      // await new Promise((resolve) => setTimeout(resolve, 1000))
-      // TODO : VERIFY DOMAIN mombphotographie.f IN RESEND TO TRY TO SEND EMAIL
-      await resend.emails.send({
-        from: "contact@mombphotographie.fr", // use a verified sender domain
-        to: "mombphotographie@gmail.com", // your own address (as you said)
-        replyTo: formData.email, // reply to the sender's email
-        subject: `🌸 Nouveau message de ${formData.name} – ${formData.subject}`,
-        react: (
-          <ContactEmailTemplate
-            name={formData.name}
-            email={formData.email}
-            subject={formData.subject}
-            message={formData.message}
-          />
-        ),
+        body: JSON.stringify(formData),
       })
+
+      if (!response.ok) {
+        throw new Error("Failed to send email")
+      }
 
       toast({
         title: "Message envoyé !",
         description: "Vous receverez une réponse dès que possible.",
       })
 
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      })
+      setFormData({ name: "", email: "", subject: "", message: "" })
     } catch (error) {
       console.error("Erreur lors de l'envoi du message :", error)
       toast({

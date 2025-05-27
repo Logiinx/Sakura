@@ -72,7 +72,7 @@ serve(async (req: Request) => {
     // 2. Create Supabase Admin Client
     const supabaseAdmin = createClient(
       Deno.env.get("VITE_SUPABASE_URL") ?? "",
-      Deno.env.get("VITE_SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     )
 
     // 3. Get Public URL for the already uploaded file
