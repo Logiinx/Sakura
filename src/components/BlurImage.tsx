@@ -27,26 +27,34 @@ export const BlurImage: React.FC<BlurImageProps> = ({
   ...rest // Pass through other img attributes like width, height
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [hashError, setHashError] = useState(false)
 
   useEffect(() => {
     const img = new Image()
     img.onload = () => {
+      console.log("Image loaded successfully:", src)
       setImageLoaded(true)
     }
+    img.onerror = (error) => {
+      console.error("Image failed to load:", src, error)
+    }
     img.src = src
-    // Optional: handle image loading errors
-    // img.onerror = () => { console.error("Image failed to load:", src); }
 
     // Cleanup function in case the component unmounts before image loads
     return () => {
       img.onload = null
-      // img.onerror = null; // Uncomment if using onerror
+      img.onerror = null
     }
   }, [src]) // Reload if src changes
 
   // Keep showBlurhash for checking if hash exists, but don't use for conditional rendering directly
-  const hasBlurhash = !!hash
+  const hasBlurhash = !!hash && !hashError
   const { width, height, ...imgRest } = rest // Separate width/height for blurhash canvas if needed
+
+  const handleHashError = () => {
+    console.error("Blurhash error for:", src)
+    setHashError(true)
+  }
 
   return (
     <div
@@ -58,18 +66,18 @@ export const BlurImage: React.FC<BlurImageProps> = ({
       <div className="absolute inset-0">
         {/* Blurhash Canvas - Always rendered if hash exists, fades out */}
         {hasBlurhash && hash && (
-          <Blurhash
-            hash={hash}
-            width="100%" // Explicit width
-            height="100%" // Explicit height
-            resolutionX={hashWidth} // Use prop for resolution
-            resolutionY={hashHeight} // Use prop for resolution
-            punch={punch}
-            className={`absolute inset-0 h-full w-full bg-transparent transition-opacity duration-500 ${
-              imageLoaded ? "opacity-0" : "opacity-100" // Fade out when image loaded
-            }`}
-            // Removed inline style, class takes precedence
-          />
+          <div className="absolute inset-0 h-full w-full">
+            <Blurhash
+              hash={hash}
+              width="100%" // Explicit width
+              height="100%" // Explicit height
+              resolutionX={hashWidth} // Use prop for resolution
+              resolutionY={hashHeight} // Use prop for resolution
+              punch={punch}
+              className={`h-full w-full bg-transparent transition-opacity duration-500 ${imageLoaded ? "opacity-0" : "opacity-100"}`}
+              onError={handleHashError}
+            />
+          </div>
         )}
 
         {/* Actual Image - Always Rendered, Opacity Transitions */}
@@ -77,9 +85,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
           src={src}
           alt={alt}
           onLoad={() => setImageLoaded(true)}
-          className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${
-            imageLoaded ? "opacity-100" : "opacity-0" // Fade in when image loaded
-          }`}
+          className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           style={{ objectFit: objectFit }}
           crossOrigin={crossorigin} // Apply crossorigin
           {...imgRest} // Apply remaining props like style, etc.
@@ -98,7 +104,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
       {/* Fallback - Shows if NO blurhash AND image not loaded */}
       {!hasBlurhash && !imageLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-transparent text-gray-500">
-          {/* Loading... */}
+          <span>Loading...</span>
         </div>
       )}
     </div>

@@ -38,7 +38,7 @@ function useSectionImagesQuery(sections: string[]) {
 
 const PackageFourPage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["complices-package", "complices-1", "complices-2", "complices-3"], [])
+  const imageSections = useMemo(() => ["complices-0", "complices-1", "complices-2", "complices-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 

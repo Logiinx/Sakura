@@ -8,10 +8,10 @@ const categories = ["all", "Grossesse", "Famille", "Bébé", "Complices", "Maria
 
 // Define image sections for each category
 const categoryImageSections = {
-  Grossesse: Array.from({ length: 10 }, (_, i) => `grossesse-${i + 1}`),
-  Famille: Array.from({ length: 10 }, (_, i) => `famille-${i + 1}`),
-  Bébé: Array.from({ length: 10 }, (_, i) => `bebe-${i + 1}`),
-  Complices: Array.from({ length: 10 }, (_, i) => `complices-${i + 1}`),
+  Grossesse: Array.from({ length: 11 }, (_, i) => `grossesse-${i}`),
+  Famille: Array.from({ length: 11 }, (_, i) => `famille-${i}`),
+  Bébé: Array.from({ length: 11 }, (_, i) => `bebe-${i}`),
+  Complices: Array.from({ length: 11 }, (_, i) => `complices-${i}`),
   Mariage: Array.from({ length: 10 }, (_, i) => `mariage-${i + 1}`),
 }
 
@@ -44,21 +44,34 @@ const Gallery = () => {
   // Transform the images data into a flat array
   const filteredImages = useMemo(() => {
     if (!sectionImages) return []
-    return selectedSections
+    const images = selectedSections
       .map((section) => {
         const imageData = sectionImages[section]
-        return imageData
-          ? {
-              id: section,
-              src: imageData.image_url,
-              alt: imageData.alt_text || section,
-              hash: imageData.blur_hash,
-              width: imageData.width,
-              height: imageData.height,
-            }
-          : null
+        if (imageData) {
+          // Ensure the image URL is properly formatted and accessible
+          const imageUrl = imageData.image_url
+
+          // Check if the URL is valid
+          if (!imageUrl) {
+            console.error(`Missing image URL for section ${section}`)
+            return null
+          }
+
+          return {
+            id: section,
+            src: imageUrl,
+            alt: imageData.alt_text || section,
+            hash: imageData.blur_hash,
+            width: imageData.width || 800, // Provide default width if missing
+            height: imageData.height || 600, // Provide default height if missing
+          }
+        }
+        return null
       })
       .filter((img): img is NonNullable<typeof img> => img !== null)
+
+    console.log("Filtered images:", images.length)
+    return images
   }, [sectionImages, selectedSections])
 
   const openLightbox = (id: string) => {
@@ -73,7 +86,8 @@ const Gallery = () => {
 
   const getImageIndex = () => {
     if (selectedImage === null) return -1
-    return filteredImages.findIndex((img) => img.id === selectedImage)
+    const index = filteredImages.findIndex((img) => img.id === selectedImage)
+    return index
   }
 
   const navigateLightbox = (direction: "next" | "prev") => {
@@ -188,14 +202,18 @@ const Gallery = () => {
                 </svg>
               </button>
 
-              <BlurImage
-                src={filteredImages[getImageIndex()].src}
-                hash={filteredImages[getImageIndex()].hash}
-                alt={filteredImages[getImageIndex()].alt}
-                className="max-h-[85vh] max-w-[85vw]"
-                objectFit="contain"
-                onClick={(e) => e.stopPropagation()}
-              />
+              <div className="relative max-h-[85vh] max-w-[85vw] overflow-hidden">
+                {filteredImages.length > 0 && getImageIndex() >= 0 && (
+                  <>
+                    <img
+                      src={filteredImages[getImageIndex()].src}
+                      alt={filteredImages[getImageIndex()].alt}
+                      className="block h-auto max-h-[85vh] w-auto max-w-[85vw] object-contain"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </>
+                )}
+              </div>
 
               <button
                 className="absolute right-4 top-1/2 -mt-6 text-white hover:text-sakura-pink"

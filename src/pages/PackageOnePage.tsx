@@ -43,7 +43,7 @@ function useSectionImagesQuery(sections: string[]) {
  */
 const PackageOnePage: React.FC = () => {
   // Define the sections for images needed on this page
-  const imageSections = useMemo(() => ["grossesse-package", "grossesse-1", "grossesse-2", "grossesse-3"], [])
+  const imageSections = useMemo(() => ["grossesse-0", "grossesse-1", "grossesse-2", "grossesse-3"], [])
 
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
 

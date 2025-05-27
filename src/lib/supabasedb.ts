@@ -80,6 +80,8 @@ export async function getSectionImages(sections: string[]): Promise<Record<strin
     return {}
   }
 
+  console.log("Fetching images for sections:", sections)
+
   // Explicitly list columns based on SiteImageData interface
   const columnsToSelect = "id, created_at, image_url, alt_text, width, height, section, blur_hash, size, updated_at"
 
@@ -89,6 +91,8 @@ export async function getSectionImages(sections: string[]): Promise<Record<strin
     if (error) {
       handleSupabaseError(error, `loading images for sections "${sections.join(", ")}"`)
     }
+
+    console.log("Fetched image data:", data)
 
     // Initialize result object with null for all requested sections
     const imagesBySection = sections.reduce(
