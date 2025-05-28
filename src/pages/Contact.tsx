@@ -194,7 +194,7 @@ const Contact = () => {
       <section className="bg-sakura-light-gray py-16">
         <div className="sakura-container">
           <div className="mb-8 text-center">
-            <h2 className="mb-4 text-3xl font-bold">Sur la carte</h2>
+            <h2 className="mb-4 font-bad-script text-4xl font-bold tracking-widest md:text-5xl">Sur la carte</h2>
             <div className="mx-auto h-1 w-20 bg-sakura-pink"></div>
           </div>
 
