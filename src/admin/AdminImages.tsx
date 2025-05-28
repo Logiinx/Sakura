@@ -22,6 +22,7 @@ import { supabase } from "@/lib/supabase" // Changed path
 import type { SiteImageData, SectionTextData } from "@/lib/supabasedb" // Adjust path if needed, ADD SectionTextData
 import { getAllSiteImages, updateImageAltText, getAllSectionTexts, updateSectionText } from "@/lib/supabasedb" // Adjust path if needed, ADD text functions
 import { encode } from "blurhash" // <-- Import blurhash
+import Compressor from "compressorjs" // <-- Import Compressor.js
 import { toast } from "sonner"
 
 // Define the sections you want to manage
@@ -85,6 +86,30 @@ const encodeImageToBlurhash = async (file: File): Promise<{ hash: string; width:
   }
 }
 
+// --- Helper Function for Client-Side Image Optimization ---
+/**
+ * Optimizes an image file using Compressor.js.
+ * Converts the image to WebP format with a specified quality.
+ * @param file The image file to optimize.
+ * @returns A Promise that resolves with the optimized image file (as a Blob or File).
+ * @throws An error if optimization fails.
+ */
+const optimizeImage = (file: File): Promise<File | Blob> => {
+  return new Promise((resolve, reject) => {
+    new Compressor(file, {
+      quality: 0.8, // Adjust quality as needed (0-1)
+      mimeType: "image/webp", // Convert to WebP
+      success(result) {
+        resolve(result)
+      },
+      error(err) {
+        console.error("Image optimization failed:", err)
+        reject(new Error(`Image optimization failed: ${err.message}`))
+      },
+    })
+  })
+}
+
 // --- Component Start ---
 
 const AdminImages: React.FC = () => {
@@ -103,6 +128,7 @@ const AdminImages: React.FC = () => {
   // Upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [isHashing, setIsHashing] = useState(false)
+  const [isOptimizing, setIsOptimizing] = useState(false) // New state for optimization
   const [generatedBlurhash, setGeneratedBlurhash] = useState<string | null>(null)
   const [imageWidth, setImageWidth] = useState<number | null>(null)
   const [imageHeight, setImageHeight] = useState<number | null>(null)
@@ -184,6 +210,7 @@ const AdminImages: React.FC = () => {
     setGeneratedBlurhash(null)
     setImageWidth(null)
     setImageHeight(null)
+    setIsOptimizing(false) // Reset optimizing state
 
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -220,10 +247,17 @@ const AdminImages: React.FC = () => {
 
   const handleUpload = async () => {
     // Also check if hashing is done and hash exists
-    if (!selectedFile || !uploadSection || isHashing || !generatedBlurhash) {
+    if (!selectedFile || !uploadSection || isHashing || !generatedBlurhash || isOptimizing) {
+      // Add isOptimizing
       toast.warning(
         `Veuillez sélectionner un fichier et une section${
-          isHashing ? " (Hashage en cours...)" : !generatedBlurhash && selectedFile ? " (Erreur BlurHash)" : ""
+          isHashing
+            ? " (Hashage en cours...)"
+            : isOptimizing
+              ? " (Optimisation en cours...)"
+              : !generatedBlurhash && selectedFile
+                ? " (Erreur BlurHash)"
+                : ""
         }.`
       )
       return
@@ -234,7 +268,34 @@ const AdminImages: React.FC = () => {
     setUploadProgress(0)
     setError(null)
 
-    const fileExtension = selectedFile.name.split(".").pop() || "jpg"
+    // --- Image Optimization using Compressor.js ---
+    let optimizedFileToUpload: File | Blob = selectedFile
+    let fileExtension = selectedFile.name.split(".").pop()?.toLowerCase() || "jpg"
+
+    // Only optimize if it's not already webp, or if we want to force re-compression
+    if (selectedFile.type !== "image/webp") {
+      setIsOptimizing(true)
+      try {
+        toast.info("Optimisation de l'image en cours...")
+        optimizedFileToUpload = await optimizeImage(selectedFile)
+        // Compressor.js result might be a Blob, ensure it's a File for upload if needed
+        // For Supabase upload, Blob is fine. The name might be lost, so we construct it.
+        fileExtension = "webp" // Set extension to webp after conversion
+        toast.success("Image optimisée avec succès !")
+      } catch (optError) {
+        console.error("Image optimization failed:", optError)
+        const optErrorMessage = optError instanceof Error ? optError.message : "Unknown optimization error"
+        toast.error(`L'optimisation de l'image a échoué: ${optErrorMessage}`)
+        setError(`L'optimisation de l'image a échoué: ${optErrorMessage}`)
+        setUploading(false)
+        setIsOptimizing(false)
+        return // Stop the upload process if optimization fails
+      } finally {
+        setIsOptimizing(false)
+      }
+    }
+    // --- End Image Optimization ---
+
     const uniqueFileName = `${uploadSection}-${Date.now()}.${fileExtension}`
     const filePath = `${uploadSection}/${uniqueFileName}`
 
@@ -247,9 +308,10 @@ const AdminImages: React.FC = () => {
 
       const { data: storageData, error: storageError } = await supabase.storage
         .from("assets") // <<< Your BUCKET NAME
-        .upload(filePath, selectedFile, {
+        .upload(filePath, optimizedFileToUpload, {
+          // Use the optimized file
           cacheControl: "3600",
-          upsert: false, // Keep upsert false for now while debugging
+          upsert: false,
         })
 
       // --- Add Logging --- START
@@ -590,12 +652,24 @@ const AdminImages: React.FC = () => {
             </CardContent>
             <CardFooter>
               <Button
-                className={`bg-sakura-pink ${uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash ? "bg-gray-400" : ""}`}
+                className={`bg-sakura-pink ${uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash || isOptimizing ? "bg-gray-400" : ""}`}
                 onClick={handleUpload}
                 disabled={
-                  uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
+                  uploading ||
+                  isInvokingFunction ||
+                  !selectedFile ||
+                  !uploadSection ||
+                  isHashing ||
+                  !generatedBlurhash ||
+                  isOptimizing // Add isOptimizing
                 }>
-                {isHashing ? "Chargement..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
+                {isHashing
+                  ? "Chargement..."
+                  : isOptimizing // New condition for optimizing
+                    ? "Optimisation..."
+                    : uploading || isInvokingFunction
+                      ? "Traitement..."
+                      : "Uploader l'Image"}
               </Button>
             </CardFooter>
           </Card>
