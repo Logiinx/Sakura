@@ -515,7 +515,10 @@ const AdminImages: React.FC = () => {
           <h1 className="mr-auto font-bad-script text-3xl font-bold -tracking-tighter text-white">
             Gestion des Images du Site
           </h1>
-          <Button variant="outline" onClick={handleLogout} disabled={isLoggingOut}>
+          <Button
+            className="bg-white text-black shadow-md hover:bg-destructive/90 hover:!text-white hover:text-shadow-md"
+            onClick={handleLogout}
+            disabled={isLoggingOut}>
             {isLoggingOut ? "Déconnexion..." : "Se déconnecter"}
           </Button>
         </div>
@@ -539,7 +542,7 @@ const AdminImages: React.FC = () => {
                   accept="image/png, image/jpeg, image/webp, image/gif"
                   onChange={handleFileChange}
                   disabled={uploading || isInvokingFunction}
-                  className="h-13 file:mr-4 file:rounded-full file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                  className="h-13 file:mr-4 file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-opacity-90"
                 />
               </div>
               <div className="grid w-full max-w-md items-center gap-2">
@@ -592,7 +595,7 @@ const AdminImages: React.FC = () => {
                 disabled={
                   uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash
                 }>
-                {isHashing ? "Hashage..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
+                {isHashing ? "Chargement..." : uploading || isInvokingFunction ? "Traitement..." : "Uploader l'Image"}
               </Button>
             </CardFooter>
           </Card>
@@ -766,7 +769,7 @@ const AdminImages: React.FC = () => {
                             <div className="flex justify-end gap-2">
                               <Button
                                 size="sm"
-                                variant="outline"
+                                className="bg-white text-black shadow hover:bg-sakura-pink/90 hover:!text-white hover:text-shadow-md"
                                 onClick={() => handleEditClick(image)}
                                 disabled={isDeletingImageId === image.id}>
                                 Modifier Alt

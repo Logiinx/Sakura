@@ -30,6 +30,8 @@ export const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        sakura:
+          "rounded-md bg-sakura-pink px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-opacity-90",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -39,7 +41,7 @@ export const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: "sakura",
       size: "default",
     },
   }
