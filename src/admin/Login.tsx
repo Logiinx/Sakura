@@ -58,7 +58,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     <div className="flex min-h-screen w-full items-center justify-center bg-[url('https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/camera404.webp')] bg-cover bg-center px-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Panneau Admin - Connexion</CardTitle>
+          <CardTitle className="font-bad-script text-3xl font-bold tracking-widest">
+            Panel Admin <br /> Connexion
+          </CardTitle>
           <CardDescription>Veuillez vous connecter pour continuer.</CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
@@ -89,7 +91,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             {error && <p className="text-sm text-red-600">{error}</p>}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="hover:bg-sakura flex w-full rounded-md bg-sakura-pink font-semibold !text-white shadow-md text-shadow-md hover:bg-opacity-90"
+              disabled={loading}>
               {loading ? "Connexion en cours..." : "Se connecter"}
             </Button>
           </CardFooter>

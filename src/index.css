@@ -139,7 +139,7 @@
 /* Custom button style */
 .sakura-btn {
   /* Mix Tailwind utilities to create a reusable button style */
-  @apply rounded-md bg-sakura-pink px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-opacity-90;
+  @apply rounded-md bg-sakura-pink px-6 py-3 font-medium text-white transition-all duration-300 text-shadow-md hover:bg-opacity-90;
 }
 
 /* Custom container style */

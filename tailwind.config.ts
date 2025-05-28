@@ -37,6 +37,13 @@ export default {
     },
     // The 'extend' section allows adding new values or modifying existing ones without overwriting defaults.
     extend: {
+      textShadow: {
+        sm: "0px 1px 1px rgba(0, 0, 0, 0.15)", // plus léger
+        md: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+        lg: "3px 3px 6px rgba(0, 0, 0, 0.4)",
+        white: "0 1px 2px rgba(255, 255, 255, 0.6)", // utile pour fond sombre
+        pink: "0 1px 2px #FFC1CC",
+      },
       // Customizing colors.
       colors: {
         // These colors use CSS variables defined in a global CSS file (like index.css).
