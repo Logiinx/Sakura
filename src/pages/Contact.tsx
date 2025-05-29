@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { FaMapPin, FaPhone, FaEnvelope } from "react-icons/fa"
+import { FaMapPin, FaPhone, FaEnvelope } from "react-icons/fa6"
 
 import { useToast } from "@/hooks/use-toast"
 

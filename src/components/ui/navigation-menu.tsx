@@ -1,6 +1,6 @@
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import * as React from "react"
-import { FaChevronDown } from "react-icons/fa"
+import { FaChevronDown } from "react-icons/fa6"
 
 import { navigationMenuTriggerStyle } from "@/lib/ui-variants"
 import { cn } from "@/lib/utils"

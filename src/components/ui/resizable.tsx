@@ -1,4 +1,4 @@
-import { FaGripVertical } from "react-icons/fa"
+import { FaGripVertical } from "react-icons/fa6"
 import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
