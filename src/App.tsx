@@ -32,7 +32,6 @@ import Layout from "./components/Layout"
 import SakuraPetals from "./components/SakuraPetals"
 import ScrollToTop from "./components/ScrollToTop"
 import ScrollToTopButton from "./components/ScrollToTopButton"
-import BookNow from "./pages/BookNow"
 import Contact from "./pages/Contact"
 import Galerie from "./pages/Galerie"
 // Page Components (located in ./pages/)
@@ -92,7 +91,6 @@ const App = () => {
               {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
               <Route path="/galerie" element={<Galerie />} />
               <Route path="/contact" element={<Contact />} />
-              <Route path="/book-now" element={<BookNow />} />
               <Route path="/grossesse" element={<PackageOnePage />} />
               <Route path="/famille" element={<PackageTwoPage />} />
               <Route path="/bebe" element={<PackageThreePage />} />
