@@ -598,13 +598,14 @@ const AdminImages: React.FC = () => {
                 <Label htmlFor="file-input" className="font-medium">
                   Image
                 </Label>
+                {/* Choisir un fichier / Aucun fichier choisi */}
                 <Input
                   id="file-input"
                   type="file"
                   accept="image/png, image/jpeg, image/webp, image/gif"
                   onChange={handleFileChange}
                   disabled={uploading || isInvokingFunction}
-                  className="h-13 file:mr-4 file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-opacity-90"
+                  className="h-13 file:mr-4 file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:!text-white file:text-shadow-md hover:file:bg-opacity-90"
                 />
               </div>
               <div className="grid w-full max-w-md items-center gap-2">
@@ -652,7 +653,7 @@ const AdminImages: React.FC = () => {
             </CardContent>
             <CardFooter>
               <Button
-                className={`bg-sakura-pink ${uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash || isOptimizing ? "bg-gray-400" : ""}`}
+                className={`bg-sakura-pink font-semibold !text-white text-shadow-md ${uploading || isInvokingFunction || !selectedFile || !uploadSection || isHashing || !generatedBlurhash || isOptimizing ? "bg-gray-400" : ""}`}
                 onClick={handleUpload}
                 disabled={
                   uploading ||
