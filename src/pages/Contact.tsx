@@ -20,7 +20,7 @@ const Contact = () => {
       [name]: value,
     }))
   }
-
+  // TODO VERIFY DOMAIN
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
