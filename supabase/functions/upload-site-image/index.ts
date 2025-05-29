@@ -19,6 +19,103 @@ interface RequestBody {
   width?: number // Added: width from client
   height?: number // Added: height from client
   blurHash?: string // Added: blurHash from client
+  fileSize?: number // Added: file size for validation
+}
+
+// Security: Define allowed file types and size limits
+const ALLOWED_FILE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB (reduced from 10MB for better performance)
+const ALLOWED_SECTIONS = ["grossesse", "famille", "bebe", "complices", "mariage", "hero", "about"]
+
+/**
+ * Validates file path to prevent path traversal attacks
+ */
+function validateFilePath(filePath: string): boolean {
+  // Check for path traversal attempts
+  if (filePath.includes("..") || filePath.includes("//") || filePath.startsWith("/")) {
+    return false
+  }
+
+  // Ensure path follows expected pattern: section/filename
+  const pathParts = filePath.split("/")
+  if (pathParts.length !== 2) {
+    return false
+  }
+
+  const [section, filename] = pathParts
+
+  // Validate section
+  if (!ALLOWED_SECTIONS.includes(section)) {
+    return false
+  }
+
+  // Validate filename (alphanumeric, hyphens, underscores, dots only)
+  const allowedExtensionsPattern = ALLOWED_FILE_EXTENSIONS.join("|")
+  const filenameRegex = new RegExp(`^[a-zA-Z0-9._-]+\\.(${allowedExtensionsPattern})$`, "i")
+  return filenameRegex.test(filename)
+}
+
+/**
+ * Validates file type based on file extension
+ */
+function validateFileType(filePath: string): boolean {
+  const extension = filePath.toLowerCase().split(".").pop()
+  return ALLOWED_FILE_EXTENSIONS.includes(extension || "")
+}
+
+/**
+ * Validates request body input
+ */
+function validateRequestBody(body: unknown): { isValid: boolean; error?: string } {
+  if (!body || typeof body !== "object") {
+    return { isValid: false, error: "Invalid request body" }
+  }
+
+  const { filePath, section, altText, width, height, fileSize } = body as Record<string, unknown>
+
+  // Required fields
+  if (!filePath || typeof filePath !== "string") {
+    return { isValid: false, error: "filePath is required and must be a string" }
+  }
+
+  if (!section || typeof section !== "string") {
+    return { isValid: false, error: "section is required and must be a string" }
+  }
+
+  // Validate file path
+  if (!validateFilePath(filePath)) {
+    return { isValid: false, error: "Invalid file path format" }
+  }
+
+  // Validate file type
+  if (!validateFileType(filePath)) {
+    return { isValid: false, error: "Invalid file type. Only JPG, JPEG, PNG, and WebP are allowed" }
+  }
+
+  // Validate section
+  if (!ALLOWED_SECTIONS.includes(section)) {
+    return { isValid: false, error: "Invalid section" }
+  }
+
+  // Validate file size if provided
+  if (fileSize && (typeof fileSize !== "number" || fileSize <= 0 || fileSize > MAX_FILE_SIZE)) {
+    return { isValid: false, error: `File size must be between 1 byte and ${MAX_FILE_SIZE / (1024 * 1024)}MB` }
+  }
+
+  // Optional field validation
+  if (altText && (typeof altText !== "string" || altText.length > 500)) {
+    return { isValid: false, error: "altText must be a string with max 500 characters" }
+  }
+
+  if (width && (typeof width !== "number" || width <= 0 || width > 10000)) {
+    return { isValid: false, error: "width must be a positive number <= 10000" }
+  }
+
+  if (height && (typeof height !== "number" || height <= 0 || height > 10000)) {
+    return { isValid: false, error: "height must be a positive number <= 10000" }
+  }
+
+  return { isValid: true }
 }
 
 serve(async (req) => {
@@ -31,67 +128,71 @@ serve(async (req) => {
   }
 
   try {
-    // Log Content-Type immediately
-    const _contentTypeHeader = req.headers.get("Content-Type")
-    // console.log(`Content-Type header received: ${contentTypeHeader}`) // Removed log
-
-    // 1. Attempt to Parse Incoming JSON Body Directly
-    let body: RequestBody
-    let rawBodyForError = "<Body not read>"
-    try {
-      // console.log("Attempting req.json()...") // Removed log
-      body = await req.json()
-      // console.log("Successfully parsed JSON body:", body) // Removed log
-    } catch (jsonError) {
-      console.error("req.json() failed:", jsonError) // Keep console.error
-      // If JSON parsing fails, TRY reading as text for debugging
-      try {
-        // console.log("Attempting req.text() as fallback...") // Removed log
-        rawBodyForError = await req.text() // Use original req object
-        // console.log(`Fallback req.text() content: [${rawBodyForError}]`) // Removed log
-      } catch (textError) {
-        console.error("Fallback req.text() also failed:", textError) // Keep console.error
-        rawBodyForError = `<Failed to read body as text: ${textError.message}>`
-      }
-      // Throw the original JSON error but include the text attempt info
-      throw new Error(
-        `Invalid JSON body. Text fallback attempt: [${rawBodyForError}]. Parse error: ${jsonError.message}`
-      )
+    // Validate Content-Type header
+    const contentType = req.headers.get("Content-Type")
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Invalid Content-Type:", contentType)
+      return new Response(JSON.stringify({ error: "Content-Type must be application/json" }), {
+        status: 400,
+        headers: { ...cors, "Content-Type": "application/json" },
+      })
     }
 
-    // If we reach here, JSON parsing succeeded
-    // Extract data including the new fields
+    // 1. Parse and validate incoming JSON body
+    let body: RequestBody
+    try {
+      body = await req.json()
+    } catch (jsonError) {
+      console.error("JSON parsing failed:", jsonError instanceof Error ? jsonError.message : "Unknown error")
+      return new Response(JSON.stringify({ error: "Invalid JSON format" }), {
+        status: 400,
+        headers: { ...cors, "Content-Type": "application/json" },
+      })
+    }
+
+    // 2. Validate request body
+    const validation = validateRequestBody(body)
+    if (!validation.isValid) {
+      console.error("Request validation failed:", validation.error)
+      return new Response(JSON.stringify({ error: validation.error }), {
+        status: 400,
+        headers: { ...cors, "Content-Type": "application/json" },
+      })
+    }
+
+    // Extract validated data
     const { filePath, section, altText, width, height, blurHash } = body
 
-    if (!filePath || !section) {
-      // This check might be redundant if the interface matches, but good validation
-      throw new Error("Missing required fields in parsed JSON body: filePath and section are required.")
+    // 3. Validate environment variables and create Supabase Admin Client
+    const supabaseUrl = Deno.env.get("VITE_SUPABASE_URL")
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error("Missing required environment variables")
+      throw new Error("Server configuration error")
     }
 
-    // console.log( // Removed log
-    //   `Processing parsed data - Path: ${filePath}, Section: ${section}, Alt: ${altText}, W: ${width}, H: ${height}, Hash: ${blurHash}`
-    // )
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey)
 
-    // 2. Create Supabase Admin Client
-    const supabaseAdmin = createClient(
-      Deno.env.get("VITE_SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    )
+    // 4. Verify file exists and get Public URL
+    const { data: fileData, error: fileError } = await supabaseAdmin.storage
+      .from("assets")
+      .list(filePath.split("/")[0], {
+        search: filePath.split("/")[1],
+      })
 
-    // 3. Get Public URL for the already uploaded file
-    // console.log(`Getting public URL for path: ${filePath}`) // Removed log
-    const { data: urlData } = supabaseAdmin.storage
-      .from("assets") // <<< Your Bucket Name
-      .getPublicUrl(filePath) // Use the path received from the client
+    if (fileError || !fileData || fileData.length === 0) {
+      console.error("File not found in storage:", filePath, fileError)
+      throw new Error("File not found in storage")
+    }
+
+    const { data: urlData } = supabaseAdmin.storage.from("assets").getPublicUrl(filePath)
 
     if (!urlData?.publicUrl) {
       console.error("Could not get public URL for path:", filePath)
-      // Note: The file already exists in storage at this point.
-      // Deciding whether to delete it here if URL fails is complex.
       throw new Error("Failed to get public URL for the uploaded image.")
     }
     const publicUrl = urlData.publicUrl
-    // console.log("Public URL obtained:", publicUrl) // Removed log
 
     // ---- Image processing (size, width, height, blurhash) is now done on the client ----
     // We will get size from Storage directly if needed later, or assume client handles it.

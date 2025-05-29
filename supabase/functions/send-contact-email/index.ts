@@ -2,6 +2,119 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 
 import { getCorsHeaders } from "../_shared/cors.ts"
 
+interface ContactFormData {
+  name: string
+  email: string
+  subject: string
+  message: string
+}
+
+/**
+ * Validates email format
+ */
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email) && email.length <= 254
+}
+
+/**
+ * Sanitizes text input to prevent injection attacks
+ */
+function sanitizeText(text: string): string {
+  return text
+    .replace(/[<>"'&]/g, (char) => {
+      switch (char) {
+        case "<":
+          return "&lt;"
+        case ">":
+          return "&gt;"
+        case '"':
+          return "&quot;"
+        case "'":
+          return "&#x27;"
+        case "&":
+          return "&amp;"
+        default:
+          return char
+      }
+    })
+    .trim()
+}
+
+/**
+ * Validates contact form data
+ */
+function validateContactForm(data: unknown): { isValid: boolean; error?: string; sanitizedData?: ContactFormData } {
+  if (!data || typeof data !== "object") {
+    return { isValid: false, error: "Invalid request body" }
+  }
+
+  const { name, email, subject, message } = data as Record<string, unknown>
+
+  // Validate required fields
+  if (!name || typeof name !== "string") {
+    return { isValid: false, error: "Name is required and must be a string" }
+  }
+
+  if (!email || typeof email !== "string") {
+    return { isValid: false, error: "Email is required and must be a string" }
+  }
+
+  if (!subject || typeof subject !== "string") {
+    return { isValid: false, error: "Subject is required and must be a string" }
+  }
+
+  if (!message || typeof message !== "string") {
+    return { isValid: false, error: "Message is required and must be a string" }
+  }
+
+  // Validate field lengths
+  if (name.length > 100) {
+    return { isValid: false, error: "Name must be 100 characters or less" }
+  }
+
+  if (email.length > 254) {
+    return { isValid: false, error: "Email must be 254 characters or less" }
+  }
+
+  if (subject.length > 200) {
+    return { isValid: false, error: "Subject must be 200 characters or less" }
+  }
+
+  if (message.length > 5000) {
+    return { isValid: false, error: "Message must be 5000 characters or less" }
+  }
+
+  if (message.length < 10) {
+    return { isValid: false, error: "Message must be at least 10 characters long" }
+  }
+
+  // Validate email format
+  if (!isValidEmail(email)) {
+    return { isValid: false, error: "Invalid email format" }
+  }
+
+  // Check for suspicious patterns that might indicate injection attempts
+  const suspiciousPatterns = [/bcc:/i, /cc:/i, /to:/i, /from:/i, /content-type:/i, /mime-version:/i, /\r\n/, /\n/, /\r/]
+
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(name) || pattern.test(email) || pattern.test(subject) || pattern.test(message)) {
+      return { isValid: false, error: "Invalid characters detected in input" }
+    }
+  }
+
+  // Return sanitized data
+  return {
+    isValid: true,
+    sanitizedData: {
+      name: sanitizeText(name),
+      email: email.toLowerCase().trim(),
+      subject: sanitizeText(subject),
+      message: sanitizeText(message),
+    },
+  }
+}
+
 export function generateSakuraEmail({
   name,
   email,
@@ -93,30 +206,138 @@ export function generateSakuraEmail({
 </html>`
 }
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 5
+const requestCounts = new Map<string, { count: number; resetTime: number }>()
+
+/**
+ * Simple rate limiter based on IP address
+ */
+function checkRateLimit(ip: string): { allowed: boolean; resetTime?: number } {
+  const now = Date.now()
+  const record = requestCounts.get(ip)
+
+  if (!record || now > record.resetTime) {
+    requestCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    return { allowed: true }
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return { allowed: false, resetTime: record.resetTime }
+  }
+
+  record.count++
+  return { allowed: true }
+}
+
+/**
+ * Validates environment variables
+ */
+function validateEnvironment(): { isValid: boolean; error?: string } {
+  const apiKey = Deno.env.get("RESEND_API_KEY")
+
+  if (!apiKey || typeof apiKey !== "string" || apiKey.trim().length === 0) {
+    return { isValid: false, error: "RESEND_API_KEY environment variable is required" }
+  }
+
+  if (!apiKey.startsWith("re_")) {
+    return { isValid: false, error: "Invalid RESEND_API_KEY format" }
+  }
+
+  return { isValid: true }
+}
+
 serve(async (req) => {
   const origin = req.headers.get("origin")
   const cors = getCorsHeaders(origin)
 
-  // 1. Pré-vol CORS
+  // 1. CORS pre-flight
   if (req.method === "OPTIONS") {
-    // Toujours renvoyer un 204 No Content pour OPTIONS
     return new Response(null, {
       status: 204,
       headers: cors,
     })
   }
 
-  const { name, email, subject, message } = await req.json()
+  // 2. Method validation
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...cors, "Content-Type": "application/json" },
+    })
+  }
 
-  const apiKey = Deno.env.get("RESEND_API_KEY")
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    // TODO VERIFY DOMAIN MOMBPHOTOGRAPHIE.FR ON RESEND THEN TRY IF EDGEFUNCTION WORKS
-    body: JSON.stringify({
+  // 3. Content-Type validation
+  const contentType = req.headers.get("content-type")
+  if (!contentType || !contentType.includes("application/json")) {
+    return new Response(JSON.stringify({ error: "Content-Type must be application/json" }), {
+      status: 400,
+      headers: { ...cors, "Content-Type": "application/json" },
+    })
+  }
+
+  // 4. Rate limiting
+  const clientIP = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown"
+  const rateLimitResult = checkRateLimit(clientIP)
+
+  if (!rateLimitResult.allowed) {
+    const resetTime = rateLimitResult.resetTime || Date.now()
+    const waitTime = Math.ceil((resetTime - Date.now()) / 1000)
+
+    return new Response(
+      JSON.stringify({
+        error: "Rate limit exceeded",
+        retryAfter: waitTime,
+      }),
+      {
+        status: 429,
+        headers: {
+          ...cors,
+          "Content-Type": "application/json",
+          "Retry-After": waitTime.toString(),
+        },
+      }
+    )
+  }
+
+  // 5. Environment validation
+  const envValidation = validateEnvironment()
+  if (!envValidation.isValid) {
+    console.error("Environment validation failed:", envValidation.error)
+    return new Response(JSON.stringify({ error: "Service configuration error" }), {
+      status: 500,
+      headers: { ...cors, "Content-Type": "application/json" },
+    })
+  }
+
+  let rawData: unknown
+  try {
+    rawData = await req.json()
+  } catch (error) {
+    console.error("JSON parsing failed:", error instanceof Error ? error.message : "Unknown error")
+    return new Response(JSON.stringify({ error: "Invalid JSON format" }), {
+      status: 400,
+      headers: { ...cors, "Content-Type": "application/json" },
+    })
+  }
+
+  // Validate and sanitize input
+  const validation = validateContactForm(rawData)
+  if (!validation.isValid || !validation.sanitizedData) {
+    console.error("Form validation failed:", validation.error)
+    return new Response(JSON.stringify({ error: validation.error }), {
+      status: 400,
+      headers: { ...cors, "Content-Type": "application/json" },
+    })
+  }
+
+  const { name, email, subject, message } = validation.sanitizedData
+
+  const apiKey = Deno.env.get("RESEND_API_KEY")!
+
+  try {
+    const emailPayload = {
       from: "MOM.B Photographie <contact@mombphotographie.fr>",
       to: "mombphotographie@gmail.com",
       reply_to: email,
@@ -127,20 +348,69 @@ serve(async (req) => {
         subject: subject,
         message: message,
       }),
-    }),
-  })
+    }
 
-  let data
-  try {
-    data = await response.json()
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(emailPayload),
+    })
+
+    if (!response.ok) {
+      // Log detailed error for debugging but don't expose to client
+      const errorText = await response.text().catch(() => "Unable to read error response")
+      console.error("Resend API error:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+        timestamp: new Date().toISOString(),
+        clientIP: clientIP,
+      })
+
+      // Return generic error to prevent information disclosure
+      return new Response(JSON.stringify({ error: "Failed to send email. Please try again later." }), {
+        headers: {
+          ...cors,
+          "Content-Type": "application/json",
+        },
+        status: 500,
+      })
+    }
+
+    const result = await response.json()
+    console.log("Email sent successfully:", {
+      id: result.id,
+      timestamp: new Date().toISOString(),
+      from: email,
+      subject: subject,
+    })
+
+    return new Response(JSON.stringify({ success: true, message: "Email sent successfully" }), {
+      headers: {
+        ...cors,
+        "Content-Type": "application/json",
+      },
+      status: 200,
+    })
   } catch (error) {
-    data = { error: "Failed to parse response JSON", details: error instanceof Error ? error.message : String(error) }
+    // Log detailed error for debugging
+    console.error("Email sending failed:", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+      clientIP: clientIP,
+    })
+
+    // Return generic error to prevent information disclosure
+    return new Response(JSON.stringify({ error: "Failed to send email. Please try again later." }), {
+      headers: {
+        ...cors,
+        "Content-Type": "application/json",
+      },
+      status: 500,
+    })
   }
-  return new Response(JSON.stringify(data), {
-    headers: {
-      ...cors,
-      "Content-Type": "application/json",
-    },
-    status: response.status,
-  })
 })
