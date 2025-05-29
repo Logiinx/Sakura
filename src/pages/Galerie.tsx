@@ -26,7 +26,7 @@ function useSectionImagesQuery(sections: string[]) {
   return { images: data, isLoading, error }
 }
 
-const Gallery = () => {
+const Galerie = () => {
   const [selectedCategory, setSelectedCategory] = useState("Tous")
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
@@ -238,4 +238,4 @@ const Gallery = () => {
   )
 }
 
-export default Gallery
+export default Galerie

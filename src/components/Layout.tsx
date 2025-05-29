@@ -103,7 +103,7 @@ const Layout: React.FC = () => {
       "/famille",
       "/bebe",
       "/complices",
-      "/gallery",
+      "/galerie",
       "/contact",
       "/book-now",
       // Add other paths that need an initially opaque header
@@ -285,8 +285,11 @@ const Layout: React.FC = () => {
             </div>
             {/* --- End Tarifs Dropdown --- */}
 
-            <NavLink to="/gallery" className={({ isActive }) => getNavLinkClass(isActive)}>
+            <NavLink to="/galerie" className={({ isActive }) => getNavLinkClass(isActive)}>
               Galerie
+            </NavLink>
+            <NavLink to="/partenaires" className={({ isActive }) => getNavLinkClass(isActive)}>
+              Partenaires
             </NavLink>
             <NavLink to="/contact" className={({ isActive }) => getNavLinkClass(isActive)}>
               Contact
@@ -347,10 +350,16 @@ const Layout: React.FC = () => {
                   </NavLink>
                 </div>
                 <NavLink
-                  to="/gallery"
+                  to="/galerie"
                   className={({ isActive }) => getMobileNavLinkClass(isActive)}
                   onClick={toggleMenu}>
                   Galerie
+                </NavLink>
+                <NavLink
+                  to="/partenaires"
+                  className={({ isActive }) => getMobileNavLinkClass(isActive)}
+                  onClick={toggleMenu}>
+                  Partenaires
                 </NavLink>
                 <NavLink
                   to="/contact"
