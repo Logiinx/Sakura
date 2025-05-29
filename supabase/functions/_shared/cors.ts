@@ -5,7 +5,7 @@ const allowedOrigins = ["https://sakura-iota.vercel.app", "https://www.momb-phot
  * Retourne les en-têtes CORS adaptés à l’origine de la requête.
  * @param origin Le header Origin de la requête entrante
  */
-export function corsHeaders(origin: string | null) {
+export function getCorsHeaders(origin: string | null) {
   // Si l’origine est dans la whitelist, on la renvoie, sinon on renvoie une chaîne vide
   const allowOrigin = origin && allowedOrigins.includes(origin) ? origin : ""
 
