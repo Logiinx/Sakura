@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 
-import { corsHeaders } from "../_shared/cors.ts"
+import { getCorsHeaders } from "../_shared/cors.ts"
 
 export function generateSakuraEmail({
   name,
@@ -95,11 +95,15 @@ export function generateSakuraEmail({
 
 serve(async (req) => {
   const origin = req.headers.get("origin")
-  const cors = corsHeaders(origin)
+  const cors = getCorsHeaders(origin)
 
   // 1. Pré-vol CORS
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: cors })
+    // Toujours renvoyer un 204 No Content pour OPTIONS
+    return new Response(null, {
+      status: 204,
+      headers: cors,
+    })
   }
 
   const { name, email, subject, message } = await req.json()

@@ -5,7 +5,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-import { corsHeaders } from "../_shared/cors.ts"
+import { getCorsHeaders } from "../_shared/cors.ts"
 
 // Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
@@ -23,7 +23,7 @@ interface RequestBody {
 
 serve(async (req) => {
   const origin = req.headers.get("origin")
-  const cors = corsHeaders(origin)
+  const cors = getCorsHeaders(origin)
 
   // 1. Pré-vol CORS
   if (req.method === "OPTIONS") {
@@ -156,7 +156,7 @@ serve(async (req) => {
         blurhash: imageDataToSave.blur_hash,
       }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...cors, "Content-Type": "application/json" },
         status: 200,
       }
     )
