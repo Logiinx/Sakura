@@ -7,12 +7,13 @@
  */
 
 import React, { useState, useEffect, useRef } from "react"
+import { FaTimes } from "react-icons/fa"
 // Import components from react-router-dom for navigation and rendering page content.
 // Link: Basic navigation link.
 // NavLink: Special link that knows if it's "active" (matches the current URL).
 // Outlet: Placeholder where nested route components (pages) will be rendered.
 // useLocation: Hook to get information about the current URL.
-import { FaBars, FaTimes, FaInstagram, FaFacebook, FaChevronDown, FaWhatsapp } from "react-icons/fa"
+import { FaBars, FaInstagram, FaFacebookF, FaChevronDown, FaTiktok } from "react-icons/fa6"
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
 
 // Define the Layout component as a Functional Component (React.FC).
@@ -152,7 +153,7 @@ const Layout: React.FC = () => {
   const getNavLinkClass = (isActive: boolean): string => {
     // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
     const baseClasses =
-      "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:bg-opacity-90 transition-colors flex items-center gap-1" // Added flex, items-center, gap-1
+      "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:text-shadow-md hover:bg-opacity-90 transition-colors flex items-center gap-1" // Added flex, items-center, gap-1
     const textClass = isScrolled || forceHeaderOpaque ? "text-sakura-dark-text" : "text-white"
     // Standard active class logic
     const activeClass = isActive ? "font-medium text-sakura-pink border-sakura-pink" : ""
@@ -394,28 +395,31 @@ const Layout: React.FC = () => {
             <div className="flex space-x-6">
               {/* Use anchor tags `<a>` for external links (replace "#" with actual URLs). */}
               <a
-                href="https://www.facebook.com/mombphotographie/" // Replace with actual Facebook URL
-                target="_blank" // Open in new tab
+                href="https://www.facebook.com/mombphotographie/"
+                target="_blank"
                 rel="noopener noreferrer" // Security best practice for target="_blank"
-                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
-                aria-label="Facebook (opens in a new tab)">
-                <FaFacebook size="2em" />
+                className="rounded-lg bg-[#1876f0] p-1 transition-transform duration-200 hover:scale-110"
+                aria-label="Facebook (ouvre dans un nouvel onglet)">
+                <FaFacebookF className="text-white transition-transform duration-200 hover:scale-110" size="2em" />
               </a>
               <a
-                href="https://www.instagram.com/mombphotographie/" // Replace with actual Instagram URL
+                href="https://www.instagram.com/mombphotographie/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
-                aria-label="Instagram (opens in a new tab)">
-                <FaInstagram size="2em" />
+                className="rounded-lg bg-[linear-gradient(45deg,_#f58529_0%,_#dd2a7b_30%,_#8134af_60%,_#515bd4_100%)] p-1 transition-transform duration-200 hover:scale-110"
+                aria-label="Instagram (ouvre dans un nouvel onglet)">
+                <FaInstagram className="text-white transition-transform duration-200 hover:scale-110" size="2em" />
               </a>
               <a
-                href="#" // Replace with actual WhatsApp URL
+                href="https://www.tiktok.com/@mombphotographie"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover-float text-gray-500 transition-colors hover:text-sakura-pink"
-                aria-label="WhatsApp (opens in a new tab)">
-                <FaWhatsapp size="2em" />
+                className="rounded-lg bg-black p-1 transition-transform duration-200 hover:scale-110"
+                aria-label="TikTok (ouvre dans un nouvel onglet)">
+                <FaTiktok
+                  size="2em"
+                  className="text-white transition-transform duration-200 [filter:drop-shadow(-2px_0px_#69C9D0)_drop-shadow(2px_0px_#EE1D52)] hover:scale-110"
+                />
               </a>
             </div>
           </div>
