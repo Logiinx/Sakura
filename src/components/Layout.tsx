@@ -106,7 +106,6 @@ const Layout: React.FC = () => {
       "/galerie",
       "/contact",
       "/book-now",
-      "/partenaires",
       // Add other paths that need an initially opaque header
     ]
     if (pathsForOpaqueHeader.some((path) => location.pathname.startsWith(path))) {
