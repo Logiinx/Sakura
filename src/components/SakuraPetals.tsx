@@ -6,15 +6,21 @@
  * The styling and animation keyframes are defined in `src/index.css`.
  */
 
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useCallback } from "react"
 
 // Define the SakuraPetals component as a Functional Component (React.FC).
 const SakuraPetals: React.FC = () => {
   // Create a ref to attach to the container div.
   // This allows us to directly access the DOM element inside the useEffect hook.
   const containerRef = useRef<HTMLDivElement>(null)
-  // Define the number of petals to create.
-  const numberOfPetals = 20
+
+  // Define the number of petals to create based on screen size for better performance
+  const getNumberOfPetals = useCallback(() => {
+    if (typeof window === "undefined") return 20
+    return window.innerWidth < 768 ? 10 : 20 // Fewer petals on mobile
+  }, [])
+
+  const numberOfPetals = getNumberOfPetals()
 
   // --- Effect for Creating and Cleaning Up Petals --- //
   useEffect(() => {
@@ -44,13 +50,13 @@ const SakuraPetals: React.FC = () => {
     }
     // Empty dependency array `[]` ensures this effect runs only once when the component mounts
     // and the cleanup function runs only when it unmounts.
-  }, []) // No dependencies, runs once on mount.
+  }) // No dependencies, runs once on mount.
 
   /**
    * Helper function to create a single petal element and append it to the container.
    * @param container - The HTMLDivElement to append the petal to.
    */
-  const createPetal = (container: HTMLDivElement) => {
+  const createPetal = useCallback((container: HTMLDivElement) => {
     // Create a new div element that will represent a petal.
     const petal = document.createElement("div")
 
@@ -61,8 +67,8 @@ const SakuraPetals: React.FC = () => {
     const fallSpeed = Math.random() * 10 + 8
     // Randomize horizontal starting position across the window width.
     const startPositionX = Math.random() * window.innerWidth
-    // Randomize vertical starting position slightly above the viewport (-100px to 0px).
-    const startPositionY = Math.random() * -100
+    // Randomize vertical starting position well above the viewport (-300px to -100px).
+    const startPositionY = Math.random() * -150 + -50
     // Randomize animation delay. Between 0 and 15 seconds.
     const animationDelay = Math.random() * 15
     // Randomize initial rotation.
@@ -80,7 +86,7 @@ const SakuraPetals: React.FC = () => {
 
     // Add the newly created and styled petal to the container div in the DOM.
     container.appendChild(petal)
-  }
+  }, [])
 
   // --- Render --- //
   // Render the container div.

@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
     // Listen for auth state changes (login/logout)
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("Auth state changed, new session:", session)
+      // Auth state changed
       setSession(session)
       if (_event !== "INITIAL_SESSION") {
         // Avoid setting loading false again if it's just the initial check completing
