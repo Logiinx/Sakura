@@ -32,7 +32,7 @@ export const BlurImage: React.FC<BlurImageProps> = ({
   useEffect(() => {
     const img = new Image()
     img.onload = () => {
-      console.log("Image loaded successfully:", src)
+      // Image loaded successfully
       setImageLoaded(true)
     }
     img.onerror = (error) => {

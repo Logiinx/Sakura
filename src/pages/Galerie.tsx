@@ -70,7 +70,7 @@ const Galerie = () => {
       })
       .filter((img): img is NonNullable<typeof img> => img !== null)
 
-    console.log("Filtered images:", images.length)
+    // Debug: Filtered images count available if needed
     return images
   }, [sectionImages, selectedSections])
 

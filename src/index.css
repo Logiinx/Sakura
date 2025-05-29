@@ -162,9 +162,16 @@
   width: 100%;
   height: 100%;
   pointer-events: none; /* Allow clicks to pass through */
-  z-index: 1000; /* Ensure it's on top (adjust as needed) */
+  z-index: 10; /* Lower z-index to avoid interfering with modals */
   overflow: hidden;
 }
+
+/* Hide petals for users who prefer reduced motion */
+/* @media (prefers-reduced-motion: reduce) {
+  .sakura-petals {
+    display: none;
+  }
+} */
 
 .petal {
   position: absolute; /* Position petals individually */
@@ -203,7 +210,7 @@
 @keyframes fall {
   0% {
     /* Starting state */
-    transform: translateY(-50px) translateX(0) rotate(0deg); /* Start above screen */
+    transform: translateY(-200px) translateX(0) rotate(0deg); /* Start well above screen */
     opacity: 0; /* Start invisible */
   }
   10% {

@@ -80,7 +80,7 @@ export async function getSectionImages(sections: string[]): Promise<Record<strin
     return {}
   }
 
-  console.log("Fetching images for sections:", sections)
+  // Fetching images for sections
 
   // Explicitly list columns based on SiteImageData interface
   const columnsToSelect = "id, created_at, image_url, alt_text, width, height, section, blur_hash, size, updated_at"
@@ -92,7 +92,7 @@ export async function getSectionImages(sections: string[]): Promise<Record<strin
       handleSupabaseError(error, `loading images for sections "${sections.join(", ")}"`)
     }
 
-    console.log("Fetched image data:", data)
+    // Fetched image data
 
     // Initialize result object with null for all requested sections
     const imagesBySection = sections.reduce(
@@ -188,7 +188,7 @@ export async function getAllSectionTexts(): Promise<SectionTextData[]> {
  */
 export async function updateSectionText(id: number, content: string): Promise<boolean> {
   try {
-    console.log(`[updateSectionText] Attempting update for ID: ${id}`)
+    // Attempting update for section text
     const { data, error, status } = await supabase
       .from("sections_texts")
       .update({ content: content, updated_at: new Date().toISOString() }) // Update content and timestamp
@@ -196,7 +196,7 @@ export async function updateSectionText(id: number, content: string): Promise<bo
       .select("id, content") // Select to verify
       .maybeSingle()
 
-    console.log("[updateSectionText] Update result:", { data, error, status })
+    // Update result available
 
     if (error) {
       console.error(`[updateSectionText] Supabase error during update for ID ${id}:`, error)
@@ -206,7 +206,7 @@ export async function updateSectionText(id: number, content: string): Promise<bo
     // Check status code (200 OK or 204 No Content if select wasn't used/matched)
     // And verify returned data if select was used
     if ((status === 200 || status === 204) && data?.content === content) {
-      console.log(`[updateSectionText] Update successful and verified for ID: ${id}`)
+      // Update successful and verified
       return true
     } else if (status === 200 || status === 204) {
       // Update happened but verification failed (maybe RLS or select issue)
@@ -241,7 +241,7 @@ export async function updateSectionText(id: number, content: string): Promise<bo
  */
 export async function updateImageAltText(id: number, altText: string): Promise<boolean> {
   try {
-    console.log(`[updateImageAltText] Attempting update for ID: ${id} with Alt Text: "${altText}"`)
+    // Attempting alt text update
     const { data, error } = await supabase
       .from("site_images")
       .update({ alt_text: altText, updated_at: new Date().toISOString() })
@@ -249,7 +249,7 @@ export async function updateImageAltText(id: number, altText: string): Promise<b
       .select("id, alt_text") // Chain select to get the updated row back
       .maybeSingle() // Use maybeSingle as we expect one row or null
 
-    console.log("[updateImageAltText] Update result:", { data, error })
+    // Alt text update result available
 
     if (error) {
       // Log the error before throwing
@@ -259,7 +259,7 @@ export async function updateImageAltText(id: number, altText: string): Promise<b
 
     // Check if data was returned and if the alt_text matches what we sent
     if (data && data.alt_text === altText) {
-      console.log(`[updateImageAltText] Update successful and verified for ID: ${id}`)
+      // Alt text update successful and verified
       return true
     } else {
       // This case means the update reported no error, but we didn't get the expected data back.
