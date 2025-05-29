@@ -299,7 +299,7 @@ const PackageOnePage: React.FC = () => {
             <div className="text-center">
               <Link
                 to="/book-now"
-                className="mt-auto inline-block w-full rounded-md bg-sakura-pink px-8 py-3 text-center font-medium text-white transition-colors text-shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:ring-offset-2 sm:w-auto">
+                className="mt-auto inline-block w-full rounded-md bg-sakura-pink px-8 py-3 text-center font-medium text-white transition-colors duration-100 text-shadow-md hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-sakura-pink focus:ring-offset-2 sm:w-auto">
                 Réserver cette séance
               </Link>
             </div>
