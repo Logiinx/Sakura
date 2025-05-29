@@ -34,8 +34,8 @@ const ScrollToTopButton: React.FC = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          aria-label="Scroll to top"
-          className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-sakura-pink text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:shadow-xl">
+          aria-label="Retourner en haut de la page"
+          className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-sakura-pink text-white shadow-lg transition-all duration-100 text-shadow-lg hover:scale-105 hover:opacity-90 hover:shadow-xl">
           <FaChevronUp className="h-5 w-5" />
         </button>
       )}

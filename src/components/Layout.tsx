@@ -153,7 +153,7 @@ const Layout: React.FC = () => {
   const getNavLinkClass = (isActive: boolean): string => {
     // Adjusted padding to match "Book Now" button (py-2 px-5). Kept border logic.
     const baseClasses =
-      "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:text-shadow-md hover:bg-opacity-90 transition-colors flex items-center gap-1" // Added flex, items-center, gap-1
+      "px-3 py-2 rounded-md border border-transparent hover:border-sakura-pink hover:text-white hover:bg-sakura-pink hover:text-shadow-md hover:bg-opacity-90 duration-100 transition-colors flex items-center gap-1" // Added flex, items-center, gap-1
     const textClass = isScrolled || forceHeaderOpaque ? "text-sakura-dark-text" : "text-white"
     // Standard active class logic
     const activeClass = isActive ? "font-medium text-sakura-pink border-sakura-pink" : ""
@@ -294,7 +294,7 @@ const Layout: React.FC = () => {
             {/* "Book Now" Button - styled differently using custom class and inline styles. */}
             <NavLink
               to="/book-now"
-              className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-300 text-shadow-md hover:bg-opacity-90">
+              className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-200 text-shadow-md hover:bg-opacity-90">
               Disponibilités
             </NavLink>
           </nav>
@@ -381,9 +381,7 @@ const Layout: React.FC = () => {
           <div className="flex flex-col items-center justify-between text-center md:flex-row md:text-left">
             {/* Footer Logo and Tagline */}
             <div className="mb-6 md:mb-0">
-              <Link to="/" className="font-bad-script text-xl font-bold tracking-wider text-sakura-dark-text">
-                MOM.B
-              </Link>
+              <p className="font-bad-script text-xl font-bold tracking-wider text-sakura-dark-text">MOM.B</p>
               <Link
                 to="/#about-me-section"
                 className="mt-2 block font-bad-script text-base tracking-wider text-gray-500 transition-colors hover:text-sakura-pink">
