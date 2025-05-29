@@ -105,7 +105,6 @@ const Layout: React.FC = () => {
       "/complices",
       "/galerie",
       "/contact",
-      "/book-now",
       // Add other paths that need an initially opaque header
     ]
     if (pathsForOpaqueHeader.some((path) => location.pathname.startsWith(path))) {
@@ -291,14 +290,10 @@ const Layout: React.FC = () => {
             <NavLink to="/partenaires" className={({ isActive }) => getNavLinkClass(isActive)}>
               Partenaires
             </NavLink>
-            <NavLink to="/contact" className={({ isActive }) => getNavLinkClass(isActive)}>
-              Contact
-            </NavLink>
-            {/* "Book Now" Button - styled differently using custom class and inline styles. */}
             <NavLink
-              to="/book-now"
+              to="/contact"
               className="hover-float rounded-md bg-sakura-pink px-5 py-2 font-medium text-white transition-all duration-200 text-shadow-md hover:bg-opacity-90">
-              Disponibilités
+              Contact
             </NavLink>
           </nav>
         </div>
@@ -366,9 +361,6 @@ const Layout: React.FC = () => {
                   className={({ isActive }) => getMobileNavLinkClass(isActive)}
                   onClick={toggleMenu}>
                   Contact
-                </NavLink>
-                <NavLink to="/book-now" className="sakura-btn mt-4 text-xl" onClick={toggleMenu}>
-                  Disponibilités
                 </NavLink>
               </nav>
             </div>

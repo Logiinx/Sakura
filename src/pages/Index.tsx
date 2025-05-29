@@ -245,9 +245,7 @@ const Index: React.FC = () => {
             Bienvenue sur MOM.B
           </p>
           {/* Call to Action Button: Uses the custom `sakura-btn` style and `hover-float` animation. */}
-          <Link
-            to="/book-now"
-            className="sakura-btn hover-float flex justify-center px-1 py-2 shadow-md text-shadow-md">
+          <Link to="/contact" className="sakura-btn hover-float flex justify-center px-1 py-2 shadow-md text-shadow-md">
             Prendre rendez-vous
           </Link>
         </div>
@@ -266,7 +264,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   {grossesseText ?? "Chargement du texte..."}
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
+                <Link to="/grossesse" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -406,7 +404,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   {familleText ?? "Chargement du texte..."}
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
+                <Link to="/famille" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -425,7 +423,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   {bebeText ?? "Chargement du texte..."}
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
+                <Link to="/bebe" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -574,7 +572,7 @@ const Index: React.FC = () => {
                 <p className="text-warm-gray-600 mb-6 text-lg leading-relaxed text-[#623E2A] md:text-xl">
                   {complicesText ?? "Chargement du texte..."}
                 </p>
-                <Link to="/book-now" className="sakura-btn hover-float inline-block text-shadow-md">
+                <Link to="/complices" className="sakura-btn hover-float inline-block text-shadow-md">
                   EN SAVOIR PLUS
                 </Link>
               </div>
@@ -656,7 +654,7 @@ const Index: React.FC = () => {
               <p className="mb-4 text-2xl font-medium text-[#333333]">Sur devis personnalisé</p>
               <p className="text-lg text-gray-700">Chaque projet est unique et mérite une attention particulière</p>
               <Link
-                to="/book-now"
+                to="/contact"
                 className="sakura-btn hover-float mt-12 inline-block px-8 py-4 text-lg font-medium text-shadow-md">
                 Contactez-moi pour un devis
               </Link>
