@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { FaChevronLeft, FaChevronRight, FaCalendarAlt as CalendarIcon } from "react-icons/fa"
+import { FaChevronLeft, FaChevronRight, FaCalendarDays as CalendarIcon } from "react-icons/fa6"
 
 import { useToast } from "@/hooks/use-toast"
 import { format, isToday, isSameDay, addDays, startOfWeek, addWeeks, eachDayOfInterval, isWeekend } from "date-fns"

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import type { UseEmblaCarouselType } from "embla-carousel-react"
 import React, { useMemo, useCallback, useState, useEffect } from "react"
-import { FaCheck } from "react-icons/fa"
+import { FaCheck } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"

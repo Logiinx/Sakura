@@ -1,6 +1,6 @@
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react"
 import * as React from "react"
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa6"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

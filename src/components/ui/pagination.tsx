@@ -1,7 +1,9 @@
 import * as React from "react"
-import { FaChevronLeft, FaChevronRight, FaEllipsisH } from "react-icons/fa"
+import { FaEllipsisH } from "react-icons/fa"
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
 
-import { type ButtonProps, buttonVariants } from "@/components/ui/button"
+import { type ButtonProps } from "@/components/ui/button"
+import { buttonVariants } from "@/lib/ui-variants"
 import { cn } from "@/lib/utils"
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { FaChevronUp } from "react-icons/fa"
+import { FaChevronUp } from "react-icons/fa6"
 
 const ScrollToTopButton: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)

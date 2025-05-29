@@ -1,6 +1,6 @@
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import * as React from "react"
-import { FaCircle } from "react-icons/fa"
+import { FaCircle } from "react-icons/fa6"
 
 import { cn } from "@/lib/utils"
 
