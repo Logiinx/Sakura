@@ -26,6 +26,7 @@ import Compressor from "compressorjs" // <-- Import Compressor.js
 import { toast } from "sonner"
 
 // Define the sections you want to manage
+// TODO KEEP SYNC WITH index.ts (need to redeploy edge function Supabase)
 const VALID_SECTIONS = [
   "hero",
   "grossesse-1",

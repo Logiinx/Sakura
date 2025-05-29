@@ -108,10 +108,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     return emailRegex.test(email)
   }
 
-  // // Validate password strength
-  // const isValidPassword = (password: string): boolean => {
-  //   return password.length >= 8
-  // }
+  // Validate password strength
+  const isValidPassword = (password: string): boolean => {
+    return password.length >= 8
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault() // Prevent default form submission
@@ -133,10 +133,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       return
     }
 
-    // if (!isValidPassword(password)) {
-    //   setError("Password must be at least 8 characters long")
-    //   return
-    // }
+    if (!isValidPassword(password)) {
+      setError("Password must be at least 8 characters long")
+      return
+    }
 
     // Check rate limiting
     const identifier = email.toLowerCase().trim()

@@ -25,7 +25,33 @@ interface RequestBody {
 // Security: Define allowed file types and size limits
 const ALLOWED_FILE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB (reduced from 10MB for better performance)
-const ALLOWED_SECTIONS = ["grossesse", "famille", "bebe", "complices", "mariage", "hero", "about"]
+
+// TODO KEEP SYNC WITH ADMINIMAGES.TSX
+const ALLOWED_SECTIONS = [
+  "hero",
+  "grossesse",
+  "grossesse-0",
+  "grossesse-1",
+  "grossesse-2",
+  "grossesse-3",
+  "famille",
+  "famille-0",
+  "famille-1",
+  "famille-2",
+  "famille-3",
+  "bebe",
+  "bebe-0",
+  "bebe-1",
+  "bebe-2",
+  "bebe-3",
+  "complices",
+  "complices-0",
+  "complices-1",
+  "complices-2",
+  "complices-3",
+  "mariage",
+  "about",
+]
 
 /**
  * Validates file path to prevent path traversal attacks
