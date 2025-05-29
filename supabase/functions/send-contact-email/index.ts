@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 
+import { corsHeaders } from "../_shared/cors.ts"
+
 export function generateSakuraEmail({
   name,
   email,
@@ -92,6 +94,14 @@ export function generateSakuraEmail({
 }
 
 serve(async (req) => {
+  const origin = req.headers.get("origin")
+  const cors = corsHeaders(origin)
+
+  // 1. Pré-vol CORS
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: cors })
+  }
+
   const { name, email, subject, message } = await req.json()
 
   const apiKey = Deno.env.get("RESEND_API_KEY")
@@ -123,7 +133,10 @@ serve(async (req) => {
     data = { error: "Failed to parse response JSON", details: error instanceof Error ? error.message : String(error) }
   }
   return new Response(JSON.stringify(data), {
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      ...cors,
+      "Content-Type": "application/json",
+    },
     status: response.status,
   })
 })

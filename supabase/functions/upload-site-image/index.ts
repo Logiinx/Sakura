@@ -21,10 +21,13 @@ interface RequestBody {
   blurHash?: string // Added: blurHash from client
 }
 
-serve(async (req: Request) => {
-  // Handle CORS preflight requests
+serve(async (req) => {
+  const origin = req.headers.get("origin")
+  const cors = corsHeaders(origin)
+
+  // 1. Pré-vol CORS
   if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders })
+    return new Response(null, { headers: cors })
   }
 
   try {
@@ -161,7 +164,10 @@ serve(async (req: Request) => {
     console.error("Function Error:", error) // Keep console.error
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred"
     return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: {
+        ...cors,
+        "Content-Type": "application/json",
+      },
       status: 500, // Use 500 for internal server errors
     })
   }
