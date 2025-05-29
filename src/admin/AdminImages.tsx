@@ -43,7 +43,7 @@ const VALID_SECTIONS = [
   "grossesse-0",
   "famille-0",
   "bebe-0",
-  "complices-0", // Example
+  "complices-0",
 ]
 
 // --- Helper Functions for Client-Side BlurHash ---
@@ -605,7 +605,7 @@ const AdminImages: React.FC = () => {
                   accept="image/png, image/jpeg, image/webp, image/gif"
                   onChange={handleFileChange}
                   disabled={uploading || isInvokingFunction}
-                  className="h-13 file:mr-4 file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:!text-white file:text-shadow-md hover:file:bg-opacity-90"
+                  className="h-13 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:!text-white file:text-shadow-md hover:file:bg-opacity-90"
                 />
               </div>
               <div className="grid w-full max-w-md items-center gap-2">
@@ -731,15 +731,20 @@ const AdminImages: React.FC = () => {
                             className="min-h-[200px] text-sm" // Increased min height for better editing
                             disabled={isSavingText}
                           />
-                          <div className="flex justify-end gap-2 pt-2">
-                            <Button size="sm" variant="outline" onClick={handleTextCancelEdit} disabled={isSavingText}>
+                          <div className="flex justify-start gap-2 pt-2">
+                            <Button
+                              size="sm"
+                              className="bg-white text-black shadow hover:bg-sakura-pink/90 hover:!text-white hover:text-shadow-md"
+                              onClick={handleTextCancelEdit}
+                              disabled={isSavingText}>
                               Annuler
                             </Button>
                             <Button
                               size="sm"
+                              className="bg-sakura-pink text-black shadow hover:bg-sakura-pink/90 hover:!text-white hover:text-shadow-md"
                               onClick={() => handleSaveText(selectedTextSection.id)}
                               disabled={isSavingText}>
-                              {isSavingText ? "Sauv..." : "Sauver"}
+                              {isSavingText ? "Appl..." : "Appliquer"}
                             </Button>
                           </div>
                         </div>
