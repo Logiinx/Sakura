@@ -82,6 +82,7 @@ const Index: React.FC = () => {
   const { text: bebeText } = useSectionTextQuery("bebe")
   const { text: complicesText } = useSectionTextQuery("complices")
   const { text: aproposdeMoiText } = useSectionTextQuery("aproposdemoi")
+  const { text: aproposdeMoiText2 } = useSectionTextQuery("aproposdemoi2")
 
   // Fetch image data
   const { images: sectionImages, isLoading: imagesLoading, error: imagesError } = useSectionImagesQuery(imageSections)
@@ -668,6 +669,32 @@ const Index: React.FC = () => {
                 <CarouselPrevious />
                 <CarouselNext />
               </Carousel>
+            </div>
+          </div>
+
+          {/* Horizontal Card Component */}
+          <div className="mt-12 w-full">
+            <div className="rounded-lg bg-white p-8 shadow-lg">
+              <div className="flex flex-col items-center space-y-6 md:flex-row md:space-x-8 md:space-y-0">
+                {/* Center - Main content */}
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="mb-3 font-bad-script text-4xl font-semibold text-sakura-pink">
+                    Moi c&apos;est Barbara et je suis :
+                  </h3>
+                  <div className="prose prose-lg mx-auto text-xl">
+                    <p className="whitespace-pre-line">{aproposdeMoiText2 ?? "Chargement du texte..."}</p>
+                  </div>
+                </div>
+
+                {/* Right side - Call to action */}
+                {/* <div className="flex-shrink-0">
+                  <Link
+                    to="/contact"
+                    className="sakura-btn hover-float inline-block px-6 py-3 text-base font-medium text-shadow-md">
+                    Découvrir mes services
+                  </Link>
+                </div> */}
+              </div>
             </div>
           </div>
         </div>
