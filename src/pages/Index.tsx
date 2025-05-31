@@ -71,7 +71,7 @@ const Index: React.FC = () => {
       "complices-1",
       "complices-2",
       "complices-3",
-      // Add other single images if needed, e.g., "about-me-photo"
+      "aproposdemoi",
     ],
     []
   )
@@ -107,6 +107,7 @@ const Index: React.FC = () => {
   const familyCarouselRef = useScrollAnimation() // Use this for animation
   const babyCarouselRef = useScrollAnimation() // Use this for animation
   const complicesCarouselRef = useScrollAnimation() // Use this for animation
+  const aproposdemoiCarouselRef = useScrollAnimation() // Use this for animation
 
   // Use useInView *with* the refs from useScrollAnimation just to get visibility status for autoplay
   // Note: We ignore the first returned value (the ref) from useInView as we already have one.
@@ -164,6 +165,7 @@ const Index: React.FC = () => {
       complicesApi.plugins().autoplay?.play()
     }
   }, [isComplicesCarouselVisible, complicesApi])
+
   // --- END: Get Carousel API instances and manage autoplay ---
 
   // --- START: Scroll to section based on URL hash ---
@@ -593,12 +595,77 @@ const Index: React.FC = () => {
             <div className="section-divider"></div>
           </div>
 
-          {/* About Me Content */}
-          <div className="mx-auto max-w-4xl">
-            <div className="rounded-lg bg-white p-8 shadow-lg">
-              <div className="prose prose-lg mx-auto text-xl">
-                <p className="whitespace-pre-line">{aproposdeMoiText ?? "Chargement du texte..."}</p>
+          {/* About Me Content - Left-Right Layout */}
+          <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
+            {/* Text Content - Left Side */}
+            <div className="w-full lg:w-1/2 lg:pr-16">
+              <div className="rounded-lg bg-white p-8 shadow-lg">
+                <div className="prose prose-lg mx-auto text-xl">
+                  <p className="whitespace-pre-line">{aproposdeMoiText ?? "Chargement du texte..."}</p>
+                </div>
               </div>
+            </div>
+
+            {/* Carousel - Right Side */}
+            <div ref={aproposdemoiCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
+              <Carousel className="w-full" opts={{ loop: true }}>
+                <CarouselContent>
+                  {/* Dynamic Carousel Items */}
+                  {[1].map((index) => {
+                    const imgData = getImageData(`about-me-${index}`)
+                    const sectionKey = `about-me-${index}`
+                    // Define desired dimensions and container height
+                    let containerHeight = 550 // Corresponds to h-[550px]
+                    const landscapeTargetWidth = 600
+
+                    let transformedSrc: string | undefined = undefined
+                    let objectFitClass: "cover" | "contain" = "cover" // Default
+
+                    if (imgData?.image_url) {
+                      if (imgData.width && imgData.height && imgData.height > 0) {
+                        const aspectRatio = imgData.width / imgData.height
+                        if (aspectRatio < 1) {
+                          // Vertical image: Resize based on height, contain
+                          containerHeight = 550
+                          objectFitClass = "contain"
+                          transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
+                        } else {
+                          // Landscape/Square image: Resize with cover
+                          objectFitClass = "cover"
+                          transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                        }
+                      } else {
+                        // Fallback if dimensions are missing
+                        transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
+                      }
+                    }
+
+                    return (
+                      <CarouselItem key={sectionKey} className="basis-full overflow-hidden">
+                        {/* Added fixed height h-[550px] for more vertical orientation */}
+                        <div className="relative h-[550px] w-full">
+                          {imgData && transformedSrc ? (
+                            <BlurImage
+                              src={transformedSrc} // Use transformed URL
+                              hash={imgData.blur_hash}
+                              alt={imgData.alt_text || `À propos de moi ${index}`}
+                              // Apply styles directly for fill/cover behavior
+                              className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
+                              objectFit={objectFitClass} // Pass objectFit as a prop
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
+                              {imagesLoading ? "Chargement..." : `Image ${sectionKey} manquante`}
+                            </div>
+                          )}
+                        </div>
+                      </CarouselItem>
+                    )
+                  })}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@ import { Toaster } from "@/components/ui/toaster"
 // TooltipProvider: Enables the use of tooltips throughout the application (required by shadcn-ui tooltips).
 import { TooltipProvider } from "@/components/ui/tooltip"
 
-import AdminImages from "./admin/AdminImages"
+import AdminPanel from "./admin/AdminPanel"
 import ProtectedRoute from "./admin/ProtectedRoute"
 // Layout: A wrapper component that likely contains common UI elements like header/footer.
 import Layout from "./components/Layout"
@@ -101,7 +101,7 @@ const App = () => {
                 path="/admin"
                 element={
                   <ProtectedRoute>
-                    <AdminImages />
+                    <AdminPanel />
                   </ProtectedRoute>
                 }
               />

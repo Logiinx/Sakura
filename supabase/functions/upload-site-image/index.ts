@@ -26,7 +26,7 @@ interface RequestBody {
 const ALLOWED_FILE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB (reduced from 10MB for better performance)
 
-// TODO KEEP SYNC WITH ADMINIMAGES.TSX
+// TODO KEEP SYNC WITH ADMINPANEL.TSX
 const ALLOWED_SECTIONS = [
   "hero",
   "grossesse",
