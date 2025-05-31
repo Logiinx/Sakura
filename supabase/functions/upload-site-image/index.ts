@@ -29,28 +29,23 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB (reduced from 10MB for better perfo
 // TODO KEEP SYNC WITH ADMINPANEL.TSX
 const ALLOWED_SECTIONS = [
   "hero",
-  "grossesse",
-  "grossesse-0",
   "grossesse-1",
   "grossesse-2",
   "grossesse-3",
-  "famille",
-  "famille-0",
   "famille-1",
   "famille-2",
   "famille-3",
-  "bebe",
-  "bebe-0",
   "bebe-1",
   "bebe-2",
   "bebe-3",
-  "complices",
-  "complices-0",
   "complices-1",
   "complices-2",
   "complices-3",
-  "mariage",
-  "about",
+  "grossesse-0",
+  "famille-0",
+  "bebe-0",
+  "complices-0",
+  "aproposdemoi",
 ]
 
 /**

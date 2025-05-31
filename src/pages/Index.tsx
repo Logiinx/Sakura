@@ -612,8 +612,8 @@ const Index: React.FC = () => {
                 <CarouselContent>
                   {/* Dynamic Carousel Items */}
                   {[1].map((index) => {
-                    const imgData = getImageData(`about-me-${index}`)
-                    const sectionKey = `about-me-${index}`
+                    const imgData = getImageData(`aproposdemoi`)
+                    const sectionKey = `aproposdemoi`
                     // Define desired dimensions and container height
                     let containerHeight = 550 // Corresponds to h-[550px]
                     const landscapeTargetWidth = 600
