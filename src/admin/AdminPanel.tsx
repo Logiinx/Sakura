@@ -45,6 +45,7 @@ const VALID_SECTIONS = [
   "famille-0",
   "bebe-0",
   "complices-0",
+  "aproposdemoi",
 ]
 
 // --- Helper Functions for Client-Side BlurHash ---
