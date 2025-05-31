@@ -119,6 +119,14 @@
     @apply bg-sakura-white font-montserrat text-sakura-dark-text;
     /* Prevent horizontal scrolling on the body */
     overflow-x: hidden;
+    /* width: 100vw;
+    padding-right: calc(0 - var(--removed-body-scroll-bar-size)) !important; */
+  }
+
+  /* Lock body scroll when sidebar is open RADIX UI FIX LAYOUT SHIFT*/
+  body[data-scroll-locked][data-scroll-locked] {
+    overflow: auto !important;
+    margin-right: 0 !important;
   }
 
   /* Default heading styles */
