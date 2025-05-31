@@ -101,6 +101,7 @@ const Index: React.FC = () => {
   const familyTextRef = useScrollAnimation()
   const babyTextRef = useScrollAnimation()
   const complicesTextRef = useScrollAnimation()
+  const aproposdemoiTextRef = useScrollAnimation()
 
   // Create refs for carousels (using scroll animation for slide-in)
   const maternityCarouselRef = useScrollAnimation() // Use this for animation
@@ -256,7 +257,7 @@ const Index: React.FC = () => {
       {/* --- Photography Services Sections --- */}
       <div className="w-full">
         {/* Maternity Photography */}
-        <section className="w-full bg-white py-32 md:py-40">
+        <section className="md:py-30 w-full bg-white py-32">
           <div className="sakura-container">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
               <div ref={maternityTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
@@ -338,7 +339,7 @@ const Index: React.FC = () => {
         </section>
 
         {/* Family Photography */}
-        <section className="w-full bg-[#f8f8f8] py-32 md:py-40">
+        <section className="md:py-30 w-full bg-[#f8f8f8] py-32">
           <div className="sakura-container">
             <div className="flex flex-col-reverse items-center gap-16 lg:flex-row lg:items-start">
               <div ref={familyCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
@@ -415,7 +416,7 @@ const Index: React.FC = () => {
         </section>
 
         {/* Baby Photography */}
-        <section className="w-full bg-white py-32 md:py-40">
+        <section className="md:py-30 w-full bg-white py-32">
           <div className="sakura-container">
             <div className="flex flex-col items-center gap-16 lg:flex-row lg:items-start">
               <div ref={babyTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
@@ -492,7 +493,7 @@ const Index: React.FC = () => {
         </section>
 
         {/* Complices Photography */}
-        <section className="w-full bg-[#f8f8f8] py-32 md:py-40">
+        <section className="md:py-30 w-full bg-[#f8f8f8] py-32">
           <div className="sakura-container">
             <div className="flex flex-col-reverse items-center gap-16 lg:flex-row lg:items-start">
               <div ref={complicesCarouselRef} className="slide-hidden slide-from-left w-full lg:w-1/2">
@@ -582,7 +583,9 @@ const Index: React.FC = () => {
           </div>
         </section>
       </div>
+
       <div className="section-divider"></div>
+
       {/* --- About Me Section --- */}
       {/* Add id for scrolling */}
       <section id="about-me-section" className="bg-sakura-pink bg-opacity-30 py-20 md:py-20">
@@ -598,7 +601,7 @@ const Index: React.FC = () => {
           {/* About Me Content - Left-Right Layout */}
           <div className="flex flex-col items-center gap-8 lg:flex-row lg:items-start">
             {/* Text Content - Left Side */}
-            <div className="w-full lg:w-1/2 lg:pr-16">
+            <div ref={aproposdemoiTextRef} className="slide-hidden slide-from-left w-full lg:w-1/2 lg:pr-16">
               <div className="rounded-lg bg-white p-8 shadow-lg">
                 <div className="prose prose-lg mx-auto text-xl">
                   <p className="whitespace-pre-line">{aproposdeMoiText ?? "Chargement du texte..."}</p>
@@ -610,48 +613,47 @@ const Index: React.FC = () => {
             <div ref={aproposdemoiCarouselRef} className="slide-hidden slide-from-right w-full lg:w-1/2">
               <Carousel className="w-full" opts={{ loop: true }}>
                 <CarouselContent>
-                  {/* Dynamic Carousel Items */}
-                  {[1].map((index) => {
+                  {[1].map((sectionKey, index) => {
                     const imgData = getImageData(`aproposdemoi`)
-                    const sectionKey = `aproposdemoi`
-                    // Define desired dimensions and container height
-                    let containerHeight = 550 // Corresponds to h-[550px]
-                    const landscapeTargetWidth = 600
 
+                    // Dynamic sizing based on image orientation
+                    let containerHeight = 384
+                    let containerClass = "relative h-96 w-full"
+                    const landscapeTargetWidth = 600
                     let transformedSrc: string | undefined = undefined
-                    let objectFitClass: "cover" | "contain" = "cover" // Default
+                    let objectFitClass: "cover" | "contain" = "cover"
 
                     if (imgData?.image_url) {
                       if (imgData.width && imgData.height && imgData.height > 0) {
                         const aspectRatio = imgData.width / imgData.height
                         if (aspectRatio < 1) {
-                          // Vertical image: Resize based on height, contain
+                          // Vertical image - use taller container for better display
                           containerHeight = 550
+                          containerClass = "relative h-[550px] w-full"
                           objectFitClass = "contain"
                           transformedSrc = `${imgData.image_url}?height=${containerHeight}&resize=contain`
                         } else {
-                          // Landscape/Square image: Resize with cover
+                          // Horizontal image - use standard container
+                          containerHeight = 384
+                          containerClass = "relative h-96 w-full"
                           objectFitClass = "cover"
                           transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
                         }
                       } else {
-                        // Fallback if dimensions are missing
                         transformedSrc = `${imgData.image_url}?width=${landscapeTargetWidth}&height=${containerHeight}&resize=cover`
                       }
                     }
 
                     return (
                       <CarouselItem key={sectionKey} className="basis-full overflow-hidden">
-                        {/* Added fixed height h-[550px] for more vertical orientation */}
-                        <div className="relative h-[550px] w-full">
+                        <div className={containerClass}>
                           {imgData && transformedSrc ? (
                             <BlurImage
-                              src={transformedSrc} // Use transformed URL
+                              src={transformedSrc}
                               hash={imgData.blur_hash}
-                              alt={imgData.alt_text || `À propos de moi ${index}`}
-                              // Apply styles directly for fill/cover behavior
+                              alt={imgData.alt_text || `Image ${index + 1} pour ${sectionKey}`}
                               className={`absolute inset-0 h-full w-full rounded-lg shadow-md`}
-                              objectFit={objectFitClass} // Pass objectFit as a prop
+                              objectFit={objectFitClass}
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-gray-500 shadow-md">
