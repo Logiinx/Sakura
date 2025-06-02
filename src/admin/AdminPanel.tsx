@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react"
 import type { ChangeEvent } from "react"
+import { FaCheck } from "react-icons/fa6"
 
 // import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
@@ -601,14 +602,19 @@ const AdminImages: React.FC = () => {
                   Image
                 </Label>
                 {/* Choisir un fichier / Aucun fichier choisi */}
-                <Input
-                  id="file-input"
-                  type="file"
-                  accept="image/png, image/jpeg, image/webp, image/gif"
-                  onChange={handleFileChange}
-                  disabled={uploading || isInvokingFunction}
-                  className="h-13 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:!text-white file:text-shadow-md hover:file:bg-opacity-90"
-                />
+                <div className="relative flex items-center">
+                  <Input
+                    id="file-input"
+                    type="file"
+                    accept="image/png, image/jpeg, image/webp, image/gif"
+                    onChange={handleFileChange}
+                    disabled={uploading || isInvokingFunction}
+                    className="h-13 cursor-pointer file:mr-4 file:cursor-pointer file:rounded-xl file:border-0 file:bg-sakura-pink file:px-4 file:py-2 file:text-sm file:font-semibold file:!text-white file:text-shadow-md hover:file:bg-opacity-90"
+                  />
+                  {selectedFile && !isHashing && generatedBlurhash && (
+                    <FaCheck className="ml-2 text-green-600" size={20} />
+                  )}
+                </div>
               </div>
               <div className="grid w-full max-w-md items-center gap-2">
                 <Label htmlFor="section-select" className="font-medium">
