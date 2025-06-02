@@ -33,7 +33,7 @@ const MentionsLegales: React.FC = () => {
                 <p>Nom de l&apos;entreprise : MOM.B Photographie</p>
                 <p>Forme juridique : Entreprise individuelle</p>
                 <p>Siège social : 15 lotissement le Recpharès, 34370 Cazouls-lès-Béziers</p>
-                <p>SIRET : 98009342100017</p>
+                <p>SIRET : 980 093 421 00017</p>
                 <p>Email : contact@momb-photographie.fr</p>
                 <p>Téléphone : 06 03 74 98 93</p>
               </div>
@@ -43,10 +43,10 @@ const MentionsLegales: React.FC = () => {
             <div>
               <h2 className="mb-4 font-playfair text-2xl font-bold text-sakura-dark-text">Hébergement</h2>
               <div className="space-y-2 text-gray-600">
-                <p>Ce site est hébergé par :</p>
-                <p>Nom de l&apos;hébergeur : o2switch</p>
-                <p>Adresse : 222-224 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France</p>
-                <p>SIRET : 510 909 807 00024</p>
+                <p>Nom de l&apos;hébergeur : Vercel</p>
+                <p>Raison sociale : Vercel Inc.</p>
+                <p>Adresse : 440 N Barranca Ave #4133 Covina, CA 91723, USA.</p>
+                <p>Téléphone : +1 559 288 7060</p>
               </div>
             </div>
 
@@ -55,18 +55,20 @@ const MentionsLegales: React.FC = () => {
               <h2 className="mb-4 font-playfair text-2xl font-bold text-sakura-dark-text">Propriété Intellectuelle</h2>
               <div className="space-y-2 text-gray-600">
                 <p>
-                  L&apos;ensemble des éléments visuels et textuels de ce site, y compris les marques, logos, icônes,
-                  infographies, photographies, et autres contenus, fait l&apos;objet d&apos;un dépôt INPI-SOLEAU et est
-                  protégé par la législation française et internationale sur le droit d&apos;auteur et la propriété
-                  intellectuelle. Toute utilisation, reproduction, ou représentation, par quelque procédé que ce soit et
-                  sur quelque support que ce soit, de tout ou partie du site et/ou des éléments qui le composent, est
-                  interdite sans le consentement exprès de MOMB Photographie.
+                  Toutes les photographies et les textes présents sur ce site sont la propriété exclusive de MOM.B
+                  Photographie et sont protégés par le Code de la propriété intellectuelle (loi n°92-597 du 1er juillet
+                  1992).
+                </p>
+                <p>
+                  Toute reproduction, représentation, modification, ou utilisation, totale ou partielle, des contenus du
+                  site, par quelque procédé que ce soit et sur quelque support que ce soit, est strictement interdite
+                  sans l&apos;autorisation écrite préalable de MOM.B Photographie.
                 </p>
               </div>
             </div>
 
             {/* Personal Data Section */}
-            <div>
+            {/* <div>
               <h2 className="mb-4 font-playfair text-2xl font-bold text-sakura-dark-text">
                 Protection des Données Personnelles
               </h2>
@@ -88,10 +90,10 @@ const MentionsLegales: React.FC = () => {
                   contacter à l&apos;adresse suivante : contact@momb-photographie.fr.
                 </p>
               </div>
-            </div>
+            </div> */}
 
             {/* Cookies Section */}
-            <div>
+            {/* <div>
               <h2 className="mb-4 font-playfair text-2xl font-bold text-sakura-dark-text">Cookies</h2>
               <div className="space-y-2 text-gray-600">
                 <p>
@@ -100,7 +102,7 @@ const MentionsLegales: React.FC = () => {
                   préférences de cookies via les paramètres de votre navigateur.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>

@@ -383,11 +383,7 @@ const Layout: React.FC = () => {
             {/* Footer Logo and Tagline */}
             <div className="mb-6 md:mb-0">
               <p className="font-bad-script text-xl font-bold tracking-wider text-sakura-dark-text">MOM.B</p>
-              <Link
-                to="/#about-me-section"
-                className="mt-2 block font-bad-script text-base tracking-wider text-gray-500 transition-colors hover:text-sakura-pink">
-                Barbara - Photographe famille, mariage, grossesse, bébé
-              </Link>
+              Barbara - Photographe famille, mariage, grossesse, bébé
             </div>
 
             {/* Social Media Links */}
