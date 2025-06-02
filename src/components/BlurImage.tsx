@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 import { Blurhash } from "react-blurhash"
 
+import { getOptimizedImageProps } from "@/utils/imageOptimization"
+
 interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string
   hash: string | null | undefined // Blurhash string
@@ -11,6 +13,9 @@ interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down" // Add objectFit prop
   overlayClassName?: string // Optional class for an overlay div
   crossorigin?: "" | "anonymous" | "use-credentials"
+  priority?: boolean
+  isHero?: boolean
+  isAboveFold?: boolean
 }
 
 export const BlurImage: React.FC<BlurImageProps> = ({
@@ -24,8 +29,18 @@ export const BlurImage: React.FC<BlurImageProps> = ({
   objectFit = "cover", // Default to 'cover'
   overlayClassName, // Destructure the new prop
   crossorigin, // Destructure crossorigin
+  priority = false,
+  isHero = false,
+  isAboveFold = false,
   ...rest // Pass through other img attributes like width, height
 }) => {
+  // Get optimized image props
+  const optimizedProps = getOptimizedImageProps({
+    src,
+    alt,
+    isHero,
+    isAboveFold: isAboveFold || priority,
+  })
   const [imageLoaded, setImageLoaded] = useState(false)
   const [hashError, setHashError] = useState(false)
 
@@ -82,12 +97,15 @@ export const BlurImage: React.FC<BlurImageProps> = ({
 
         {/* Actual Image - Always Rendered, Opacity Transitions */}
         <img
-          src={src}
-          alt={alt}
+          src={optimizedProps.src}
+          alt={optimizedProps.alt}
           onLoad={() => setImageLoaded(true)}
           className={`absolute inset-0 h-full w-full transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           style={{ objectFit: objectFit }}
           crossOrigin={crossorigin} // Apply crossorigin
+          loading={optimizedProps.loading}
+          fetchPriority={optimizedProps.fetchPriority}
+          title={optimizedProps.title}
           {...imgRest} // Apply remaining props like style, etc.
           // Apply explicit width/height if passed
           width={width}

@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, useRef } from "react"
+import { type ReactNode } from "react"
 import { FaTimes } from "react-icons/fa"
 // Import components from react-router-dom for navigation and rendering page content.
 // Link: Basic navigation link.
@@ -14,10 +15,14 @@ import { FaTimes } from "react-icons/fa"
 // Outlet: Placeholder where nested route components (pages) will be rendered.
 // useLocation: Hook to get information about the current URL.
 import { FaBars, FaInstagram, FaFacebookF, FaChevronDown, FaTiktok } from "react-icons/fa6"
-import { Link, NavLink, Outlet, useLocation } from "react-router-dom"
+import { Link, NavLink, useLocation } from "react-router-dom"
 
 // Define the Layout component as a Functional Component (React.FC).
-const Layout: React.FC = () => {
+interface LayoutProps {
+  children: ReactNode
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   // --- State --- //
   // State to track if the mobile menu is open or closed.
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -372,8 +377,8 @@ const Layout: React.FC = () => {
       {/* `flex-grow` makes this section take up available vertical space. */}
       {/* `pt-21` - CHECK THIS: Adding padding-top to prevent content from hiding under the fixed header. Adjust value (e.g., pt-20, pt-24) based on header height. */}
       <main className="pt-21 flex-grow">
-        {/* The Outlet component renders the content of the matched child route (the specific page). */}
-        <Outlet />
+        {/* The children prop renders the content of the matched child route (the specific page). */}
+        {children}
       </main>
 
       {/* --- Footer --- */}
@@ -433,5 +438,5 @@ const Layout: React.FC = () => {
   )
 }
 
-// Export the Layout component for use in App.tsx.
+// Export the Layout component as the default export.
 export default Layout

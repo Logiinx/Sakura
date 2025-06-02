@@ -8,6 +8,7 @@
 // --- Imports --- //
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query" // Data Fetching Library (React Query)
+import { HelmetProvider } from "react-helmet-async"
 // QueryClient: Manages the cache for fetched data.
 // QueryClientProvider: Makes the QueryClient available to all components in the app.
 // Routing Library (React Router DOM)
@@ -65,53 +66,54 @@ const queryClient = new QueryClient({
 const App = () => {
   // Correctly return the main application structure
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Provide tooltip context (required for shadcn-ui tooltips). */}
-      <TooltipProvider>
-        {/* Render the Toaster component - this is where toast notifications will appear. */}
-        <Toaster />
-        {/* Render the Sonner component - for other toast notifications. */}
-        <Sonner />
-        {/* Render the custom SakuraPetals component. */}
-        <SakuraPetals />
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* Provide tooltip context (required for shadcn-ui tooltips). */}
+        <TooltipProvider>
+          {/* Render the Toaster component - this is where toast notifications will appear. */}
+          <Toaster />
+          {/* Render the Sonner component - for other toast notifications. */}
+          <Sonner />
+          {/* Render the custom SakuraPetals component. */}
+          <SakuraPetals />
 
-        {/* Set up client-side routing using BrowserRouter. */}
-        <BrowserRouter>
-          {/* Component to handle scrolling to top on route changes */}
-          <ScrollToTop />
-          {/* Floating button to scroll to top */}
-          <ScrollToTopButton />
-          {/* Define the routes for the application. */}
-          <Routes>
-            {/* Define a parent route that uses the Layout component. */}
-            {/* All nested routes will render inside the Layout component's <Outlet />. */}
-            <Route path="/" element={<Layout />}>
-              {/* Index Route: Rendered when the path is exactly "/". Uses the Index page component. */}
-              <Route index element={<Index />} />
-              {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
-              <Route path="/galerie" element={<Galerie />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/grossesse" element={<PackageOnePage />} />
-              <Route path="/famille" element={<PackageTwoPage />} />
-              <Route path="/bebe" element={<PackageThreePage />} />
-              <Route path="/complices" element={<PackageFourPage />} />
-              <Route path="/mentions-legales" element={<MentionsLegales />} />
-              <Route path="/partenaires" element={<Partenaires />} />
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute>
-                    <AdminPanel />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+          {/* Set up client-side routing using BrowserRouter. */}
+          <BrowserRouter>
+            {/* Component to handle scrolling to top on route changes */}
+            <ScrollToTop />
+            {/* Layout wrapper for all pages */}
+            <Layout>
+              {/* Define the routes for the application. */}
+              <Routes>
+                {/* Index Route: Rendered when the path is exactly "/". Uses the Index page component. */}
+                <Route path="/" element={<Index />} />
+                {/* Other Page Routes: Map specific URL paths to their corresponding page components. */}
+                <Route path="/galerie" element={<Galerie />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/grossesse" element={<PackageOnePage />} />
+                <Route path="/famille" element={<PackageTwoPage />} />
+                <Route path="/bebe" element={<PackageThreePage />} />
+                <Route path="/complices" element={<PackageFourPage />} />
+                <Route path="/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/partenaires" element={<Partenaires />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute>
+                      <AdminPanel />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Wildcard Route: Matches any path not matched above. Renders the NotFound page. */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+            {/* Floating button to scroll to top */}
+            <ScrollToTopButton />
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   )
 }
 

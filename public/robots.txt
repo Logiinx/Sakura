@@ -1,5 +1,5 @@
 # robots.txt for MOM.B Photographie
-# https://www.momb-photographie.fr/
+# https://www.momb-photographie.fr
 
 # Sitemap location
 Sitemap: https://www.momb-photographie.fr/sitemap.xml

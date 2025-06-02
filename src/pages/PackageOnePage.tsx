@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { getSectionText, getSectionImages } from "@/lib/supabasedb"
 import type { SiteImageData } from "@/lib/supabasedb"
@@ -42,6 +43,20 @@ function useSectionImagesQuery(sections: string[]) {
  * @returns The JSX element for the Package One page.
  */
 const PackageOnePage: React.FC = () => {
+  const seoData = {
+    title: "Séance Photo Grossesse - MOM.B Photographie | Immortalisez votre maternité",
+    description:
+      "Séance photo grossesse professionnelle. Capturez la beauté de votre maternité. Forfaits personnalisés et souvenirs inoubliables.",
+    keywords: "séance photo grossesse, photographe maternité, photos enceinte, shooting grossesse, maternité",
+    url: "https://www.momb-photographie.fr/grossesse",
+    structuredData: {
+      type: "Service",
+      name: "Séance Photo Grossesse",
+      description: "Séance photo professionnelle pour immortaliser votre grossesse",
+      provider: "MOM.B Photographie",
+      serviceType: "Photographie de maternité",
+    },
+  }
   // Define the sections for images needed on this page
   const imageSections = useMemo(() => ["grossesse-0", "grossesse-1", "grossesse-2", "grossesse-3"], [])
 
@@ -141,6 +156,7 @@ const PackageOnePage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-white">
+      <SEOHead {...seoData} />
       {/* Title Section */}
       <section className="py-16">
         <div className="sakura-container text-center">

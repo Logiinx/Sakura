@@ -1,9 +1,17 @@
 import React, { useState } from "react"
 import { FaMapPin, FaPhone, FaEnvelope } from "react-icons/fa6"
 
+import { SEOHead } from "@/components/SEOHead"
 import { useToast } from "@/hooks/use-toast"
 
 const Contact = () => {
+  const seoData = {
+    title: "Contact - MOM.B Photographie | Réservez votre séance photo",
+    description:
+      "Contactez MOM.B Photographie pour réserver votre séance photo grossesse, famille ou bébé. Devis gratuit et personnalisé.",
+    keywords: "contact photographe, réservation séance photo, devis photo grossesse, contact studio photo",
+    url: "https://www.momb-photographie.fr/contact",
+  }
   const { toast } = useToast()
   const [formData, setFormData] = useState({
     name: "",
@@ -59,6 +67,7 @@ const Contact = () => {
 
   return (
     <div className="animate-fade-in">
+      <SEOHead {...seoData} />
       <section className="py-16 md:py-24">
         <div className="sakura-container">
           <div className="mb-16 text-center">

@@ -10,6 +10,7 @@ import { HiOutlineSparkles } from "react-icons/hi"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { useInView } from "@/hooks/useInView"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation"
@@ -54,6 +55,31 @@ function useSectionImagesQuery(sections: string[]) {
 
 // Define the Index page component.
 const Index: React.FC = () => {
+  const seoData = {
+    title: "MOM.B Photographie | Séance photo grossesse, famille, bébé, mariage",
+    description:
+      "Photographe professionnelle spécialisée dans les séances grossesse, famille et bébé. Immortalisez vos moments précieux MOM.B Photographie.",
+    keywords: "photographe grossesse, photographe famille, photographe bébé, séance photo, maternité, nouveau-né",
+    image: "https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/public/og-image.webp",
+    url: "https://www.momb-photographie.fr",
+    structuredData: {
+      type: "LocalBusiness",
+      name: "MOM.B Photographie",
+      description: "Studio de photographie spécialisé dans les séances grossesse, famille et bébé",
+      address: {
+        streetAddress: "15 lotissement le Recpharès",
+        addressLocality: "Cazouls-lès-Béziers",
+        postalCode: "34370",
+        addressCountry: "FR",
+      },
+      telephone: "06 03 74 98 93",
+      email: "contact@momb-photographie.fr",
+      url: "https://www.momb-photographie.fr",
+      image: "https://mjlgssaipclicfybxjnj.supabase.co/storage/v1/object/public/assets/public/og-image.webp",
+      priceRange: "€€",
+      openingHours: "Mo-Sa 09:00-18:00",
+    },
+  }
   // --- START: Use TanStack Query Hooks ---
   // Define sections for text and images
   const imageSections = useMemo(
@@ -192,6 +218,7 @@ const Index: React.FC = () => {
   return (
     // Apply a fade-in animation to the entire page content.
     <div className="animate-fade-in">
+      <SEOHead {...seoData} />
       {/* --- Hero Section --- */}
       {/* `relative` allows absolute positioning of children. `h-screen` makes it full viewport height. */}
       {/* `flex items-center` vertically centers the content. */}
@@ -209,13 +236,18 @@ const Index: React.FC = () => {
             <BlurImage
               src={heroImageData.image_url}
               hash={heroImageData.blur_hash}
-              alt={heroImageData.alt_text || "Hero background image"}
+              alt={
+                heroImageData.alt_text ||
+                "Sakura Photography - Photographe professionnelle spécialisée en grossesse, famille et bébé"
+              }
               className="h-full w-full" // Ensure it fills the container
               objectFit="cover" // Ensure the image covers the area
               fetchPriority="high"
               loading="eager"
               overlayClassName="absolute inset-0 bg-black bg-opacity-30" // Pass overlay style here
               crossOrigin="anonymous"
+              isHero={true}
+              isAboveFold={true}
             />
           )}
 

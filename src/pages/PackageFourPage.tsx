@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { getSectionText, getSectionImages } from "@/lib/supabasedb"
 import type { SiteImageData } from "@/lib/supabasedb"
@@ -37,6 +38,21 @@ function useSectionImagesQuery(sections: string[]) {
 }
 
 const PackageFourPage: React.FC = () => {
+  const seoData = {
+    title: "Séance Photo Couple - MOM.B Photographie | Photos de couple romantiques",
+    description:
+      "Séance photo couple professionnelle. Capturez votre complicité et votre amour. Portraits romantiques et authentiques.",
+    keywords: "séance photo couple, photographe couple, photos romantiques, shooting couple, portraits amoureux",
+    url: "https://www.momb-photographie.fr/complices",
+    structuredData: {
+      type: "Service",
+      name: "Séance Photo Couple",
+      description: "Séance photo professionnelle pour couples",
+      provider: "MOM.B Photographie",
+      serviceType: "Photographie de couple",
+    },
+  }
+
   // Define the sections for images needed on this page
   const imageSections = useMemo(() => ["complices-0", "complices-1", "complices-2", "complices-3"], [])
 
@@ -115,6 +131,7 @@ const PackageFourPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-white">
+      <SEOHead {...seoData} />
       {/* Title Section */}
       <section className="py-16">
         <div className="sakura-container text-center">

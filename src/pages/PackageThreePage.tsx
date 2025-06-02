@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { getSectionText, getSectionImages } from "@/lib/supabasedb"
 import type { SiteImageData } from "@/lib/supabasedb"
@@ -37,6 +38,20 @@ function useSectionImagesQuery(sections: string[]) {
 }
 
 const PackageThreePage: React.FC = () => {
+  const seoData = {
+    title: "Séance Photo Bébé - MOM.B Photographie | Photos nouveau-né et enfants",
+    description:
+      "Séance photo bébé et nouveau-né professionnelle. Immortalisez les premiers moments de votre enfant. Douceur et sécurité garanties.",
+    keywords: "séance photo bébé, photographe nouveau-né, photos enfants, shooting bébé, newborn",
+    url: "https://www.momb-photographie.fr/bebe",
+    structuredData: {
+      type: "Service",
+      name: "Séance Photo Bébé",
+      description: "Séance photo professionnelle pour bébés et nouveau-nés",
+      provider: "MOM.B Photographie",
+      serviceType: "Photographie de nouveau-né",
+    },
+  }
   // Define the sections for images needed on this page
   const imageSections = useMemo(() => ["bebe-0", "bebe-1", "bebe-2", "bebe-3"], [])
 
@@ -127,6 +142,7 @@ const PackageThreePage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-white">
+      <SEOHead {...seoData} />
       {/* Title Section */}
       <section className="py-16">
         <div className="sakura-container text-center">

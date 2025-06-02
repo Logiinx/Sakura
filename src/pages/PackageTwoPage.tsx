@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa6"
 import { Link } from "react-router-dom"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 import { getSectionText, getSectionImages } from "@/lib/supabasedb"
 import type { SiteImageData } from "@/lib/supabasedb"
@@ -37,6 +38,20 @@ function useSectionImagesQuery(sections: string[]) {
 }
 
 const PackageTwoPage: React.FC = () => {
+  const seoData = {
+    title: "Séance Photo Famille - MOM.B Photographie | Portraits de famille authentiques",
+    description:
+      "Séance photo famille professionnelle. Capturez les moments précieux en famille. Portraits naturels et authentiques.",
+    keywords: "séance photo famille, photographe famille, portraits famille, photos enfants, shooting famille",
+    url: "https://www.momb-photographie.fr/famille",
+    structuredData: {
+      type: "Service",
+      name: "Séance Photo Famille",
+      description: "Séance photo professionnelle pour capturer les moments en famille",
+      provider: "MOM.B Photographie",
+      serviceType: "Photographie de famille",
+    },
+  }
   // Define the sections for images needed on this page
   const imageSections = useMemo(() => ["famille-0", "famille-1", "famille-2", "famille-3"], [])
 
@@ -135,6 +150,7 @@ const PackageTwoPage: React.FC = () => {
 
   return (
     <div className="animate-fade-in bg-white">
+      <SEOHead {...seoData} />
       {/* Title Section */}
       <section className="py-16">
         <div className="sakura-container text-center">

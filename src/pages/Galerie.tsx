@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import React, { useState, useMemo } from "react"
 
 import { BlurImage } from "@/components/BlurImage"
+import { SEOHead } from "@/components/SEOHead"
 import { getSectionImages } from "@/lib/supabasedb"
 
 const categories = ["Tous", "Grossesse", "Famille", "Bébé", "Complices", "Mariage"]
@@ -27,6 +28,13 @@ function useSectionImagesQuery(sections: string[]) {
 }
 
 const Galerie = () => {
+  const seoData = {
+    title: "Galerie Photo - MOM.B Photographie | Portfolio Grossesse, Famille & Bébé",
+    description:
+      "Découvrez ma galerie de photos de grossesse, famille et bébé. Portfolio professionnel de MOM.B Photographie.",
+    keywords: "galerie photo grossesse, portfolio photographe, photos famille, photos bébé, séances photo maternité",
+    url: "https://www.momb-photographie.fr/galerie",
+  }
   const [selectedCategory, setSelectedCategory] = useState("Tous")
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
@@ -106,6 +114,7 @@ const Galerie = () => {
 
   return (
     <div className="animate-fade-in">
+      <SEOHead {...seoData} />
       <section className="py-16 md:py-24">
         <div className="sakura-container">
           <div className="mb-16 text-center">
