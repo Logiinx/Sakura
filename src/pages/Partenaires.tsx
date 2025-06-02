@@ -40,14 +40,14 @@ const PartnerCard = ({ partner }: { partner: Partner }) => {
     <Card
       onClick={handleWebsiteClick}
       className="group cursor-pointer transition-all duration-100 hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex items-center p-6">
+      <div className="flex flex-col items-center p-6 sm:flex-row sm:items-center">
         {/* Logo Section */}
-        <div className="mr-6 flex-shrink-0">
+        <div className="mb-4 flex-shrink-0 sm:mb-0 sm:mr-6">
           <div className="relative overflow-hidden rounded-lg">
             <img
               src={partner.logo}
               alt={`${partner.name} logo`}
-              className="h-auto max-h-32 w-auto max-w-96 object-contain"
+              className="h-auto max-h-28 w-auto max-w-72 object-contain sm:max-h-32 sm:max-w-96"
               onError={(e) => {
                 const target = e.target as HTMLImageElement
                 target.src = "/placeholder.svg"
@@ -57,11 +57,11 @@ const PartnerCard = ({ partner }: { partner: Partner }) => {
         </div>
 
         {/* Content Section */}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between">
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <div className="flex flex-col items-center sm:flex-row sm:items-start sm:justify-between">
             <div className="flex-1">
-              <div className="mb-2 flex items-center gap-3">
-                <h3 className="font-bad-script text-xl font-bold tracking-widest text-sakura-dark-text">
+              <div className="mb-2 flex flex-col items-center gap-2 sm:flex-row sm:gap-3">
+                <h3 className="font-bad-script text-lg font-bold tracking-widest text-sakura-dark-text sm:text-xl">
                   {partner.name}
                 </h3>
                 {partner.category && (

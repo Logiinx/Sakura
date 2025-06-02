@@ -118,11 +118,11 @@ const Galerie = () => {
 
           {/* Category Filter */}
           <div className="mb-10 flex justify-center">
-            <div className="flex space-x-2 rounded-full border border-gray-200 p-1">
+            <div className="flex flex-wrap justify-center gap-2 rounded-full border border-gray-200 p-1 sm:flex-nowrap sm:gap-0 sm:space-x-2">
               {categories.map((category) => (
                 <button
                   key={category}
-                  className={`rounded-full px-6 py-2 transition-colors ${
+                  className={`rounded-full px-3 py-2 text-sm transition-colors sm:px-6 sm:text-base ${
                     selectedCategory === category ? "bg-sakura-pink text-white" : "hover:bg-sakura-light-pink"
                   }`}
                   onClick={() => setSelectedCategory(category)}>
