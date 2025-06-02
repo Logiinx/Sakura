@@ -1,7 +1,7 @@
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
 import * as React from "react"
 
-import { toggleVariants } from "@/components/ui/toggle"
+import { toggleVariants } from "@/lib/ui-variants"
 import { cn } from "@/lib/utils"
 import { type VariantProps } from "class-variance-authority"
 
