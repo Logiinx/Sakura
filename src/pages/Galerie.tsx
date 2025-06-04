@@ -127,12 +127,14 @@ const Galerie = () => {
 
           {/* Category Filter */}
           <div className="mb-10 flex justify-center">
-            <div className="flex flex-wrap justify-center gap-2 rounded-full border border-gray-200 p-1 sm:flex-nowrap sm:gap-0 sm:space-x-2">
+            <div className="flex flex-wrap justify-center gap-2 rounded-xl border border-gray-200 p-1 sm:flex-nowrap sm:gap-0 sm:space-x-2">
               {categories.map((category) => (
                 <button
                   key={category}
-                  className={`rounded-full px-3 py-2 text-sm transition-colors sm:px-6 sm:text-base ${
-                    selectedCategory === category ? "bg-sakura-pink text-white" : "hover:bg-sakura-light-pink"
+                  className={`rounded-xl px-3 py-2 text-sm transition-colors sm:px-6 sm:text-base ${
+                    selectedCategory === category
+                      ? "bg-sakura-pink text-white"
+                      : "hover:bg-sakura-pink hover:bg-opacity-30"
                   }`}
                   onClick={() => setSelectedCategory(category)}>
                   {category.charAt(0).toUpperCase() + category.slice(1)}
