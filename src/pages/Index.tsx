@@ -217,7 +217,7 @@ const Index: React.FC = () => {
   // console.log("Images Error:", imagesError) // Removed log - potentially logged via hook
   return (
     // Apply a fade-in animation to the entire page content.
-    <div className="animate-fade-in">
+    <div>
       <SEOHead {...seoData} />
       {/* --- Hero Section --- */}
       {/* `relative` allows absolute positioning of children. `h-screen` makes it full viewport height. */}
